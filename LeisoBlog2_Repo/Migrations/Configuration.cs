@@ -1,12 +1,13 @@
 namespace LeisoBlog2_Repo.Migrations
 {
     using LesioBlog2_Repo.Models;
+    using LesioBlog2_Repo.Models.Context;
     using System;
     using System.Data.Entity;
     using System.Data.Entity.Migrations;
     using System.Linq;
 
-    internal sealed class Configuration : DbMigrationsConfiguration<LesioBlog2_Repo.Models.BlogContext>
+    internal sealed class Configuration : DbMigrationsConfiguration<BlogContext>
     {
         public Configuration()
         {
@@ -14,7 +15,7 @@ namespace LeisoBlog2_Repo.Migrations
             AutomaticMigrationDataLossAllowed = true;
         }
 
-        protected override void Seed(LesioBlog2_Repo.Models.BlogContext context)
+        protected override void Seed(BlogContext context)
         {
             //  This method will be called after migrating to the latest version.
 

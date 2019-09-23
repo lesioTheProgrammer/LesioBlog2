@@ -95,12 +95,15 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Abstract\IBlogContext.cs" />
+    <Compile Include="Abstract\IWpisRepo.cs" />
+    <Compile Include="Concrete\WpisRepo.cs" />
     <Compile Include="Migrations\201909201045498_init.cs" />
     <Compile Include="Migrations\201909201045498_init.Designer.cs">
       <DependentUpon>201909201045498_init.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
-    <Compile Include="Models\blogContext.cs" />
+    <Compile Include="Models\Context\blogContext.cs" />
     <Compile Include="Models\Comment.cs" />
     <Compile Include="Models\CommentTag.cs" />
     <Compile Include="Models\RepeatedFields.cs" />
@@ -124,6 +127,7 @@
       <DependentUpon>201909201045498_init.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

@@ -1,13 +1,14 @@
-﻿using System;
+﻿using LeisoBlog2_Repo.Abstract;
+using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.ModelConfiguration.Conventions;
 using System.Linq;
 using System.Web;
 
-namespace LesioBlog2_Repo.Models
+namespace LesioBlog2_Repo.Models.Context
 {
-    public class BlogContext : DbContext
+    public class BlogContext : DbContext, IBlogContext
     {
         public BlogContext() : base("LesioBlog")
         {

@@ -6,18 +6,27 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using LeisoBlog2_Repo.Abstract;
 using LesioBlog2_Repo.Models;
+using LesioBlog2_Repo.Models.Context;
+
 
 namespace LesioBlog2.Controllers
 {
     public class WpisController : Controller
     {
-        private BlogContext db = new BlogContext();
+        private readonly IWpisRepo  _wpis;
+
+        public WpisController(IWpisRepo wpisrepo)
+        {
+            this._wpis = wpisrepo;
+        }
+
 
         // GET: Wpis
         public ActionResult Index()
         {
-            var wpis = db.Wpis.Include(w => w.User);
+            var wpis = _wpis.GetWpis();
             return View(wpis.ToList());
         }
 
@@ -28,7 +37,7 @@ namespace LesioBlog2.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Wpis wpis = db.Wpis.Find(id);
+            Wpis wpis = _wpis.GetWpisById(id);
             if (wpis == null)
             {
                 return HttpNotFound();
@@ -39,7 +48,7 @@ namespace LesioBlog2.Controllers
         // GET: Wpis/Create
         public ActionResult Create()
         {
-            ViewBag.UserID = new SelectList(db.Users, "UserID", "NickName");
+          //  ViewBag.UserID = new SelectList(db.Users, "UserID", "NickName");
             return View();
         }
 
@@ -52,12 +61,12 @@ namespace LesioBlog2.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Wpis.Add(wpis);
-                db.SaveChanges();
+                _wpis.Add(wpis);
+                _wpis.SaveChanges();
                 return RedirectToAction("Index");
             }
 
-            ViewBag.UserID = new SelectList(db.Users, "UserID", "NickName", wpis.UserID);
+           // ViewBag.UserID = new SelectList(db.Users, "UserID", "NickName", wpis.UserID);
             return View(wpis);
         }
 
@@ -68,12 +77,12 @@ namespace LesioBlog2.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Wpis wpis = db.Wpis.Find(id);
+            Wpis wpis = _wpis.GetWpisById(id);
             if (wpis == null)
             {
                 return HttpNotFound();
             }
-            ViewBag.UserID = new SelectList(db.Users, "UserID", "NickName", wpis.UserID);
+         //   ViewBag.UserID = new SelectList(db.Users, "UserID", "NickName", wpis.UserID);
             return View(wpis);
         }
 
@@ -82,15 +91,19 @@ namespace LesioBlog2.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "WpisID,UserID,Content,AddingDate,Plusy")] Wpis wpis)
+        public ActionResult Edit([Bind(Include = "WpisID,UserID,Content,Plusy,AddingDate")] Wpis wpis)
         {
+            wpis.AddingDate = _wpis.GetWpisWithAddDate(wpis);
+
+
+
             if (ModelState.IsValid)
             {
-                db.Entry(wpis).State = EntityState.Modified;
-                db.SaveChanges();
+                _wpis.Update(wpis);
+                _wpis.SaveChanges();
                 return RedirectToAction("Index");
             }
-            ViewBag.UserID = new SelectList(db.Users, "UserID", "NickName", wpis.UserID);
+           // ViewBag.UserID = new SelectList(db.Users, "UserID", "NickName", wpis.UserID);
             return View(wpis);
         }
 
@@ -101,7 +114,7 @@ namespace LesioBlog2.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Wpis wpis = db.Wpis.Find(id);
+            Wpis wpis = _wpis.GetWpisById(id);
             if (wpis == null)
             {
                 return HttpNotFound();
@@ -114,9 +127,9 @@ namespace LesioBlog2.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Wpis wpis = db.Wpis.Find(id);
-            db.Wpis.Remove(wpis);
-            db.SaveChanges();
+            Wpis wpis = _wpis.GetWpisById(id);
+            _wpis.Delete(wpis);
+            _wpis.SaveChanges();
             return RedirectToAction("Index");
         }
 
@@ -124,7 +137,7 @@ namespace LesioBlog2.Controllers
         {
             if (disposing)
             {
-                db.Dispose();
+                _wpis.Dispose();
             }
             base.Dispose(disposing);
         }
