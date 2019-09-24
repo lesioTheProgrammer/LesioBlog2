@@ -96,11 +96,23 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Abstract\IBlogContext.cs" />
+    <Compile Include="Abstract\ITagRepo.cs" />
+    <Compile Include="Abstract\IUserRepo.cs" />
     <Compile Include="Abstract\IWpisRepo.cs" />
+    <Compile Include="Concrete\TagRepo.cs" />
+    <Compile Include="Concrete\UserRepo.cs" />
     <Compile Include="Concrete\WpisRepo.cs" />
     <Compile Include="Migrations\201909201045498_init.cs" />
     <Compile Include="Migrations\201909201045498_init.Designer.cs">
       <DependentUpon>201909201045498_init.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201909230947055_loggingAddedUser.cs" />
+    <Compile Include="Migrations\201909230947055_loggingAddedUser.Designer.cs">
+      <DependentUpon>201909230947055_loggingAddedUser.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201909231102063_changingDisplayUserEmailAndPass.cs" />
+    <Compile Include="Migrations\201909231102063_changingDisplayUserEmailAndPass.Designer.cs">
+      <DependentUpon>201909231102063_changingDisplayUserEmailAndPass.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Context\blogContext.cs" />
@@ -125,6 +137,12 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201909201045498_init.resx">
       <DependentUpon>201909201045498_init.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201909230947055_loggingAddedUser.resx">
+      <DependentUpon>201909230947055_loggingAddedUser.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201909231102063_changingDisplayUserEmailAndPass.resx">
+      <DependentUpon>201909231102063_changingDisplayUserEmailAndPass.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup />

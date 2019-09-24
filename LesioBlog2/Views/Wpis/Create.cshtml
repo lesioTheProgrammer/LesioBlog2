@@ -15,6 +15,10 @@
         <h4>Wpis</h4>
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+
+        @*Cant select user, user has to be binded to currently logged user*@
+        @*
         <div class="form-group">
             @Html.LabelFor(model => model.UserID, "UserID", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
@@ -22,6 +26,7 @@
                 @Html.ValidationMessageFor(model => model.UserID, "", new { @class = "text-danger" })
             </div>
         </div>
+            *@
 
         <div class="form-group">
             @Html.LabelFor(model => model.Content, htmlAttributes: new { @class = "control-label col-md-2" })

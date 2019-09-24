@@ -94,7 +94,10 @@ namespace LeisoBlog2_Repo.Migrations
                     NickName = "Bobas" + i.ToString(),
                     FullName = "Pan Bobas" + i.ToString(),
                     City = "Breslau" + i.ToString(),
-                    Gender = i < 5 ? "Male" : "Female"
+                    Gender = i < 5 ? "Male" : "Female",
+                    Email = "lesio" + i.ToString() + "@gmail.com",
+                    Password = "piespies" + i.ToString(),
+
 
                 };
                 context.Set<User>().AddOrUpdate(user);

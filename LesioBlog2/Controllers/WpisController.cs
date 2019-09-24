@@ -16,10 +16,12 @@ namespace LesioBlog2.Controllers
     public class WpisController : Controller
     {
         private readonly IWpisRepo  _wpis;
+        private readonly ITagRepo _tag;
 
-        public WpisController(IWpisRepo wpisrepo)
+        public WpisController(IWpisRepo wpisrepo, ITagRepo tagrepo)
         {
             this._wpis = wpisrepo;
+            this._tag = tagrepo;
         }
 
 
@@ -27,6 +29,9 @@ namespace LesioBlog2.Controllers
         public ActionResult Index()
         {
             var wpis = _wpis.GetWpis();
+
+
+
             return View(wpis.ToList());
         }
 
@@ -59,6 +64,10 @@ namespace LesioBlog2.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "WpisID,UserID,Content,AddingDate,Plusy")] Wpis wpis)
         {
+
+          
+
+
             if (ModelState.IsValid)
             {
                 _wpis.Add(wpis);

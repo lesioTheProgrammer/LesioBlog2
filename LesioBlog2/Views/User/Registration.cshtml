@@ -1,0 +1,86 @@
+﻿@model LesioBlog2_Repo.Models.User
+@{
+    ViewBag.Title = "Registration";
+
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+
+}
+
+<h2>Registration</h2>
+
+<h1>Input all data required</h1>
+
+
+
+@using (Html.BeginForm())
+{
+    @Html.ValidationSummary(true, "Registration failed, please check your inputs");
+
+    <div>
+        <fieldset>
+            <legend>Register here!</legend>
+            <div class="editor-label">
+                @Html.LabelFor(x => x.Email)
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(x => x.Email)
+                @Html.ValidationMessageFor(x => x.Email)
+            </div>
+
+
+            <div class="editor-label">
+                @Html.LabelFor(x => x.Password)
+            </div>
+            <div class="editor-field">
+                @Html.PasswordFor(x => x.Password)
+                @Html.ValidationMessageFor(x => x.Password)
+            </div>
+
+            <div class="editor-label">
+                @Html.LabelFor(x => x.NickName)
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(x => x.NickName)
+                @Html.ValidationMessageFor(x => x.NickName)
+            </div>
+
+            <div class="editor-label">
+                @Html.LabelFor(x => x.FullName)
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(x => x.FullName)
+                @Html.ValidationMessageFor(x => x.FullName)
+            </div>
+
+            <div class="editor-label">
+                @Html.LabelFor(x => x.City)
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(x => x.City)
+                @Html.ValidationMessageFor(x => x.City)
+            </div>
+
+            <div class="editor-label">
+                @Html.LabelFor(x => x.Gender)
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(x => x.Gender)
+                @Html.ValidationMessageFor(x => x.Gender)
+            </div>
+
+
+
+
+            <input type="submit" value=" Create User" />
+
+        </fieldset>
+    </div>
+
+}
+
+
+<script>
+
+
+</script>

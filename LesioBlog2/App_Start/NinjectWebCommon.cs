@@ -52,7 +52,10 @@ namespace LesioBlog2.App_Start
 
                 kernel.Bind<IWpisRepo>().To<WpisRepo>();
 
+                kernel.Bind<IUserRepo>().To<UserRepo>();
 
+
+                kernel.Bind<ITagRepo>().To<TagRepo>();
                 RegisterServices(kernel);
                 return kernel;
             }

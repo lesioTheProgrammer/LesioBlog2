@@ -1,0 +1,46 @@
+﻿
+@model LesioBlog2_Repo.Models.User
+
+
+@{
+    ViewBag.Title = "LogIn";
+
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+<div style="width: auto; background-color: aquamarine"> </div>
+<h2>LogIn</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.ValidationSummary(true, "Login failed, fix your login details");
+
+    <div>
+        <fieldset>
+            <legend>Login Form</legend>
+            <div>@Html.LabelFor(x => x.Email)</div>
+            <div>
+                @Html.TextAreaFor(x => x.Email)
+            @Html.ValidationMessageFor(x => x.Email)
+        </div>
+
+        <div>@Html.LabelFor(x => x.Password)</div>
+        <div>
+            @Html.PasswordFor(x => x.Password)
+        @Html.ValidationMessageFor(x => x.Password)
+        </div>
+
+
+            <input type="submit" value="Log In"/>
+
+
+
+        </fieldset>
+
+
+
+    </div>
+
+
+
+}

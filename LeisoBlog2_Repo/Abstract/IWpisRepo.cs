@@ -22,6 +22,8 @@ namespace LeisoBlog2_Repo.Abstract
 
 
 
+
+
         void Delete(Wpis wpis);
 
 
