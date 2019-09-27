@@ -19,12 +19,11 @@ namespace LeisoBlog2_Repo.Abstract
 
         DateTime GetWpisWithAddDate(Wpis wpis);
 
-
-
-
-
+        ICollection<Wpis> GetWpisByUserID(int? id);
 
         void Delete(Wpis wpis);
+     
+
 
 
 

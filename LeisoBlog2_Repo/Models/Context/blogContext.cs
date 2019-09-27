@@ -1,4 +1,5 @@
 ﻿using LeisoBlog2_Repo.Abstract;
+using LeisoBlog2_Repo.Models;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -33,6 +34,11 @@ namespace LesioBlog2_Repo.Models.Context
 
         public DbSet<WpisTag> WpisTags { get; set; }
 
+        public DbSet<Gender> Genders { get; set; }
+
+
+
+
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -43,13 +49,25 @@ namespace LesioBlog2_Repo.Models.Context
 
             //fluent API
             //one to many
+            //user has many wpis i many comments
             modelBuilder.Entity<Wpis>().HasRequired(x => x.User).WithMany(x => x.Wpis).HasForeignKey(x => x.UserID).WillCascadeOnDelete(true);
             modelBuilder.Entity<Comment>().HasRequired(x => x.User).WithMany(x => x.Comments).HasForeignKey(x => x.UserID).WillCascadeOnDelete(true);
+            modelBuilder.Entity<User>().HasRequired(x => x.Gender).WithMany(x => x.User).HasForeignKey(x => x.GenderID);
+
             //many to many
             modelBuilder.Entity<WpisTag>().HasKey(key => new { key.TagID, key.WpisID });
             modelBuilder.Entity<CommentTag>().HasKey(key => new { key.TagID, key.CommentID });
 
 
+            ///////  KOLUMNY COMMENT ID I WPIS ID JAK KURWICZKI JAKO FOREIGN KEJE
+
+
+
+
+
+            //one to one
+
+          //  modelBuilder.Entity<User>().HasOptional(x => x.Gender).WithRequired(x => x.User);
         }
 
 

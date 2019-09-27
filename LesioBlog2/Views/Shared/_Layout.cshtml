@@ -9,19 +9,28 @@
 </head>
 <body>
     
-     <div style="width: auto; background-color: aliceblue">
+    <div style="width: auto; background-color: aliceblue">
 
-         @if (Request.IsAuthenticated)
-         {
-             <strong>@Html.Encode(User.Identity.Name)</strong>
-             @Html.ActionLink("Log Out", "Logout", "User")
-         }
-         else
-         {
-             @Html.ActionLink("Register", "Registration", "User")
-             <span> | </span>
-             @Html.ActionLink("Log In", "Login", "User")
-         }
+        @if (Request.IsAuthenticated)
+        {
+            <strong>@Html.Encode(User.Identity.Name)</strong>
+            @Html.ActionLink("Log Out", "Logout", "User")
+            <span> | </span>
+            @Html.ActionLink("View all wpisy", "Index", "Wpis")
+            <span> | </span>
+            @Html.ActionLink("User control panel ", "Index", "User")
+        }
+        else
+        {
+            @Html.ActionLink("Register", "Registration", "User")
+            <span> | </span>
+            @Html.ActionLink("Log In", "Login", "User")
+            <span> | </span>
+            @Html.ActionLink("View all wpisy", "Index", "Wpis")
+            <span> | </span>
+            @Html.ActionLink("User control panel ", "Index", "User")
+
+        }
 
         @RenderBody()
         <hr />

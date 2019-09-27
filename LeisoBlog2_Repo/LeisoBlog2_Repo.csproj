@@ -96,28 +96,25 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Abstract\IBlogContext.cs" />
+    <Compile Include="Abstract\ICommentRepo.cs" />
+    <Compile Include="Abstract\IGender.cs" />
     <Compile Include="Abstract\ITagRepo.cs" />
     <Compile Include="Abstract\IUserRepo.cs" />
     <Compile Include="Abstract\IWpisRepo.cs" />
+    <Compile Include="Concrete\CommentRepo.cs" />
+    <Compile Include="Concrete\GenderRepo.cs" />
     <Compile Include="Concrete\TagRepo.cs" />
     <Compile Include="Concrete\UserRepo.cs" />
     <Compile Include="Concrete\WpisRepo.cs" />
-    <Compile Include="Migrations\201909201045498_init.cs" />
-    <Compile Include="Migrations\201909201045498_init.Designer.cs">
-      <DependentUpon>201909201045498_init.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201909230947055_loggingAddedUser.cs" />
-    <Compile Include="Migrations\201909230947055_loggingAddedUser.Designer.cs">
-      <DependentUpon>201909230947055_loggingAddedUser.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201909231102063_changingDisplayUserEmailAndPass.cs" />
-    <Compile Include="Migrations\201909231102063_changingDisplayUserEmailAndPass.Designer.cs">
-      <DependentUpon>201909231102063_changingDisplayUserEmailAndPass.cs</DependentUpon>
+    <Compile Include="Migrations\201909260852255_init3.cs" />
+    <Compile Include="Migrations\201909260852255_init3.Designer.cs">
+      <DependentUpon>201909260852255_init3.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Context\blogContext.cs" />
     <Compile Include="Models\Comment.cs" />
     <Compile Include="Models\CommentTag.cs" />
+    <Compile Include="Models\Gender.cs" />
     <Compile Include="Models\RepeatedFields.cs" />
     <Compile Include="Models\Tag.cs" />
     <Compile Include="Models\User.cs" />
@@ -135,17 +132,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201909201045498_init.resx">
-      <DependentUpon>201909201045498_init.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201909230947055_loggingAddedUser.resx">
-      <DependentUpon>201909230947055_loggingAddedUser.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201909231102063_changingDisplayUserEmailAndPass.resx">
-      <DependentUpon>201909231102063_changingDisplayUserEmailAndPass.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201909260852255_init3.resx">
+      <DependentUpon>201909260852255_init3.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

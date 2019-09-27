@@ -11,17 +11,70 @@ namespace LesioBlog2.Controllers
     public class UserController : Controller
     {
         private readonly IUserRepo _user;
-        public UserController(IUserRepo userrepo)
+        private readonly IGender _gender;
+        private readonly ICommentRepo _comm;
+        private readonly IWpisRepo _wpisRepo;
+
+
+        public UserController(IUserRepo userrepo, IGender gender, ICommentRepo comments, IWpisRepo wpis)
         {
             this._user = userrepo;
+            this._gender = gender;
+            this._comm = comments;
+            this._wpisRepo = wpis;
+
         }
 
         // GET: User
 
 
-        public ActionResult Index()
+        [HttpGet]
+        public ActionResult Index(string Name)
         {
-            return View();
+            bool isUserLogged = (System.Web.HttpContext.Current.User != null) && System.Web.HttpContext.Current.User.Identity.IsAuthenticated;
+           
+            if (isUserLogged && string.IsNullOrEmpty(Name))
+            {
+              var FakeUser = System.Web.HttpContext.Current.User;
+              string userName = FakeUser.Identity.Name;
+                //search by name
+                //cant be empty
+                var user = _user.GetUserByNickname(userName);
+                //gender nie ma kolumny userID
+
+                user.Gender = _gender.GetGenderByID(user.GenderID);
+                user.Comments = _comm.GetCommentByUserID(user.UserID);
+                user.Wpis = _wpisRepo.GetWpisByUserID(user.UserID);
+
+                return View(user);
+            }
+            else if ((isUserLogged && !string.IsNullOrEmpty(Name)))
+            {
+                var user = _user.GetUserByNickname(Name);
+
+                user.Gender = _gender.GetGenderByID(user.GenderID);
+                user.Comments = _comm.GetCommentByUserID(user.UserID);
+                user.Wpis = _wpisRepo.GetWpisByUserID(user.UserID);
+
+                return View(user);
+            }
+
+            else
+            {
+                return View();
+            }
+
+        }
+
+        //post searching user 
+        [HttpPost]
+        public ActionResult Index(LesioBlog2_Repo.Models.User user)
+        {
+            //check if user is logged in
+            bool isUserLogged = (System.Web.HttpContext.Current.User != null) && System.Web.HttpContext.Current.User.Identity.IsAuthenticated;
+           //nothing to post in displaying user state
+           
+                return View();
         }
 
 
@@ -58,15 +111,19 @@ namespace LesioBlog2.Controllers
         [HttpGet]
         public ActionResult Registration()
         {
+
+            var genderlist = this._gender.GetGenders();
+            ViewBag.GenderID = new SelectList(genderlist, "GenderID", "GenderName", genderlist.Select(x=>x.GenderID));
+
             return View();
         }
 
         [HttpPost]
-        public ActionResult Registration([Bind(Include = "Email,Password,UserID,NickName,FullName,City,Gender")]LesioBlog2_Repo.Models.User user)
+        public ActionResult Registration([Bind(Include = "Email,Password,UserID,NickName,FullName,City,GenderID")]LesioBlog2_Repo.Models.User user)
         {
 
             //checking if email and nickname taken
-
+            
             if (IsEmailUsernameTaken(user.Email, user.NickName))
             {
                 if (ModelState.IsValid)  //password and email form checking
@@ -88,6 +145,9 @@ namespace LesioBlog2.Controllers
                         matchingUser = _user.FindUserByID(user.UserID);
                     }
                     #endregion
+
+
+
 
                     _user.Add(user);
                     _user.SaveChanges();

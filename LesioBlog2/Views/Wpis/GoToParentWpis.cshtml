@@ -1,0 +1,49 @@
+﻿@model LesioBlog2_Repo.Models.Wpis
+
+@{
+    ViewBag.Title = "GoToParentWpis";
+}
+
+<h2>This is a parent wpis</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.User.NickName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Content)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.AddingDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Plusy)
+        </th>
+        <th></th>
+    </tr>
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => Model.User.NickName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => Model.Content)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => Model.AddingDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => Model.Plusy)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = Model.WpisID }) |
+                @Html.ActionLink("Details", "Details", new { id = Model.WpisID }) |
+                @Html.ActionLink("Delete", "Delete", new { id = Model.WpisID })
+            </td>
+        </tr>
+    }
+
+</table>

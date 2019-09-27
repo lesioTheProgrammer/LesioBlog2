@@ -1,5 +1,6 @@
 namespace LeisoBlog2_Repo.Migrations
 {
+    using LeisoBlog2_Repo.Models;
     using LesioBlog2_Repo.Models;
     using LesioBlog2_Repo.Models.Context;
     using System;
@@ -21,7 +22,7 @@ namespace LeisoBlog2_Repo.Migrations
 
             //  You can use the DbSet<T>.AddOrUpdate() helper extension method 
             //  to avoid creating duplicate seed data.
-
+            SeedGenders(context);
             SeedUsers(context);
             SeedWpis(context);
             SeedComments(context);
@@ -84,6 +85,26 @@ namespace LeisoBlog2_Repo.Migrations
             context.SaveChanges();
         }
 
+        private void SeedGenders(BlogContext context)
+        {
+            
+                for (int i = 1; i < 3; i++)
+                {
+                var gender = new Gender
+                {
+                    GenderID = i,
+                    GenderName = i <2 ?  "Male" : "Female"
+                 };
+                context.Set<Gender>().AddOrUpdate(gender);
+
+
+                }
+            context.SaveChanges();
+        }
+
+
+
+
         private void SeedUsers(BlogContext context)
         {
             for (int i = 1; i < 11; i++)
@@ -94,11 +115,9 @@ namespace LeisoBlog2_Repo.Migrations
                     NickName = "Bobas" + i.ToString(),
                     FullName = "Pan Bobas" + i.ToString(),
                     City = "Breslau" + i.ToString(),
-                    Gender = i < 5 ? "Male" : "Female",
                     Email = "lesio" + i.ToString() + "@gmail.com",
                     Password = "piespies" + i.ToString(),
-
-
+                    GenderID = i < 5 ? 1 : 2
                 };
                 context.Set<User>().AddOrUpdate(user);
             }

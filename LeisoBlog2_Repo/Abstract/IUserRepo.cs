@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace LeisoBlog2_Repo.Abstract
 {
-    public interface IUserRepo 
+    public interface IUserRepo : IDisposable
     {
         void Add(User user);
 

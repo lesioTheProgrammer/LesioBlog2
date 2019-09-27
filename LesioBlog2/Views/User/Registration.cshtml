@@ -65,7 +65,7 @@
                 @Html.LabelFor(x => x.Gender)
             </div>
             <div class="editor-field">
-                @Html.TextBoxFor(x => x.Gender)
+                @Html.DropDownList("GenderID")
                 @Html.ValidationMessageFor(x => x.Gender)
             </div>
 

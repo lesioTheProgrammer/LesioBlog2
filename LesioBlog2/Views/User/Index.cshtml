@@ -9,5 +9,111 @@
 
 }
 
-<h2>Index</h2>
+<h2>Search the user by the nickname or check your user profile details</h2>
 
+@if (Request.IsAuthenticated)
+{
+
+
+    <table class="table">
+
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.NickName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FullName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.City)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Email)
+            </th>
+
+            <th>
+                @Html.DisplayNameFor(model => model.Gender)
+            </th>
+            <th>
+                @Html.DisplayName("Comment count")
+            </th>
+            <th>
+                @Html.DisplayName("Wpis count")
+            </th>
+
+
+            <th></th>
+        </tr>
+
+        <tr>
+            <td>
+                @Html.DisplayFor(model => model.NickName)
+            </td>
+            <td>
+                @Html.DisplayFor(model => model.FullName)
+            </td>
+            <td>
+                @Html.DisplayFor(model => model.City)
+            </td>
+            <td>
+                @Html.DisplayFor(model => model.Email)
+            </td>
+
+            <td>
+                @Html.DisplayFor(model => model.Gender.GenderName)
+            </td>
+            <td>
+                @Html.DisplayFor(model => model.Comments.Count)
+                @Html.ActionLink("Go to user's comments", "Index", "Comments", new { userNickName = Model.NickName }, null)
+
+
+
+            </td>
+            <td>
+                @Html.DisplayFor(model => model.Wpis.Count)
+                @Html.ActionLink("Go to user's wpis", "Index", "Wpis", new { userNickName = Model.NickName }, null )
+               
+            </td>
+
+        </tr>
+    </table>
+
+
+
+}
+
+
+
+else
+{
+    <h3> Please log in to search the user or view the user details.</h3>
+    @Html.ActionLink("Log In", "Login", "User")
+    <span>  ||  </span>
+    @Html.ActionLink("Register", "Registration", "User")
+}
+
+
+@using (Html.BeginForm("Index", "User", FormMethod.Get))
+{
+    {
+        if (Request.IsAuthenticated)
+        {
+            <div>
+                <fieldset>
+                    <legend>Search for another user</legend>
+                    <div class="editor-label">
+                        @Html.Label("Search another user by name")
+                    </div>
+                    <div class="editor-field">
+                        @Html.TextBox("Name")
+                        @Html.ValidationMessageFor(x => x.NickName)
+                    </div>
+                    <input type="submit" value="Search" />
+                </fieldset>
+            </div>
+
+        }
+
+
+    }
+}

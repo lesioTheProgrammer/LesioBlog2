@@ -51,6 +51,10 @@ namespace LeisoBlog2_Repo.Concrete
         }
 
 
+    
+
+
+
         public IQueryable<Wpis> GetPages(int? page, int? pagesize)
         {
             throw new NotImplementedException();
@@ -68,6 +72,15 @@ namespace LeisoBlog2_Repo.Concrete
             return wpis;
         }
 
+        public ICollection<Wpis> GetWpisByUserID(int? id)
+        {
+            //var wpis = _db.Wpis.Where(x => x.UserID == id);
+
+            var wpis = _db.Wpis.Where(x => x.UserID == id).Select(x=>x);
+            var list = wpis.ToList();
+            return list;
+        }
+
         public List<Wpis> GetWpisByUserNickName(string name)
         {
             var user = _db.Users.FirstOrDefault(x => x.NickName.ToLower() == name.ToLower());
@@ -79,6 +92,8 @@ namespace LeisoBlog2_Repo.Concrete
             //else:
             return new List<Wpis>();
         }
+
+
 
         public DateTime GetWpisWithAddDate(Wpis wpis)
         {
@@ -107,13 +122,7 @@ namespace LeisoBlog2_Repo.Concrete
 
         public void Update(Wpis wpis)
         {
-
-            
-         
-
             _db.Entry(wpis).State = EntityState.Modified;
-            
-
         }
     }
 }

@@ -1,6 +1,8 @@
-﻿using System;
+﻿using LeisoBlog2_Repo.Models;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Web;
 
@@ -9,6 +11,8 @@ namespace LesioBlog2_Repo.Models
     public class User
     {
         public int UserID { get; set; }
+        public int GenderID { get; set; }
+    
 
 
         [Required]
@@ -31,10 +35,13 @@ namespace LesioBlog2_Repo.Models
         public string NickName { get; set; }
         public string FullName { get; set; }
         public string City { get; set; }
-        public string Gender { get; set; }
+
+
 
         public virtual ICollection<Wpis> Wpis { get; set; }
 
         public virtual ICollection<Comment> Comments { get; set; }
+
+        public virtual Gender Gender { get; set; } //1 gender to one user
     }
 }

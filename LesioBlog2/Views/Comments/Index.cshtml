@@ -1,0 +1,60 @@
+﻿@model IEnumerable<LesioBlog2_Repo.Models.Comment>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Komentarze</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.User.NickName)
+        </th>
+        <th>
+            @Html.DisplayName("Wpis content");
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Content)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.AddingDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Plusy)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+<tr>
+    <td>
+        @Html.DisplayFor(modelItem => item.User.NickName)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Wpis.Content)
+        @Html.ActionLink("Go to related wpis", "GoToParentWpis", "Wpis", new { id = item.WpisID }, null)
+    </td>
+
+
+    <td>
+        @Html.DisplayFor(modelItem => item.Content)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.AddingDate)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Plusy)
+    </td>
+    <td>
+        @Html.ActionLink("Edit", "Edit", new { id = item.ID }) |
+        @Html.ActionLink("Details", "Details", new { id = item.ID }) |
+        @Html.ActionLink("Delete", "Delete", new { id = item.ID })
+    </td>
+</tr>
+}
+
+</table>

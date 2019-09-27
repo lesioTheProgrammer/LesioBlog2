@@ -54,6 +54,10 @@ namespace LesioBlog2.App_Start
 
                 kernel.Bind<IUserRepo>().To<UserRepo>();
 
+                kernel.Bind<IGender>().To<GenderRepo>();
+
+                kernel.Bind<ICommentRepo>().To<CommentRepo>();
+
 
                 kernel.Bind<ITagRepo>().To<TagRepo>();
                 RegisterServices(kernel);

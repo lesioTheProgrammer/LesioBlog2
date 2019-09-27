@@ -7,7 +7,7 @@ using System.Web;
 
 namespace LeisoBlog2_Repo.Concrete
 {
-    public class UserRepo : IUserRepo, IDisposable
+    public class UserRepo : IUserRepo
     {
 
         private readonly IBlogContext _db;
@@ -29,7 +29,7 @@ namespace LeisoBlog2_Repo.Concrete
 
         public User GetUserByEmail(string email)
         {
-            var user = _db.Users.SingleOrDefault(u => u.Email == email);
+            var user = _db.Users.SingleOrDefault(u => u.Email.ToLower() == email.ToLower());
             return user;
         }
 
@@ -44,25 +44,32 @@ namespace LeisoBlog2_Repo.Concrete
         {
             string nickname = "THIS USER HAS NO NICKNAME WHATS WRONG HELP";
             //mam usera po emailu tera wygrzebac jego nickname
-            var user = _db.Users.SingleOrDefault(x => x.Email == email);
+            var user = _db.Users.SingleOrDefault(x => x.Email.ToLower() == email.ToLower());
 
             if (user != null)
             {
               nickname = user.NickName;
-              return nickname;
+              return nickname.ToLower();
             }
             else
             {
-              return nickname;
+              return nickname.ToLower();
             }
         }
 
         public User GetUserByNickname(string nickname)
         {
-            var user = _db.Users.SingleOrDefault(x => x.NickName == nickname);
+            var user = _db.Users.SingleOrDefault(x => x.NickName.ToLower() == nickname.ToLower());
             return user;
         }
 
+        public User GetLoggedUser()
+        {
+            var user =_db.Users.SingleOrDefault();
+            return user;
+
+        }
+        
 
 
         public void SaveChanges()

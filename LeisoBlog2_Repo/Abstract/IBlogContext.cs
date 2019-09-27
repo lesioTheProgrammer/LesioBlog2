@@ -1,4 +1,5 @@
-﻿using LesioBlog2_Repo.Models;
+﻿using LeisoBlog2_Repo.Models;
+using LesioBlog2_Repo.Models;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -21,6 +22,7 @@ namespace LeisoBlog2_Repo.Abstract
 
          DbSet<WpisTag> WpisTags { get; set; }
 
+         DbSet<Gender> Genders { get; set; }
 
         Database Database { get; }
         DbEntityEntry Entry(object entity);

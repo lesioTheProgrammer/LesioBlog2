@@ -3,7 +3,7 @@ namespace LeisoBlog2_Repo.Migrations
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class init : DbMigration
+    public partial class init3 : DbMigration
     {
         public override void Up()
         {
@@ -78,12 +78,26 @@ namespace LeisoBlog2_Repo.Migrations
                 c => new
                     {
                         UserID = c.Int(nullable: false, identity: true),
-                        NickName = c.String(),
+                        GenderID = c.Int(nullable: false),
+                        Email = c.String(nullable: false),
+                        Password = c.String(nullable: false, maxLength: 200),
+                        PasswordSalt = c.String(),
+                        NickName = c.String(nullable: false),
                         FullName = c.String(),
                         City = c.String(),
-                        Gender = c.String(),
                     })
-                .PrimaryKey(t => t.UserID);
+                .PrimaryKey(t => t.UserID)
+                .ForeignKey("dbo.Gender", t => t.GenderID)
+                .Index(t => t.GenderID);
+            
+            CreateTable(
+                "dbo.Gender",
+                c => new
+                    {
+                        GenderID = c.Int(nullable: false, identity: true),
+                        GenderName = c.String(),
+                    })
+                .PrimaryKey(t => t.GenderID);
             
         }
         
@@ -92,10 +106,12 @@ namespace LeisoBlog2_Repo.Migrations
             DropForeignKey("dbo.Comment", "UserID", "dbo.User");
             DropForeignKey("dbo.WpisTag", "WpisID", "dbo.Wpis");
             DropForeignKey("dbo.Wpis", "UserID", "dbo.User");
+            DropForeignKey("dbo.User", "GenderID", "dbo.Gender");
             DropForeignKey("dbo.Comment", "WpisID", "dbo.Wpis");
             DropForeignKey("dbo.WpisTag", "TagID", "dbo.Tag");
             DropForeignKey("dbo.CommentTag", "TagID", "dbo.Tag");
             DropForeignKey("dbo.CommentTag", "CommentID", "dbo.Comment");
+            DropIndex("dbo.User", new[] { "GenderID" });
             DropIndex("dbo.Wpis", new[] { "UserID" });
             DropIndex("dbo.WpisTag", new[] { "WpisID" });
             DropIndex("dbo.WpisTag", new[] { "TagID" });
@@ -103,6 +119,7 @@ namespace LeisoBlog2_Repo.Migrations
             DropIndex("dbo.CommentTag", new[] { "TagID" });
             DropIndex("dbo.Comment", new[] { "WpisID" });
             DropIndex("dbo.Comment", new[] { "UserID" });
+            DropTable("dbo.Gender");
             DropTable("dbo.User");
             DropTable("dbo.Wpis");
             DropTable("dbo.WpisTag");
