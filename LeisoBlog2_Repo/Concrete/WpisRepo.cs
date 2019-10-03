@@ -2,10 +2,8 @@
 using LesioBlog2_Repo.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Data.Entity;
-using System.Diagnostics;
-using System.Web;
+using System.Linq;
 
 namespace LeisoBlog2_Repo.Concrete
 {
@@ -62,7 +60,7 @@ namespace LeisoBlog2_Repo.Concrete
 
         public IQueryable<Wpis> GetWpis()
         {
-            var listofWpis = _db.Wpis.Include("User");
+            var listofWpis = _db.Wpis.Include("User").Include(x => x.Comments);
             return listofWpis;
         }
 
@@ -86,13 +84,18 @@ namespace LeisoBlog2_Repo.Concrete
             var user = _db.Users.FirstOrDefault(x => x.NickName.ToLower() == name.ToLower());
             if (user != null)
             {
-                var wpis = _db.Wpis.Where(x => x.UserID == user.UserID).ToList();
+                var wpis = _db.Wpis.Where(x => x.UserID == user.UserID).Select(x=>x).ToList();
                 return wpis;
             }
             //else:
             return new List<Wpis>();
         }
 
+        public int GetIdOfWpisCreator(int? id)
+        {
+            int wpisUserId = _db.Wpis.SingleOrDefault(x => x.WpisID == id).UserID;
+            return wpisUserId;
+        }
 
 
         public DateTime GetWpisWithAddDate(Wpis wpis)

@@ -1,8 +1,6 @@
 ﻿using LeisoBlog2_Repo.Abstract;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
 
@@ -92,7 +90,7 @@ namespace LesioBlog2.Controllers
                 if (IsValid(user.Email, user.Password))
                 {
                      //to get user nickname
-                    FormsAuthentication.SetAuthCookie(_user.GetUserNicknameByEmail(user.Email), false);  //this decides which value goes to user.identiy name
+                    FormsAuthentication.SetAuthCookie(_user.GetUserNicknameByEmail(user.Email), true);  //this decides which value goes to user.identiy name
                     return RedirectToAction("Index", "Wpis");
                 }
 

@@ -2,8 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LeisoBlog2_Repo.Abstract
 {
@@ -22,10 +20,6 @@ namespace LeisoBlog2_Repo.Abstract
         ICollection<Wpis> GetWpisByUserID(int? id);
 
         void Delete(Wpis wpis);
-     
-
-
-
-
+        int GetIdOfWpisCreator(int? id);
     }
 }

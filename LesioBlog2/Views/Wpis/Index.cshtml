@@ -7,7 +7,10 @@
 <h2>Wpisy</h2>
 
 <p>
-    @Html.ActionLink("Create New", "Create")
+    @if (Request.IsAuthenticated)
+    {
+        @Html.ActionLink("Create New", "Create")
+    }
 </p>
 <table class="table">
     <tr>
@@ -26,26 +29,92 @@
         <th></th>
     </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.User.NickName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Content)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.AddingDate)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Plusy)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.WpisID }) |
-            @Html.ActionLink("Details", "Details", new { id=item.WpisID }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.WpisID })
-        </td>
-    </tr>
-}
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.User.NickName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Content)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AddingDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Plusy)
+            </td>
+            <td>
+
+                @if (Request.IsAuthenticated)
+                {
+                    @Html.ActionLink("Details", "Details", new { id = item.WpisID })
+
+
+                    if (System.Web.HttpContext.Current.User.Identity.Name == item.User.NickName)
+                    {
+                        <span> || </span>
+                        @Html.ActionLink("Edit", "Edit", new { id = item.WpisID });
+                        <span> || </span>
+
+                        @Html.ActionLink("Delete", "Delete", new { id = item.WpisID })
+                    }
+                }
+            </td>
+        </tr>
+    }
 
 </table>
+
+
+
+@foreach (var item in Model)
+{
+
+    <div>
+
+        <span style="float:left">
+            Author: @Html.DisplayFor(modelItem => item.User.NickName)
+        </span>
+        <span style="float:right">
+            @Html.DisplayFor(modelItem => item.AddingDate)
+
+            <span style="border: 2px solid red ">
+                <button >
+                @Html.DisplayFor(modelItem => item.Plusy)
+
+                </button>
+
+            </span>
+
+        </span>
+
+
+    </div>
+    <div>
+        <div style="border: solid 2px !important">
+            @Html.DisplayFor(modelItem => item.Content)
+        </div>
+
+        <div style="border: solid 2px !important">
+
+            @foreach (var item2 in item.Comments)
+            {
+                <div style="border-bottom:dashed 2px;">
+                    <div>
+                        Author: @Html.DisplayFor(modelItem => item2.User.NickName)
+                    </div>
+                    <div style="margin-left:5px;padding: 15px;">
+                        @Html.DisplayFor(modelItem => item2.Content)
+
+                    </div>
+
+                </div>
+            }
+        </div>
+    </div>
+
+
+
+}
+

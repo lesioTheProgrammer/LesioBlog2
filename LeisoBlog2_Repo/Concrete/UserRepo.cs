@@ -1,9 +1,6 @@
 ﻿using LeisoBlog2_Repo.Abstract;
 using LesioBlog2_Repo.Models;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 
 namespace LeisoBlog2_Repo.Concrete
 {
@@ -56,6 +53,20 @@ namespace LeisoBlog2_Repo.Concrete
               return nickname.ToLower();
             }
         }
+
+        public int? GetIDOfCurrentlyLoggedUser()
+        {
+            var FakeUser = System.Web.HttpContext.Current.User;
+            string userName = FakeUser.Identity.Name;
+            if (string.IsNullOrEmpty(userName))
+            {
+                return null;
+            }
+            var currentlyLoggedUserId = _db.Users.SingleOrDefault(x=>x.NickName == userName).UserID;
+            return currentlyLoggedUserId;
+
+        }
+
 
         public User GetUserByNickname(string nickname)
         {
