@@ -66,7 +66,7 @@ namespace LeisoBlog2_Repo.Concrete
 
         public Wpis GetWpisById(int? id)
         {
-            var wpis = _db.Wpis.Include("User").SingleOrDefault(x => x.WpisID == id);
+            var wpis = _db.Wpis.Include("User").Include(x => x.Comments).SingleOrDefault(x => x.WpisID == id);
             return wpis;
         }
 
@@ -84,7 +84,7 @@ namespace LeisoBlog2_Repo.Concrete
             var user = _db.Users.FirstOrDefault(x => x.NickName.ToLower() == name.ToLower());
             if (user != null)
             {
-                var wpis = _db.Wpis.Where(x => x.UserID == user.UserID).Select(x=>x).ToList();
+                var wpis = _db.Wpis.Where(x => x.UserID == user.UserID).Include(x=>x.Comments).Select(x=>x).ToList();
                 return wpis;
             }
             //else:

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Routing;
 
 namespace LesioBlog2.Controllers
 {
@@ -75,6 +76,7 @@ namespace LesioBlog2.Controllers
         }
 
         // GET: Wpis/Create
+        [AuthorizeUserAttribute]
         public ActionResult Create()
         {
             //  ViewBag.UserID = new SelectList(db.Users, "UserID", "NickName");
@@ -85,6 +87,7 @@ namespace LesioBlog2.Controllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [AuthorizeUserAttribute]
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "WpisID,UserID,Content,AddingDate,Plusy")] Wpis wpis)
         {
@@ -100,13 +103,13 @@ namespace LesioBlog2.Controllers
         }
 
         // GET: Wpis/Edit/5
+        [AuthorizeUserAttribute]
         public ActionResult Edit(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            bool isUserLogged = (System.Web.HttpContext.Current.User != null) && System.Web.HttpContext.Current.User.Identity.IsAuthenticated;
             var IdOfCreator = _wpis.GetIdOfWpisCreator(id);
             //id of logged user
             int? currentlyLoggedUserId = _user.GetIDOfCurrentlyLoggedUser();
@@ -115,7 +118,7 @@ namespace LesioBlog2.Controllers
                 return RedirectToAction("LogIn", "User");
             }
             //end
-            if (isUserLogged && IdOfCreator == currentlyLoggedUserId)
+            if (IdOfCreator == currentlyLoggedUserId)
             {
                 Wpis wpis = _wpis.GetWpisById(id);
                 if (wpis == null)
@@ -136,6 +139,7 @@ namespace LesioBlog2.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [AuthorizeUserAttribute]
         public ActionResult Edit([Bind(Include = "WpisID,UserID,Content,Plusy,AddingDate")] Wpis wpis)
         {
 
@@ -151,6 +155,7 @@ namespace LesioBlog2.Controllers
         }
 
         // GET: Wpis/Delete/5
+        [AuthorizeUserAttribute]
         public ActionResult Delete(int? id)
         {
             if (id == null)
@@ -184,6 +189,7 @@ namespace LesioBlog2.Controllers
         // POST: Wpis/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [AuthorizeUserAttribute]
         public ActionResult DeleteConfirmed(int id)
         {
             Wpis wpis = _wpis.GetWpisById(id);
@@ -205,13 +211,24 @@ namespace LesioBlog2.Controllers
 
     public class AuthorizeUserAttribute : AuthorizeAttribute
     {
-
+        //custom authorize
         protected override bool AuthorizeCore(HttpContextBase httpContext)
         {
 
             bool isUserLogged = (System.Web.HttpContext.Current.User != null) && System.Web.HttpContext.Current.User.Identity.IsAuthenticated;
 
             return isUserLogged;
+        }
+        //redirect to action 
+        protected override void HandleUnauthorizedRequest(AuthorizationContext filterContext)
+        {
+            // Returns HTTP 401 - see comment in HttpUnauthorizedResult.cs.
+            filterContext.Result = new RedirectToRouteResult(
+                                       new RouteValueDictionary
+                                       {
+                                       { "action", "LogIn" },
+                                       { "controller", "User" }
+                                       });
         }
     }
 }
