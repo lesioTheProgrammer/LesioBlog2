@@ -79,7 +79,6 @@ namespace LesioBlog2.Controllers
         [AuthorizeUserAttribute]
         public ActionResult Create()
         {
-            //  ViewBag.UserID = new SelectList(db.Users, "UserID", "NickName");
             return View();
         }
 
@@ -97,8 +96,6 @@ namespace LesioBlog2.Controllers
                 _wpis.SaveChanges();
                 return RedirectToAction("Index");
             }
-
-            // ViewBag.UserID = new SelectList(db.Users, "UserID", "NickName", wpis.UserID);
             return View(wpis);
         }
 
@@ -140,17 +137,17 @@ namespace LesioBlog2.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [AuthorizeUserAttribute]
-        public ActionResult Edit([Bind(Include = "WpisID,UserID,Content,Plusy,AddingDate")] Wpis wpis)
+        public ActionResult Edit([Bind(Include = "Content,WpisID")] Wpis wpis)
         {
 
             wpis.AddingDate = _wpis.GetWpisWithAddDate(wpis);
+            
             if (ModelState.IsValid)
             {
-                _wpis.Update(wpis);
+                _wpis.UpdateContent(wpis);
                 _wpis.SaveChanges();
                 return RedirectToAction("Index");
             }
-            // ViewBag.UserID = new SelectList(db.Users, "UserID", "NickName", wpis.UserID);
             return View(wpis);
         }
 
@@ -214,9 +211,7 @@ namespace LesioBlog2.Controllers
         //custom authorize
         protected override bool AuthorizeCore(HttpContextBase httpContext)
         {
-
             bool isUserLogged = (System.Web.HttpContext.Current.User != null) && System.Web.HttpContext.Current.User.Identity.IsAuthenticated;
-
             return isUserLogged;
         }
         //redirect to action 

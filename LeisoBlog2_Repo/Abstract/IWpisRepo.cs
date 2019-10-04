@@ -21,5 +21,7 @@ namespace LeisoBlog2_Repo.Abstract
 
         void Delete(Wpis wpis);
         int GetIdOfWpisCreator(int? id);
+
+        void UpdateContent(Wpis wpis);
     }
 }

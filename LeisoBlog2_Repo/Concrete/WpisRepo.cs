@@ -48,11 +48,6 @@ namespace LeisoBlog2_Repo.Concrete
             GC.SuppressFinalize(this);
         }
 
-
-    
-
-
-
         public IQueryable<Wpis> GetPages(int? page, int? pagesize)
         {
             throw new NotImplementedException();
@@ -107,9 +102,6 @@ namespace LeisoBlog2_Repo.Concrete
             data = _db.Wpis
                 .AsNoTracking()
                 .SingleOrDefault(x=>x.WpisID == id).AddingDate;
-
-            
-
             if (data == null)
             {
                 data = DateTime.Now;
@@ -126,6 +118,12 @@ namespace LeisoBlog2_Repo.Concrete
         public void Update(Wpis wpis)
         {
             _db.Entry(wpis).State = EntityState.Modified;
+        }
+
+        public void UpdateContent(Wpis wpis)
+        {
+            _db.Wpis.Attach(wpis);
+            _db.Entry(wpis).Property("Content").IsModified = true;
         }
     }
 }
