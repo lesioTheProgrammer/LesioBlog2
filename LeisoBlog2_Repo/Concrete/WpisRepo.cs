@@ -79,7 +79,7 @@ namespace LeisoBlog2_Repo.Concrete
             var user = _db.Users.FirstOrDefault(x => x.NickName.ToLower() == name.ToLower());
             if (user != null)
             {
-                var wpis = _db.Wpis.Where(x => x.UserID == user.UserID).Include(x=>x.Comments).Select(x=>x).ToList();
+                var wpis = _db.Wpis.Where(x => x.UserID == user.UserID).Include(x=>x.Comments).Include(x=>x.User).Select(x=>x).ToList();
                 return wpis;
             }
             //else:
@@ -120,10 +120,12 @@ namespace LeisoBlog2_Repo.Concrete
             _db.Entry(wpis).State = EntityState.Modified;
         }
 
-        public void UpdateContent(Wpis wpis)
+        public void UpdateContentAndPlusyAndEditDate(Wpis wpis)
         {
             _db.Wpis.Attach(wpis);
             _db.Entry(wpis).Property("Content").IsModified = true;
+            _db.Entry(wpis).Property("Plusy").IsModified = true;
+            _db.Entry(wpis).Property("EditingDate").IsModified = true;
         }
     }
 }

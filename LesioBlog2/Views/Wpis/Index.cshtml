@@ -12,72 +12,21 @@
         @Html.ActionLink("Create New", "Create")
     }
 </p>
-@*<table class="table">
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.User.NickName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Content)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.AddingDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Plusy)
-            </th>
-            <th></th>
-        </tr>
 
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.User.NickName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Content)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.AddingDate)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Plusy)
-                </td>
-                <td>
-
-                    @if (Request.IsAuthenticated)
-                    {
-                        @Html.ActionLink("Details", "Details", new { id = item.WpisID })
-
-
-                        if (System.Web.HttpContext.Current.User.Identity.Name == item.User.NickName)
-                        {
-                            <span> || </span>
-                            @Html.ActionLink("Edit", "Edit", new { id = item.WpisID });
-                            <span> || </span>
-
-                            @Html.ActionLink("Delete", "Delete", new { id = item.WpisID })
-                        }
-                    }
-                </td>
-            </tr>
-        }
-
-    </table>*@
-
-
-
-
-@foreach (var item in Model.OrderByDescending(x=>x.Plusy))
+@foreach (var item in Model.OrderByDescending(x => x.Plusy))
 {
     <div>
         <span style="float:left">
             Author: @Html.DisplayFor(modelItem => item.User.NickName)
             <span style="font-size: 12px">
-                
-                @Html.ActionLink(@Html.DisplayFor(modelItem => item.AddingDate).ToString(), "GoToParentWpis", "Wpis", new { id = item.WpisID }, null )
+
+                @Html.ActionLink(@Html.DisplayFor(modelItem => item.AddingDate).ToString(), "GoToParentWpis", "Wpis", new { id = item.WpisID }, null)
             </span>
+            <span style="font-size: 12px">
+                Edited:
+                @Html.DisplayFor(modelItem => item.EditingDate)
+            </span>
+
         </span>
         <span style="float:right ; padding:4px">
             <span>
@@ -111,7 +60,7 @@
         </div>
 
         <div style="border: solid 2px !important">
-            @foreach (var item2 in item.Comments.OrderByDescending(x=>x.Plusy))
+            @foreach (var item2 in item.Comments.OrderByDescending(x => x.Plusy))
             {
                 <div style="border-bottom:dashed 2px;">
                     <div style="margin-left: 30px; padding: 2px">
@@ -127,28 +76,11 @@
                             </span>
                         </span>
                     </div>
-                    <div style="margin-left:30px;padding: 5px;">
-                        @Html.DisplayFor(modelItem => item2.Content)
-                        <div style="padding-bottom: 0px; font-size: 12px">
-                            @if (Request.IsAuthenticated)
-                            {
-                                @Html.ActionLink("Details", "Details", new { id = item.WpisID })
-
-
-                                if (System.Web.HttpContext.Current.User.Identity.Name == item.User.NickName)
-                                {
-                                    <span> || </span>
-                                    @Html.ActionLink("Edit", "Edit", new { id = item.WpisID });
-                                    <span> || </span>
-
-                                    @Html.ActionLink("Delete", "Delete", new { id = item.WpisID })
-                                }
-                            }
-                        </div>
-                    </div>
-
+                   
+                 <div style="padding-bottom: 0px; font-size: 12px">
+                    @Html.Partial("~/Views/Comments/_CommentPartial.cshtml", item2, new ViewDataDictionary { {"UserName", item2.User.NickName } })
+                 </div>
                 </div>
-
             }
         </div>
     </div>

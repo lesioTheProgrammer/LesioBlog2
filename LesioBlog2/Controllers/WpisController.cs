@@ -1,5 +1,6 @@
 ﻿using LeisoBlog2_Repo.Abstract;
 using LesioBlog2_Repo.Models;
+using System;
 using System.Linq;
 using System.Net;
 using System.Web;
@@ -141,10 +142,12 @@ namespace LesioBlog2.Controllers
         {
 
             wpis.AddingDate = _wpis.GetWpisWithAddDate(wpis);
+            wpis.EditingDate = DateTime.Now;
+            wpis.Plusy = 0;
             
             if (ModelState.IsValid)
             {
-                _wpis.UpdateContent(wpis);
+                _wpis.UpdateContentAndPlusyAndEditDate(wpis);
                 _wpis.SaveChanges();
                 return RedirectToAction("Index");
             }

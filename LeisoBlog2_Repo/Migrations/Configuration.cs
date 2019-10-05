@@ -4,7 +4,6 @@ namespace LeisoBlog2_Repo.Migrations
     using LesioBlog2_Repo.Models;
     using LesioBlog2_Repo.Models.Context;
     using System;
-    using System.Data.Entity;
     using System.Data.Entity.Migrations;
     using System.Linq;
 
@@ -45,7 +44,8 @@ namespace LeisoBlog2_Repo.Migrations
                     WpisID = context.Wpis.FirstOrDefault().WpisID,
                     Content = "Gerara" + i.ToString(),
                     AddingDate = DateTime.Now,
-                    Plusy = random.Next(0,100)
+                    Plusy = random.Next(0, 100),
+                    EditingDate = DateTime.Now.AddDays(1)
                 };
                 context.Set<Comment>().AddOrUpdate(comment);
             }
@@ -64,7 +64,9 @@ namespace LeisoBlog2_Repo.Migrations
                     UserID = context.Users.FirstOrDefault().UserID,
                     Content = "Mnibu" + i.ToString(),
                     AddingDate = DateTime.Now,
-                    Plusy = random.Next(0, 100)
+                    Plusy = random.Next(0, 100),
+                    EditingDate = DateTime.Now.AddDays(3)
+
                 };
                 context.Set<Wpis>().AddOrUpdate(wpis);
             }

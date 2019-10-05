@@ -110,6 +110,10 @@
     <Compile Include="Migrations\201909260852255_init3.Designer.cs">
       <DependentUpon>201909260852255_init3.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201910051037286_EditingDateField.cs" />
+    <Compile Include="Migrations\201910051037286_EditingDateField.Designer.cs">
+      <DependentUpon>201910051037286_EditingDateField.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Context\blogContext.cs" />
     <Compile Include="Models\Comment.cs" />
@@ -134,6 +138,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201909260852255_init3.resx">
       <DependentUpon>201909260852255_init3.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201910051037286_EditingDateField.resx">
+      <DependentUpon>201910051037286_EditingDateField.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

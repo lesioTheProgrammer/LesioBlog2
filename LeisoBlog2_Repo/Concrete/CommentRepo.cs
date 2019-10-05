@@ -3,7 +3,6 @@ using LesioBlog2_Repo.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 
 namespace LeisoBlog2_Repo.Concrete
 {
@@ -53,7 +52,7 @@ namespace LeisoBlog2_Repo.Concrete
             if (user != null)
             {
                 var comments = _db.Comments.Include("Wpis").Include("User").Where(x => x.UserID == user.UserID);
-              return comments.ToList();
+                return comments.ToList();
             }
             else
             {
