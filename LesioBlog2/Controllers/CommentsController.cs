@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.Entity;
+﻿using LeisoBlog2_Repo.Abstract;
+using LesioBlog2_Repo.Models;
 using System.Linq;
 using System.Net;
-using System.Web;
 using System.Web.Mvc;
-using LeisoBlog2_Repo.Abstract;
-using LesioBlog2_Repo.Models;
-using LesioBlog2_Repo.Models.Context;
 
 namespace LesioBlog2.Controllers
 {
