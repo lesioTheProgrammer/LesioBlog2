@@ -85,6 +85,14 @@ namespace LeisoBlog2_Repo.Concrete
             return data;
         }
 
+
+        public Comment FindCommentByID(int? id)
+        {
+            var comment = _db.Comments.SingleOrDefault(x => x.ID == id);
+            return comment;
+        }
+
+
         public void SaveChanges()
         {
             _db.SaveChanges();

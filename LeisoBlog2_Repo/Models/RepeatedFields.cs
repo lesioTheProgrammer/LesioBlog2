@@ -9,7 +9,7 @@ namespace LesioBlog2_Repo.Models
 
         public int Plusy { get; set; }
 
-        public DateTime EditingDate { get; set; }
+        public DateTime? EditingDate { get; set; }
 
     }
 }

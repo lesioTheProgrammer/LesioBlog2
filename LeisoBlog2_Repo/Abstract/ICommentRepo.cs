@@ -21,7 +21,7 @@ namespace LeisoBlog2_Repo.Abstract
 
         ICollection<Comment> GetCommentByUserID(int? id);
 
-
+        Comment FindCommentByID(int? id);
         void Delete(Comment comment);
 
     }

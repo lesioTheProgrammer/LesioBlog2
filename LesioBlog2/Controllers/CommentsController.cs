@@ -1,5 +1,6 @@
 ﻿using LeisoBlog2_Repo.Abstract;
 using LesioBlog2_Repo.Models;
+using System;
 using System.Linq;
 using System.Net;
 using System.Web.Mvc;
@@ -10,11 +11,13 @@ namespace LesioBlog2.Controllers
     {
         private readonly ICommentRepo _comm;
         private readonly IWpisRepo _wpis;
+        private readonly IUserRepo _user;
 
-        public CommentsController(ICommentRepo commm, IWpisRepo wpis)
+        public CommentsController(ICommentRepo commm, IWpisRepo wpis, IUserRepo users)
         {
             this._comm = commm;
             this._wpis = wpis;
+            this._user = users;
         }
 
         // GET: Comments
@@ -61,14 +64,36 @@ namespace LesioBlog2.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "ID,UserID,WpisID,Content,AddingDate,Plusy")] Comment comment)
+        public ActionResult Create([Bind(Include = "WpisID,Content,UserID,ID,AddingDate,Plusy,EditingDate")] Comment comment)
         {
+
+            comment.Plusy = 0;
+            comment.AddingDate = DateTime.Now;
+            //load from users:
+            var nullableUserID = _user.GetIDOfCurrentlyLoggedUser();
+            if (nullableUserID == null)
+            {
+                return RedirectToAction("LogIn", "User");
+            }
+            else
+            {
+                //int? to int
+                comment.UserID = nullableUserID.GetValueOrDefault();
+            }
+            comment.EditingDate = null;
+
             if (ModelState.IsValid)
             {
-                return RedirectToAction("Index");
+                _comm.Add(comment);
+                _comm.SaveChanges();
+                //string returnUrl = Request.UrlReferrer.AbsoluteUri;
+               // return Redirect(returnUrl);
+
+                // return new RedirectToRouteResult(new RouteValueDictionary(new { action = "Index", controller = "Wpis" }));
+                return RedirectToAction("Index", "Wpis");
             }
 
-            return View(comment);
+            return PartialView(comment);
         }
 
         // GET: Comments/Edit/5
@@ -98,7 +123,7 @@ namespace LesioBlog2.Controllers
             {
                 _comm.Update(comment);
                 _comm.SaveChanges();
-                return RedirectToAction("Index");
+                //no need to redirect it 
             }
             return View(comment);
         }
@@ -126,6 +151,7 @@ namespace LesioBlog2.Controllers
             Comment comment = _comm.GetCommentById(id);
             _comm.Delete(comment);
             _comm.SaveChanges();
+
             return RedirectToAction("Index");
         }
 

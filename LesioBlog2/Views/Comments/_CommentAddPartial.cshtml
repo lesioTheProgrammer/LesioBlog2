@@ -1,0 +1,27 @@
+﻿
+@model LesioBlog2_Repo.Models.Comment
+
+
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    if (Request.IsAuthenticated)
+    {
+        <div style="margin-left: 30px; padding: 2px">
+            Comment here:
+            <br>
+            @Html.TextBoxFor(x => x.WpisID)
+            <br />
+            <span style="margin-left: 0px">
+                <button>
+                    @Html.ActionLink("Comment", "Create", new { Content = "Gierarka" })
+                </button>
+            </span>
+
+        </div>
+    }
+}
+

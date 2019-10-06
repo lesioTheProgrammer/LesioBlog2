@@ -58,7 +58,21 @@
                 }
             </div>
         </div>
+        @*Tu o dodanie komentarza*@
+    <div>
 
+        
+        @*@Html.Partial("~/Views/Comments/_CommentAddPartial.cshtml",new { })*@
+        
+
+        @*Renderuje spoko ale jest lipa przy creacie jak daje redirect to aciton wtedy i akcja to wpis index xd*@
+
+
+
+        @{Html.RenderAction("Create", "Comments", new { WpisID = item.WpisID });}
+    </div>
+
+        @* View comments bellow the wpis *@
         <div style="border: solid 2px !important">
             @foreach (var item2 in item.Comments.OrderByDescending(x => x.Plusy))
             {
@@ -75,12 +89,21 @@
                                 </button>
                             </span>
                         </span>
+                        <br>
+                        @Html.DisplayFor(modelItem => item2.Content)
+                        <br />
                     </div>
-                   
-                 <div style="padding-bottom: 0px; font-size: 12px">
-                    @Html.Partial("~/Views/Comments/_CommentPartial.cshtml", item2, new ViewDataDictionary { {"UserName", item2.User.NickName } })
-                 </div>
+
+                    <div style="padding-bottom: 0px; font-size: 12px">
+                        @Html.Partial("~/Views/Comments/_CommentPartial.cshtml", item2)
+                    </div>
                 </div>
+
+
+
+
+
+
             }
         </div>
     </div>

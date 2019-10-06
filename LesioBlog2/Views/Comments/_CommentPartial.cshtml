@@ -10,7 +10,7 @@
         @Html.ActionLink("Details", "Details", "Comments", new { id = Model.ID }, null)
 
 
-        if (System.Web.HttpContext.Current.User.Identity.Name == ViewData["UserName"])
+        if (System.Web.HttpContext.Current.User.Identity.Name == Model.User.NickName)
         {
             <span> || </span>
             @Html.ActionLink("Edit", "Edit","Comments", new { id = Model.ID }, null);

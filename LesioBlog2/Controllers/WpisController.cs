@@ -91,6 +91,9 @@ namespace LesioBlog2.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "WpisID,UserID,Content,AddingDate,Plusy")] Wpis wpis)
         {
+
+            
+
             if (ModelState.IsValid)
             {
                 _wpis.Add(wpis);
