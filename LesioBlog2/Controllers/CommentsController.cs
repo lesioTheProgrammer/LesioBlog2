@@ -66,9 +66,10 @@ namespace LesioBlog2.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "WpisID,Content,UserID,ID,AddingDate,Plusy,EditingDate")] Comment comment)
         {
-
             comment.Plusy = 0;
             comment.AddingDate = DateTime.Now;
+          //  comment.WpisID = 8;
+            //wpisID is not passed?????
             //load from users:
             var nullableUserID = _user.GetIDOfCurrentlyLoggedUser();
             if (nullableUserID == null)
@@ -86,13 +87,8 @@ namespace LesioBlog2.Controllers
             {
                 _comm.Add(comment);
                 _comm.SaveChanges();
-                //string returnUrl = Request.UrlReferrer.AbsoluteUri;
-               // return Redirect(returnUrl);
-
-                // return new RedirectToRouteResult(new RouteValueDictionary(new { action = "Index", controller = "Wpis" }));
                 return RedirectToAction("Index", "Wpis");
             }
-
             return PartialView(comment);
         }
 
