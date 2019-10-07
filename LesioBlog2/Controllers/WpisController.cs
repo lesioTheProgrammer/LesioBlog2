@@ -88,14 +88,15 @@ namespace LesioBlog2.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [AuthorizeUserAttribute]
-        [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "WpisID,UserID,Content,AddingDate,Plusy")] Wpis wpis)
         {
 
-            
-
             if (ModelState.IsValid)
             {
+                wpis.AddingDate = DateTime.Now;
+                wpis.EditingDate = DateTime.Now;
+                var loggedUserId = _user.GetIDOfCurrentlyLoggedUser();
+                wpis.UserID = loggedUserId.Value;
                 _wpis.Add(wpis);
                 _wpis.SaveChanges();
                 return RedirectToAction("Index");

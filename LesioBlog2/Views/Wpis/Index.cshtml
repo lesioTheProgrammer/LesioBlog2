@@ -4,113 +4,112 @@
     ViewBag.Title = "Index";
 }
 
-<h2>Wpisy</h2>
+<h2 style="text-align:center;"> <b>Wpisy </b></h2>
 
 <p>
     @if (Request.IsAuthenticated)
     {
+        using (Html.BeginForm("Create", "Wpis", FormMethod.Post))
+        {
+            
+            <textarea name="content" placeholder="Dodaj wpis!" style="margin-top: 12px; min-width: 90%; resize: none"></textarea>
+            <br />
+            <span style="margin-left: 0px">
+                <div class="form-group">
+                    <div class=" col-md-1">
+                        <input type="submit" class="btn-primary " value="Dodaj wpis" style="margin-top: 12px;" />
+                    </div>
+                </div>
+            </span>
+
+        }
         @Html.ActionLink("Create New", "Create")
     }
 </p>
 
-@foreach (var item in Model.OrderByDescending(x => x.Plusy))
-{
-    <div>
-        <span style="float:left">
-            Author: @Html.DisplayFor(modelItem => item.User.NickName)
-            <span style="font-size: 12px">
+<div style="margin: 50px">
 
-                @Html.ActionLink(@Html.DisplayFor(modelItem => item.AddingDate).ToString(), "GoToParentWpis", "Wpis", new { id = item.WpisID }, null)
+
+    @foreach (var item in Model.OrderByDescending(x => x.Plusy))
+    {
+        <div style="margin-top:15px;">
+            <span style="float:left">
+                Author: @Html.DisplayFor(modelItem => item.User.NickName)
+                <span style="font-size: 12px">
+
+                    @Html.ActionLink(@Html.DisplayFor(modelItem => item.AddingDate).ToString(), "GoToParentWpis", "Wpis", new { id = item.WpisID }, null)
+                </span>
+                <span style="font-size: 12px">
+                    Edited:
+                    @Html.DisplayFor(modelItem => item.EditingDate)
+                </span>
+
             </span>
-            <span style="font-size: 12px">
-                Edited:
-                @Html.DisplayFor(modelItem => item.EditingDate)
+            <span style="float:right ; padding:4px">
+                <span>
+                    <button>
+                        @Html.DisplayFor(modelItem => item.Plusy)
+                    </button>
+                </span>
             </span>
-
-        </span>
-        <span style="float:right ; padding:4px">
-            <span>
-                <button>
-                    @Html.DisplayFor(modelItem => item.Plusy)
-                </button>
-            </span>
-        </span>
-    </div>
-    <div>
-        <div style="border: solid 2px !important">
-            <br>
-            @Html.DisplayFor(modelItem => item.Content)
-            <br />
-            <div style="padding-bottom: 0px; font-size: 12px">
-                @if (Request.IsAuthenticated)
-                {
-                    @Html.ActionLink("Details", "Details", new { id = item.WpisID })
-
-
-                    if (System.Web.HttpContext.Current.User.Identity.Name == item.User.NickName)
+        </div>
+        <div>
+            <div style="border: solid 2px !important">
+                <br>
+                @Html.DisplayFor(modelItem => item.Content)
+                <br />
+                <div style="padding-bottom: 0px; font-size: 12px">
+                    @if (Request.IsAuthenticated)
                     {
-                        <span> || </span>
-                        @Html.ActionLink("Edit", "Edit", new { id = item.WpisID });
-                        <span> || </span>
+                        @Html.ActionLink("Details", "Details", new { id = item.WpisID })
 
-                        @Html.ActionLink("Delete", "Delete", new { id = item.WpisID })
+
+                        if (System.Web.HttpContext.Current.User.Identity.Name == item.User.NickName)
+                        {
+                            <span> || </span>
+                            @Html.ActionLink("Edit", "Edit", new { id = item.WpisID });
+                            <span> || </span>
+
+                            @Html.ActionLink("Delete", "Delete", new { id = item.WpisID })
+                        }
                     }
+                </div>
+            </div>
+
+
+            @* View comments bellow the wpis *@
+            <div style="border: solid 2px !important; margin-left:35px;">
+                @foreach (var item2 in item.Comments.OrderByDescending(x => x.Plusy))
+                {
+                    <div style="border-bottom:dashed 2px;">
+                        <div style="margin-left: 30px; padding: 2px">
+                            Author: @Html.DisplayFor(modelItem => item2.User.NickName)
+                            <span style="font-size: 12px">
+                                @Html.DisplayFor(modelItem => item2.AddingDate)
+                            </span>
+                            <span>
+                                <span style="float:right; padding: 0px">
+                                    <button>
+                                        @Html.DisplayFor(modelItem => item2.Plusy)
+                                    </button>
+                                </span>
+                            </span>
+                            <br>
+                            @Html.DisplayFor(modelItem => item2.Content)
+                            <br />
+                        </div>
+
+                        <div style="padding-bottom: 0px; font-size: 12px">
+                            @Html.Partial("~/Views/Comments/_CommentPartial.cshtml", item2)
+                        </div>
+                    </div>
+
                 }
+                @*Tu o dodanie komentarza*@
+                <div>
+                    @Html.Partial("~/Views/Comments/_CommentAddPartial.cshtml", new ViewDataDictionary { { "WpisID", item.WpisID } })
+                </div>
             </div>
         </div>
-        @*Tu o dodanie komentarza*@
-    <div>
-
-       @*
-        @Html.Partial("~/Views/Comments/_CommentAddPartial.cshtml",new { })*@
-           
-      
-        
-
-        @*Renderuje spoko ale jest lipa przy creacie jak daje redirect to aciton wtedy i akcja to wpis index xd*@
-
-
-
-        @{Html.RenderAction("Create", "Comments", new { WpisID = item.WpisID });}
-    </div>
-
-        @* View comments bellow the wpis *@
-        <div style="border: solid 2px !important">
-            @foreach (var item2 in item.Comments.OrderByDescending(x => x.Plusy))
-            {
-                <div style="border-bottom:dashed 2px;">
-                    <div style="margin-left: 30px; padding: 2px">
-                        Author: @Html.DisplayFor(modelItem => item2.User.NickName)
-                        <span style="font-size: 12px">
-                            @Html.DisplayFor(modelItem => item2.AddingDate)
-                        </span>
-                        <span>
-                            <span style="float:right; padding: 0px">
-                                <button>
-                                    @Html.DisplayFor(modelItem => item2.Plusy)
-                                </button>
-                            </span>
-                        </span>
-                        <br>
-                        @Html.DisplayFor(modelItem => item2.Content)
-                        <br />
-                    </div>
-
-                    <div style="padding-bottom: 0px; font-size: 12px">
-                        @Html.Partial("~/Views/Comments/_CommentPartial.cshtml", item2)
-                    </div>
-                </div>
-
-
-
-
-
-
-            }
-        </div>
-    </div>
-
-
-
-}
-
+    }
+</div>

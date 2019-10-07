@@ -10,14 +10,11 @@
         @Html.ActionLink("Details", "Details", "Comments", new { id = Model.ID }, null)
 
 
-        if (System.Web.HttpContext.Current.User.Identity.Name == Model.User.NickName)
-        {
             <span> || </span>
             @Html.ActionLink("Edit", "Edit","Comments", new { id = Model.ID }, null);
             <span> || </span>
 
             @Html.ActionLink("Delete", "Delete","Comments", new { id = Model.ID }, null)
-        }
     }
 
 </div>

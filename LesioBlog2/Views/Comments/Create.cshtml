@@ -16,6 +16,7 @@
         <div style="margin-left: 30px; padding: 2px">
             Comment here:
             <br>
+            @Html.HiddenFor(model => model.WpisID)
             @Html.EditorFor(model => model.Content, new { htmlAttributes = new { @class = "form-control" } })
             @Html.ValidationMessageFor(model => model.Content, "", new { @class = "text-danger" })
             <br />
