@@ -266,7 +266,6 @@
     <Content Include="Scripts\popper.js.map" />
     <Content Include="Scripts\popper-utils.min.js.map" />
     <Content Include="Scripts\popper-utils.js.map" />
-    <Content Include="Views\Wpis\Create.cshtml" />
     <Content Include="Views\Wpis\Delete.cshtml" />
     <Content Include="Views\Wpis\Details.cshtml" />
     <Content Include="Views\Wpis\Edit.cshtml" />
@@ -275,7 +274,6 @@
     <Content Include="Views\User\LogIn.cshtml" />
     <Content Include="Views\User\Registration.cshtml" />
     <Content Include="Views\User\LogOut.cshtml" />
-    <Content Include="Views\Comments\Create.cshtml" />
     <Content Include="Views\Comments\Delete.cshtml" />
     <Content Include="Views\Comments\Details.cshtml" />
     <Content Include="Views\Comments\Edit.cshtml" />
