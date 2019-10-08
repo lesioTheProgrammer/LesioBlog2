@@ -23,5 +23,6 @@ namespace LeisoBlog2_Repo.Abstract
         int GetIdOfWpisCreator(int? id);
 
         void UpdateContentAndPlusyAndEditDate(Wpis wpis);
+        void Add(WpisTag wpisTag);
     }
 }

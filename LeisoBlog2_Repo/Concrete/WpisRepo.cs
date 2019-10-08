@@ -25,6 +25,13 @@ namespace LeisoBlog2_Repo.Concrete
             _db.Wpis.Add(wpis);
         }
 
+        public void Add(WpisTag wpisTag)
+        {
+            _db.WpisTags.Add(wpisTag);
+        }
+
+
+
         public void Delete(Wpis wpis)
         {
             _db.Wpis.Remove(wpis);

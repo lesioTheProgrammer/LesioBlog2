@@ -183,7 +183,6 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\CommentsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
-    <Compile Include="Controllers\TagsController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Controllers\WpisController.cs" />
     <Compile Include="Global.asax.cs">
@@ -282,7 +281,6 @@
     <Content Include="Views\Wpis\GoToParentWpis.cshtml" />
     <Content Include="Views\Comments\_CommentPartial.cshtml" />
     <Content Include="Views\Comments\_CommentAddPartial.cshtml" />
-    <Content Include="Views\Tags\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

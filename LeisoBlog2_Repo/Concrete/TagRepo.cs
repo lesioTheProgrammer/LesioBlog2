@@ -26,15 +26,19 @@ namespace LeisoBlog2_Repo.Concrete
 
         public Tag GetTagByName(string name)
         {
-            var tag = _db.Tags.Include("TagName").SingleOrDefault(x => x.TagName == name);
+            var tag = _db.Tags.Include("WpisTag").SingleOrDefault(x => x.TagName == name);
             return tag;
         }
 
         public IQueryable<Tag> GetTags()
         {
-            var tags = _db.Tags.Include("TagName");
+            var tags = _db.Tags.Include("WpisTag");
             return tags;
         }
+        
+
+       
+
 
         public List<Wpis> getWpisWithSelectedTag(string tagName)
         {
@@ -46,7 +50,7 @@ namespace LeisoBlog2_Repo.Concrete
 
 
             var listOfWpisIncludingTags = _db.WpisTags
-                .Where(x=>x.WpisID == tagIdByTagName)
+                .Where(x=>x.TagID == tagIdByTagName)
                 .Select(x=>x.Wpis)
                 .Include(x => x.Comments.Select(u => u.User))
                 .Include(x => x.User)

@@ -3,6 +3,7 @@ using LesioBlog2_Repo.Models;
 using System;
 using System.Linq;
 using System.Net;
+using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
@@ -99,10 +100,42 @@ namespace LesioBlog2.Controllers
             wpis.EditingDate = null;
             var loggedUserId = _user.GetIDOfCurrentlyLoggedUser();
             wpis.UserID = loggedUserId.Value;
+
+            
+           
+
+            // np #poop
+      
+           
+      //      COOOOO JAAAAAAAAA ROBIEEEEEEEEEEEEEEE
             if (ModelState.IsValid)
             {
                 _wpis.Add(wpis);
                 _wpis.SaveChanges();
+
+                MatchCollection matches = Regex.Matches(wpis.Content, @"\B(\#[a-zA-Z0-9-,_]+\b)");
+                //wpis ID first important
+                foreach (var tagName in matches)
+                {
+                    var tag = _tag.GetTagByName(tagName.ToString());
+                    if (tag == null)
+                    {
+                        tag = new Tag();
+                        tag.TagName = tagName.ToString();
+                        //id radnom
+                        _tag.Add(tag);
+                        _tag.SaveChanges();
+                    }
+
+                    var wpisTag = new WpisTag()
+                    {
+                        TagID = tag.TagID,
+                        WpisID = wpis.WpisID
+                    };
+                    _wpis.Add(wpisTag);
+                    _wpis.SaveChanges();
+                }
+
                 return RedirectToAction("Index");
             }
             return View(wpis);
