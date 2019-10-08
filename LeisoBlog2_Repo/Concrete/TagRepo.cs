@@ -2,8 +2,8 @@
 using LesioBlog2_Repo.Models;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
-using System.Web;
 
 namespace LeisoBlog2_Repo.Concrete
 {
@@ -34,6 +34,24 @@ namespace LeisoBlog2_Repo.Concrete
         {
             var tags = _db.Tags.Include("TagName");
             return tags;
+        }
+
+        public List<Wpis> getWpisWithSelectedTag(string tagName)
+        {
+            //first get tahId by tagName
+            int tagIdByTagName = _db.Tags
+                .Where(x => x.TagName == tagName)
+                .Select(x=>x.TagID)
+                .SingleOrDefault();
+
+
+            var listOfWpisIncludingTags = _db.WpisTags
+                .Where(x=>x.WpisID == tagIdByTagName)
+                .Select(x=>x.Wpis)
+                .Include(x => x.Comments.Select(u => u.User))
+                .Include(x => x.User)
+                .ToList();
+            return listOfWpisIncludingTags;
         }
 
         public void SaveChanges()

@@ -21,24 +21,26 @@ namespace LesioBlog2.Controllers
             this._tag = tagrepo;
             this._user = user;
         }
-
-
         // GET: Wpis
-
-
-        public ActionResult Index(string userNickName)
+        public ActionResult Index(string userNickName, string tagName)
         {
             var wpis = _wpis.GetWpis();
-            if (string.IsNullOrEmpty(userNickName))
+
+
+            if (string.IsNullOrEmpty(userNickName) && string.IsNullOrEmpty(tagName))
             {
                 return View(wpis.ToList());
             }
-            else
+            else if (!string.IsNullOrEmpty(userNickName))
             {
                 //get wpis by user id
                 wpis = _wpis.GetWpisByUserNickName(userNickName).AsQueryable();
-
             }
+            else if (!string.IsNullOrEmpty(tagName))
+            {
+                wpis = _tag.getWpisWithSelectedTag(tagName).AsQueryable();
+            }
+
             return View(wpis.ToList());
 
         }
@@ -91,6 +93,8 @@ namespace LesioBlog2.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "WpisID,UserID,Content,AddingDate,Plusy")] Wpis wpis)
         {
+            //tagz?
+
             wpis.AddingDate = DateTime.Now;
             wpis.EditingDate = null;
             var loggedUserId = _user.GetIDOfCurrentlyLoggedUser();

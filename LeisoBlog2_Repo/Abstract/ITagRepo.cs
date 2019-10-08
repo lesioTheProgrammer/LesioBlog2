@@ -1,9 +1,6 @@
 ﻿using LesioBlog2_Repo.Models;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LeisoBlog2_Repo.Abstract
 {
@@ -15,7 +12,6 @@ namespace LeisoBlog2_Repo.Abstract
 
         void Add(Tag tag);
         void SaveChanges();
-
-
+        List<Wpis> getWpisWithSelectedTag(string tagName);
     }
 }

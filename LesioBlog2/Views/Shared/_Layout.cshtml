@@ -18,6 +18,16 @@
             @Html.ActionLink("View all wpisy", "Index", "Wpis")
             <span> | </span>
             @Html.ActionLink("User control panel ", "Index", "User")
+            {
+                <form asp-controller="Wpis" asp-action="Index" method="Get">
+                    <p>
+                        Szukaj wpisow po tagu: <input type="text" name="tagName" />
+                        <input type="submit" value="Szukaj" />
+                    </p>
+                </form>
+            }
+
+
         }
         else
         {
