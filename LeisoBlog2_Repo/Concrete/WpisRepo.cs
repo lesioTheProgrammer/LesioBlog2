@@ -34,6 +34,12 @@ namespace LeisoBlog2_Repo.Concrete
 
         public void Delete(Wpis wpis)
         {
+            var commentsChildren = _db.Comments.Where(x => x.WpisID == wpis.WpisID).Select(x=>x);
+            foreach (var item in commentsChildren)
+            {
+                _db.Comments.Remove(item);
+            }
+
             _db.Wpis.Remove(wpis);
         }
         //disposing- garb collecting

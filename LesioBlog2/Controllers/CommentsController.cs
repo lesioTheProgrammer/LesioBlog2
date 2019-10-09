@@ -93,18 +93,33 @@ namespace LesioBlog2.Controllers
         }
 
         // GET: Comments/Edit/5
+        [AuthorizeUserAttribute]
         public ActionResult Edit(int? id)
         {
-            var comment = _comm.GetCommentById(id);
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            if (comment == null)
+            var IdOfCreator = _comm.GetIdOfCommentCreator(id);
+            int? currentlyLoggedUserId = _user.GetIDOfCurrentlyLoggedUser();
+            if (currentlyLoggedUserId == null)
             {
-                return HttpNotFound();
+                return RedirectToAction("LogIn", "User");
             }
-            return View(comment);
+
+            if (IdOfCreator == currentlyLoggedUserId)
+            {
+                Comment comment = _comm.GetCommentById(id);
+                if (comment == null)
+                {
+                    return HttpNotFound();
+                }
+                return View(comment);
+            }
+            else
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "You can't edit someone else comment gierarka hir \n FOR REAL");
+            }
         }
 
         // POST: Comments/Edit/5
@@ -114,41 +129,61 @@ namespace LesioBlog2.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "ID,UserID,WpisID,Content,AddingDate,Plusy")] Comment comment)
         {
+            comment.Plusy = 0;
+            comment.EditingDate = DateTime.Now;
+            comment.AddingDate = _comm.GetCommentWithAddingDate(comment);
 
             if (ModelState.IsValid)
             {
-                _comm.Update(comment);
+                _comm.UpdateContentAndPlusyAndEditDate(comment);
                 _comm.SaveChanges();
-                //no need to redirect it 
+                return RedirectToAction("Index", "Wpis");
+
             }
             return View(comment);
         }
 
         // GET: Comments/Delete/5
+        [AuthorizeUserAttribute]
         public ActionResult Delete(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Comment comment = _comm.GetCommentById(id);
-            if (comment == null)
+
+            bool isUserLogged = (System.Web.HttpContext.Current.User != null) && System.Web.HttpContext.Current.User.Identity.IsAuthenticated;
+            var IdOfCreator = _comm.GetIdOfCommentCreator(id);
+            int? currentlyLoggedUserId = _user.GetIDOfCurrentlyLoggedUser();
+            if (currentlyLoggedUserId == null)
             {
-                return HttpNotFound();
+                return RedirectToAction("LogIn", "User");
             }
-            return View(comment);
+            if (isUserLogged && IdOfCreator == currentlyLoggedUserId)
+            {
+                Comment comment = _comm.GetCommentById(id);
+                if (comment == null)
+                {
+                    return HttpNotFound();
+                }
+                return View(comment);
+            }
+            else
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "You can't DELETE someone else comment gierarka hir \n FOR REAL");
+            }
         }
 
         // POST: Comments/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [AuthorizeUserAttribute]
         public ActionResult DeleteConfirmed(int id)
         {
             Comment comment = _comm.GetCommentById(id);
             _comm.Delete(comment);
             _comm.SaveChanges();
-
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", "Wpis");
         }
 
         protected override void Dispose(bool disposing)

@@ -2,7 +2,9 @@
 using LesioBlog2_Repo.Models;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
+
 
 namespace LeisoBlog2_Repo.Concrete
 {
@@ -30,7 +32,7 @@ namespace LeisoBlog2_Repo.Concrete
 
         public Comment GetCommentById(int? id)
         {
-            var comment = _db.Comments.SingleOrDefault(x => x.ID == id);
+            var comment = _db.Comments.Include(a=>a.User).SingleOrDefault(x => x.ID == id);
             return comment;
         }
 
@@ -103,6 +105,15 @@ namespace LeisoBlog2_Repo.Concrete
             _db.Entry(comment).State = System.Data.Entity.EntityState.Modified;
         }
 
+        public void UpdateContentAndPlusyAndEditDate(Comment comment)
+        {
+            _db.Comments.Attach(comment);
+            _db.Entry(comment).Property("Content").IsModified = true;
+            _db.Entry(comment).Property("Plusy").IsModified = true;
+            _db.Entry(comment).Property("EditingDate").IsModified = true;
+        }
+
+
 
         private bool disposed = false;
         protected virtual void Dispose(bool disposing)
@@ -121,6 +132,14 @@ namespace LeisoBlog2_Repo.Concrete
             Dispose(true);
             GC.SuppressFinalize(this);
         }
+
+
+        public int GetIdOfCommentCreator(int? id)
+        {
+            var ID = _db.Comments.SingleOrDefault(x => x.ID == id).UserID;
+            return ID;
+        }
+
 
     }
 }

@@ -64,12 +64,6 @@ namespace LeisoBlog2_Repo.Concrete
         }
 
 
-
-
-
-
-
-
         #region IDisposable Support
         private bool disposedValue = false; // To detect redundant calls
 

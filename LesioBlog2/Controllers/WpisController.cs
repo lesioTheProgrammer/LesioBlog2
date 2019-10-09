@@ -234,6 +234,7 @@ namespace LesioBlog2.Controllers
         public ActionResult DeleteConfirmed(int id)
         {
             Wpis wpis = _wpis.GetWpisById(id);
+            
             _wpis.Delete(wpis);
             _wpis.SaveChanges();
             return RedirectToAction("Index");

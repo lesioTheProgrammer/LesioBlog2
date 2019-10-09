@@ -59,9 +59,7 @@ namespace LesioBlog2_Repo.Models.Context
             modelBuilder.Entity<CommentTag>().HasKey(key => new { key.TagID, key.CommentID });
 
 
-            ///////  KOLUMNY COMMENT ID I WPIS ID JAK KURWICZKI JAKO FOREIGN KEJE
-
-
+            ///////  cascade on delete on wpistag
 
 
 
