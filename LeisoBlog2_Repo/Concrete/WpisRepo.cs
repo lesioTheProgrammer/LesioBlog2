@@ -34,11 +34,35 @@ namespace LeisoBlog2_Repo.Concrete
 
         public void Delete(Wpis wpis)
         {
+            //remove comments
             var commentsChildren = _db.Comments.Where(x => x.WpisID == wpis.WpisID).Select(x=>x);
             foreach (var item in commentsChildren)
             {
                 _db.Comments.Remove(item);
             }
+
+            //remove tags if are not used anywhere else
+            var wpisTags = _db.WpisTags.Where(x => x.WpisID == wpis.WpisID).Select(x => x);
+            //lista wpistagow'
+            //Ilist because this allows to perform Savechanges in Foreach
+            IList<WpisTag> listaforLoop = _db.WpisTags.Where(x => x.WpisID == wpis.WpisID)
+                .Select(x => x)
+                .ToList();
+
+            foreach (var item in listaforLoop)
+            {
+                var tagID = item.TagID;
+                //get list of ID 
+                _db.WpisTags.Remove(item);
+                //save changes
+                _db.SaveChanges();
+                if (!_db.WpisTags.Any(x=>x.TagID == tagID) && !_db.CommentTags.Any(x => x.TagID == tagID))
+                {
+                    var tagToRemove =_db.Tags.Where(x => x.TagID == tagID).SingleOrDefault();
+                    _db.Tags.Remove(tagToRemove);
+                }
+            }
+
 
             _db.Wpis.Remove(wpis);
         }

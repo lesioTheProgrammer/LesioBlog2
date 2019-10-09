@@ -7,16 +7,16 @@
     @if (Request.IsAuthenticated)
     {
         
-        @Html.ActionLink("Details", "Details", "Comments", new { id = Model.ID }, null)
+        @Html.ActionLink("Details", "Details", "Comments", new { id = Model.CommentID }, null)
 
 
         if (System.Web.HttpContext.Current.User.Identity.Name == Model.User.NickName)
         {
             <span> || </span>
-            @Html.ActionLink("Edit", "Edit","Comments", new { id = Model.ID }, null);
+            @Html.ActionLink("Edit", "Edit","Comments", new { id = Model.CommentID }, null);
             <span> || </span>
 
-            @Html.ActionLink("Delete", "Delete","Comments", new { id = Model.ID }, null)
+            @Html.ActionLink("Delete", "Delete","Comments", new { id = Model.CommentID }, null)
         }
     }
 

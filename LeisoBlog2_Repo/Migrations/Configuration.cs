@@ -39,7 +39,7 @@ namespace LeisoBlog2_Repo.Migrations
             {
                 var comment = new Comment()
                 {
-                    ID = i,
+                    CommentID = i,
                     UserID = context.Users.FirstOrDefault().UserID,
                     WpisID = context.Wpis.FirstOrDefault().WpisID,
                     Content = "Gerara" + i.ToString(),

@@ -25,5 +25,8 @@ namespace LeisoBlog2_Repo.Abstract
         void UpdateContentAndPlusyAndEditDate(Comment comment);
 
 
+        void Add(CommentTag commTag);
+
+
     }
 }

@@ -22,8 +22,34 @@ namespace LeisoBlog2_Repo.Concrete
             _db.Comments.Add(comment);
         }
 
+        public void Add(CommentTag commTag)
+        {
+            _db.CommentTags.Add(commTag);
+        }
+
         public void Delete(Comment comment)
         {
+            //remove tags if are not used anywhere else
+            var commTags = _db.CommentTags.Where(x => x.CommentID == comment.CommentID).Select(x => x);
+            //lista wpistagow'
+            //Ilist because this allows to perform Savechanges in Foreach
+            IList<CommentTag> listaforLoop = _db.CommentTags.Where(x => x.CommentID == comment.CommentID)
+                .Select(x => x)
+                .ToList();
+
+            foreach (var item in listaforLoop)
+            {
+                var tagID = item.TagID;
+                //get list of ID 
+                _db.CommentTags.Remove(item);
+                //save changes
+                _db.SaveChanges();
+                if (!_db.CommentTags.Any(x => x.TagID == tagID) && !_db.WpisTags.Any(x => x.TagID == tagID))
+                {
+                    var tagToRemove = _db.Tags.Where(x => x.TagID == tagID).SingleOrDefault();
+                    _db.Tags.Remove(tagToRemove);
+                }
+            }
 
             _db.Comments.Remove(comment);
         }
@@ -32,7 +58,7 @@ namespace LeisoBlog2_Repo.Concrete
 
         public Comment GetCommentById(int? id)
         {
-            var comment = _db.Comments.Include(a=>a.User).SingleOrDefault(x => x.ID == id);
+            var comment = _db.Comments.Include(a=>a.User).SingleOrDefault(x => x.CommentID == id);
             return comment;
         }
 
@@ -79,9 +105,9 @@ namespace LeisoBlog2_Repo.Concrete
 
             DateTime data;
 
-            int id = comment.ID;
+            int id = comment.CommentID;
 
-            data = _db.Comments.AsNoTracking().SingleOrDefault(x => x.ID == id).AddingDate;
+            data = _db.Comments.AsNoTracking().SingleOrDefault(x => x.CommentID == id).AddingDate;
 
 
             return data;
@@ -90,7 +116,7 @@ namespace LeisoBlog2_Repo.Concrete
 
         public Comment FindCommentByID(int? id)
         {
-            var comment = _db.Comments.SingleOrDefault(x => x.ID == id);
+            var comment = _db.Comments.SingleOrDefault(x => x.CommentID == id);
             return comment;
         }
 
@@ -136,7 +162,7 @@ namespace LeisoBlog2_Repo.Concrete
 
         public int GetIdOfCommentCreator(int? id)
         {
-            var ID = _db.Comments.SingleOrDefault(x => x.ID == id).UserID;
+            var ID = _db.Comments.SingleOrDefault(x => x.CommentID == id).UserID;
             return ID;
         }
 

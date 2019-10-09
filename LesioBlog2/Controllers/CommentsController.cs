@@ -3,6 +3,7 @@ using LesioBlog2_Repo.Models;
 using System;
 using System.Linq;
 using System.Net;
+using System.Text.RegularExpressions;
 using System.Web.Mvc;
 
 namespace LesioBlog2.Controllers
@@ -10,14 +11,14 @@ namespace LesioBlog2.Controllers
     public class CommentsController : Controller
     {
         private readonly ICommentRepo _comm;
-        private readonly IWpisRepo _wpis;
         private readonly IUserRepo _user;
+        private readonly ITagRepo _tag;
 
-        public CommentsController(ICommentRepo commm, IWpisRepo wpis, IUserRepo users)
+        public CommentsController(ICommentRepo commm, ITagRepo tagrepo, IUserRepo users)
         {
             this._comm = commm;
-            this._wpis = wpis;
             this._user = users;
+            this._tag = tagrepo;
         }
 
         // GET: Comments
@@ -87,6 +88,31 @@ namespace LesioBlog2.Controllers
             {
                 _comm.Add(comment);
                 _comm.SaveChanges();
+
+
+                MatchCollection matches = Regex.Matches(comment.Content, @"\B(\#[a-zA-Z0-9-,_]+\b)");
+                //wpis ID first important
+                foreach (var tagName in matches)
+                {
+                    var tag = _tag.GetTagByName(tagName.ToString());
+                    if (tag == null)
+                    {
+                        tag = new Tag();
+                        tag.TagName = tagName.ToString();
+                        //id radnom
+                        _tag.Add(tag);
+                        _tag.SaveChanges();
+                    }
+
+                    var commTag = new CommentTag()
+                    {
+                        TagID = tag.TagID,
+                        CommentID= comment.CommentID
+                    };
+                    _comm.Add(commTag);
+                    _comm.SaveChanges();
+                }
+
                 return RedirectToAction("Index", "Wpis");
             }
             return PartialView(comment);

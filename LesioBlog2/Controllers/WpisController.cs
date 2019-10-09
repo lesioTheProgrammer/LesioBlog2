@@ -102,12 +102,6 @@ namespace LesioBlog2.Controllers
             wpis.UserID = loggedUserId.Value;
 
             
-           
-
-            // np #poop
-      
-           
-      //      COOOOO JAAAAAAAAA ROBIEEEEEEEEEEEEEEE
             if (ModelState.IsValid)
             {
                 _wpis.Add(wpis);
@@ -185,6 +179,17 @@ namespace LesioBlog2.Controllers
             wpis.AddingDate = _wpis.GetWpisWithAddDate(wpis);
             wpis.EditingDate = DateTime.Now;
             wpis.Plusy = 0;
+
+
+
+
+
+
+
+
+
+
+
             
             if (ModelState.IsValid)
             {
