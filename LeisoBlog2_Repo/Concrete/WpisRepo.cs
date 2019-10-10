@@ -66,6 +66,14 @@ namespace LeisoBlog2_Repo.Concrete
 
             _db.Wpis.Remove(wpis);
         }
+
+        public void DeleteTagAndWpisTag(int? id)
+        {
+
+        }
+
+
+
         //disposing- garb collecting
         private bool disposed = false;
         protected virtual void Dispose(bool disposing)
@@ -98,7 +106,7 @@ namespace LeisoBlog2_Repo.Concrete
 
         public Wpis GetWpisById(int? id)
         {
-            var wpis = _db.Wpis.Include(x=>x.User).Include(x => x.Comments.Select(c=>c.User)).SingleOrDefault(x => x.WpisID == id);
+            var wpis = _db.Wpis.Include(x=>x.User).Include(x => x.WpisTags).Include(x => x.Comments.Select(c=>c.User)).SingleOrDefault(x => x.WpisID == id);
             return wpis;
         }
 
@@ -144,6 +152,14 @@ namespace LeisoBlog2_Repo.Concrete
                 data = DateTime.Now;
             }
             return data;
+        }
+
+
+        public List<WpisTag> GetAllWpisTagsByWpisId(int? id)
+        {
+
+            var returning = _db.WpisTags.Where(x => x.WpisID == id).Select(x => x).ToList();
+            return returning;
         }
       
 

@@ -35,7 +35,39 @@ namespace LeisoBlog2_Repo.Concrete
             var tags = _db.Tags.Include("WpisTag");
             return tags;
         }
+
+
+        public string GetTagNamesByTagID(int? id)
+        {
+            var returnList = _db.Tags.Where(x => x.TagID == id).Select(x => x.TagName).SingleOrDefault();
+            return returnList;
+        }
+
         
+        public void RemoveTagsIfNotUsed(int id)
+        {
+                var tagToRemove = _db.Tags.Where(x => x.TagID == id).SingleOrDefault();
+                _db.Tags.Remove(tagToRemove);
+        }
+
+        public bool IfWpisOrCommentsHasTag(int id)
+        {
+            bool hastag = false;
+            if (!_db.WpisTags.Any(x => x.TagID == id) && !_db.CommentTags.Any(x => x.TagID == id))
+            {
+                hastag = true ;
+            }
+            return hastag;
+        }
+
+        public void RemoveWpisTag(int id, int id2)
+        {
+            var listaforLoop = _db.WpisTags.Where(x => x.WpisID == id2 && x.TagID == id)
+               .Select(x => x).SingleOrDefault();
+            _db.WpisTags.Remove(listaforLoop);
+            //save changes
+            _db.SaveChanges();
+        }
 
        
 

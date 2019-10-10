@@ -1,6 +1,7 @@
 ﻿using LeisoBlog2_Repo.Abstract;
 using LesioBlog2_Repo.Models;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
@@ -179,22 +180,158 @@ namespace LesioBlog2.Controllers
             wpis.AddingDate = _wpis.GetWpisWithAddDate(wpis);
             wpis.EditingDate = DateTime.Now;
             wpis.Plusy = 0;
-
-
-
-
-
-
-
-
-
-
-
             
-            if (ModelState.IsValid)
+             if (ModelState.IsValid)
             {
+                //tutaj updejt contentu nastepuje 
                 _wpis.UpdateContentAndPlusyAndEditDate(wpis);
                 _wpis.SaveChanges();
+                //old tags:
+                IList<WpisTag> listaWpisTagsActual = _wpis.GetAllWpisTagsByWpisId(wpis.WpisID);
+                List<string> listOfTagNames = new List<string>();
+                foreach (var item in listaWpisTagsActual)
+                {
+                    listOfTagNames.Add(_tag.GetTagNamesByTagID(item.TagID));
+                }
+                //tu mam liste nazw tagow uzytych
+                //tutej updejt tagow
+                //new content here
+                bool check = false;
+                MatchCollection matches = Regex.Matches(wpis.Content, @"\B(\#[a-zA-Z0-9-,_]+\b)");
+                //jak wpis ma wogole tagi to idz:
+                if (wpis.WpisTags != null)
+                {
+                    foreach (var tag in matches)
+                    {
+                        if (listOfTagNames.Any(p => p.Contains(tag.ToString())))
+                        {
+                            check = true;
+                            continue;
+                        }
+                        else
+                        {
+                            //sprawdz czy jest w bazie tagowej
+                            //jak nie ma to dodaj i dodaj wpistag
+                            //1. get tag from DB tags by tag name
+                            var tagz = _tag.GetTagByName(tag.ToString());
+                            // if no existing add so
+                            if (tagz == null)
+                            {
+                                tagz = new Tag();
+                                tagz.TagName = tag.ToString();
+                                //id radnom
+                                _tag.Add(tagz);
+                                _tag.SaveChanges();
+
+                                //tylko po dodaniu nowego tagu zmieni sie status tabeli wpistag?? WRONG
+                                var wpisTag = new WpisTag()
+                                {
+                                    TagID = tagz.TagID,
+                                    WpisID = wpis.WpisID
+                                };
+                                _wpis.Add(wpisTag);
+                                _wpis.SaveChanges();
+                            }
+                            //jak nie ma w listOfTagNames ale jest w tagach bo uzyty gdzies indziej:
+                            else
+                            {
+                                //remove wpistagStary po WpisID i TagID:
+                                int tagID = tagz.TagID;
+                                int wpisID = wpis.WpisID;
+                                _tag.RemoveWpisTag(tagID, wpisID);
+
+                                var wpisTag = new WpisTag()
+                                {
+                                    TagID = tagz.TagID,
+                                    WpisID = wpis.WpisID
+                                };
+                                _wpis.Add(wpisTag);
+                                _wpis.SaveChanges();
+                            }
+                        }
+
+                    }
+                    //jak nie ma nigdzie tagu ani uzytego ani nic to gerara
+                    //check po to zeby ogarnac gdy po edicie nie zostaje nic zwiazanego z tagami
+                    if (check == false)
+                    {
+                        foreach (var item in listaWpisTagsActual)
+                        {
+                            int wpisID = wpis.WpisID;
+                            _tag.RemoveWpisTag(item.TagID, wpisID);
+                            //get list of ID 
+                            //remove wpistag
+                            //remove tag
+                            if (_tag.IfWpisOrCommentsHasTag(item.TagID))
+                            {
+                                _tag.RemoveTagsIfNotUsed(item.TagID);
+                                _tag.SaveChanges();
+                            }
+                        }
+                    }
+
+                }
+                //jak pusty wpis przed ale po juz nie
+                else if (wpis.WpisTags == null && matches != null)
+                {
+                    foreach (var tag in matches)
+                    {
+                            var tagz = _tag.GetTagByName(tag.ToString());
+                            // if no existing add so
+                            if (tagz == null)
+                            {
+                                tagz = new Tag();
+                                tagz.TagName = tag.ToString();
+                                //id radnom
+                                _tag.Add(tagz);
+                                _tag.SaveChanges();
+                                //tylko po dodaniu nowego tagu zmieni sie status tabeli wpistag?? WRONG
+                                var wpisTag = new WpisTag()
+                                {
+                                    TagID = tagz.TagID,
+                                    WpisID = wpis.WpisID
+                                };
+                                _wpis.Add(wpisTag);
+                                _wpis.SaveChanges();
+                            }
+                            //jak nie ma w listOfTagNames ale jest w tagach bo uzyty gdzies indziej:
+                            else
+                            {
+                                //remove wpistagStary po WpisID i TagID:
+                                int tagID = tagz.TagID;
+                                int wpisID = wpis.WpisID;
+                             //to nie trzeba usuwac tylko dodac i elo - jak jest tag gdzies uzyty ale nie w tej edycji 
+
+                                var wpisTag = new WpisTag()
+                                {
+                                    TagID = tagz.TagID,
+                                    WpisID = wpis.WpisID
+                                };
+                                _wpis.Add(wpisTag);
+                                _wpis.SaveChanges();
+                            }
+                    }
+                    //jak nie ma nigdzie tagu ani uzytego ani nic to gerara
+                    //check po to zeby ogarnac gdy po edicie nie zostaje nic zwiazanego z tagami
+                    if (check == false)
+                    {
+                        foreach (var item in listaWpisTagsActual)
+                        {
+                            int wpisID = wpis.WpisID;
+                            _tag.RemoveWpisTag(item.TagID, wpisID);
+                            //get list of ID 
+                            //remove wpistag
+                            //remove tag
+                            if (_tag.IfWpisOrCommentsHasTag(item.TagID))
+                            {
+                                _tag.RemoveTagsIfNotUsed(item.TagID);
+                                _tag.SaveChanges();
+                            }
+                        }
+                    }
+
+                }
+                
                 return RedirectToAction("Index");
             }
             return View(wpis);
