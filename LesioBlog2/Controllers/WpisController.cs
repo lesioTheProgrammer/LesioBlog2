@@ -102,7 +102,7 @@ namespace LesioBlog2.Controllers
             var loggedUserId = _user.GetIDOfCurrentlyLoggedUser();
             wpis.UserID = loggedUserId.Value;
 
-            
+
             if (ModelState.IsValid)
             {
                 _wpis.Add(wpis);
@@ -177,11 +177,15 @@ namespace LesioBlog2.Controllers
         public ActionResult Edit([Bind(Include = "Content,WpisID")] Wpis wpis)
         {
 
+            var logic = new HiddenLogic();
+
+
+
             wpis.AddingDate = _wpis.GetWpisWithAddDate(wpis);
             wpis.EditingDate = DateTime.Now;
             wpis.Plusy = 0;
-            
-             if (ModelState.IsValid)
+
+            if (ModelState.IsValid)
             {
                 //tutaj updejt contentu nastepuje 
                 _wpis.UpdateContentAndPlusyAndEditDate(wpis);
@@ -205,7 +209,7 @@ namespace LesioBlog2.Controllers
                     {
                         if (listOfTagNames.Any(p => p.Contains(tag.ToString())))
                         {
-                            check = true;
+                            logic.CheckTheDifferenceBetween(matches.Count, listOfTagNames.Count);
                             continue;
                         }
                         else
@@ -253,7 +257,48 @@ namespace LesioBlog2.Controllers
                     }
                     //jak nie ma nigdzie tagu ani uzytego ani nic to gerara
                     //check po to zeby ogarnac gdy po edicie nie zostaje nic zwiazanego z tagami
-                    if (check == false)
+                    if (check == false && matches.Count != 0)
+                    {
+                        bool enterLoop = true;
+                        //usuwaj z checklisty a nie z wpistagkowej bo jak 1 usuniesz a drugi zostawisz to lipa
+                        foreach (var item in listaWpisTagsActual)
+                        {
+                            //get tag ID by match i usun pozostale?
+                            //jak matchesTag jest w listofTagsActual to zostaw jak nie to gerara
+                            foreach (var tag in matches)
+                            {
+                                var tagz = _tag.GetTagByName(tag.ToString());
+                                //   var TagName =_tag.GetTagNamesByTagID(tagz.TagID);
+                                //   var itemName = _tag.GetTagNamesByTagID(item.TagID);
+
+                                if (item.TagID == tagz.TagID)
+                                {
+                                    enterLoop = false;
+                                }
+                                else
+                                {
+                                    enterLoop = true;
+                                }
+
+                                if (enterLoop == true)
+                                {
+                                    int tagID = item.TagID;
+                                    int wpisID = wpis.WpisID;
+                                    _tag.RemoveWpisTag(item.TagID, wpisID);
+                                    //get list of ID 
+                                    //remove wpistag
+                                    //remove tag
+                                    if (_tag.IfWpisOrCommentsHasTag(item.TagID))
+                                    {
+                                        _tag.RemoveTagsIfNotUsed(item.TagID);
+                                        _tag.SaveChanges();
+                                    }
+                                }
+                                enterLoop = true;
+                            }
+                        }
+                    }
+                    else if(check == false && matches.Count == 0)
                     {
                         foreach (var item in listaWpisTagsActual)
                         {
@@ -276,40 +321,40 @@ namespace LesioBlog2.Controllers
                 {
                     foreach (var tag in matches)
                     {
-                            var tagz = _tag.GetTagByName(tag.ToString());
-                            // if no existing add so
-                            if (tagz == null)
+                        var tagz = _tag.GetTagByName(tag.ToString());
+                        // if no existing add so
+                        if (tagz == null)
+                        {
+                            tagz = new Tag();
+                            tagz.TagName = tag.ToString();
+                            //id radnom
+                            _tag.Add(tagz);
+                            _tag.SaveChanges();
+                            //tylko po dodaniu nowego tagu zmieni sie status tabeli wpistag?? WRONG
+                            var wpisTag = new WpisTag()
                             {
-                                tagz = new Tag();
-                                tagz.TagName = tag.ToString();
-                                //id radnom
-                                _tag.Add(tagz);
-                                _tag.SaveChanges();
-                                //tylko po dodaniu nowego tagu zmieni sie status tabeli wpistag?? WRONG
-                                var wpisTag = new WpisTag()
-                                {
-                                    TagID = tagz.TagID,
-                                    WpisID = wpis.WpisID
-                                };
-                                _wpis.Add(wpisTag);
-                                _wpis.SaveChanges();
-                            }
-                            //jak nie ma w listOfTagNames ale jest w tagach bo uzyty gdzies indziej:
-                            else
-                            {
-                                //remove wpistagStary po WpisID i TagID:
-                                int tagID = tagz.TagID;
-                                int wpisID = wpis.WpisID;
-                             //to nie trzeba usuwac tylko dodac i elo - jak jest tag gdzies uzyty ale nie w tej edycji 
+                                TagID = tagz.TagID,
+                                WpisID = wpis.WpisID
+                            };
+                            _wpis.Add(wpisTag);
+                            _wpis.SaveChanges();
+                        }
+                        //jak nie ma w listOfTagNames ale jest w tagach bo uzyty gdzies indziej:
+                        else
+                        {
+                            //remove wpistagStary po WpisID i TagID:
+                            int tagID = tagz.TagID;
+                            int wpisID = wpis.WpisID;
+                            //to nie trzeba usuwac tylko dodac i elo - jak jest tag gdzies uzyty ale nie w tej edycji 
 
-                                var wpisTag = new WpisTag()
-                                {
-                                    TagID = tagz.TagID,
-                                    WpisID = wpis.WpisID
-                                };
-                                _wpis.Add(wpisTag);
-                                _wpis.SaveChanges();
-                            }
+                            var wpisTag = new WpisTag()
+                            {
+                                TagID = tagz.TagID,
+                                WpisID = wpis.WpisID
+                            };
+                            _wpis.Add(wpisTag);
+                            _wpis.SaveChanges();
+                        }
                     }
                     //jak nie ma nigdzie tagu ani uzytego ani nic to gerara
                     //check po to zeby ogarnac gdy po edicie nie zostaje nic zwiazanego z tagami
@@ -331,7 +376,7 @@ namespace LesioBlog2.Controllers
                     }
 
                 }
-                
+
                 return RedirectToAction("Index");
             }
             return View(wpis);
@@ -376,7 +421,7 @@ namespace LesioBlog2.Controllers
         public ActionResult DeleteConfirmed(int id)
         {
             Wpis wpis = _wpis.GetWpisById(id);
-            
+
             _wpis.Delete(wpis);
             _wpis.SaveChanges();
             return RedirectToAction("Index");
@@ -413,4 +458,38 @@ namespace LesioBlog2.Controllers
                                        });
         }
     }
+
+
+
+
+    public class HiddenLogic
+    {
+        //metods that are repeaated
+
+        public bool CheckTheDifferenceBetween(int var1, int var2)
+        {
+            bool check = true;
+            if (var1 < var2)
+            {
+                check = false;
+            }
+            return check;
+        }
+
+
+        public void AddTagAfterEditing(Tag tag)
+        {
+
+
+
+        }
+
+    }
+
+
+
+
+
+
+
 }
