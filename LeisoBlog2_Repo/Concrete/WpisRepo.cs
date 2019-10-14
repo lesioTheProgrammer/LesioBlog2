@@ -1,11 +1,11 @@
-﻿using LeisoBlog2_Repo.Abstract;
+﻿using LesioBlog2_Repo.Abstract;
 using LesioBlog2_Repo.Models;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 
-namespace LeisoBlog2_Repo.Concrete
+namespace LesioBlog2_Repo.Concrete
 {
     public class WpisRepo : IWpisRepo, IDisposable
     {
@@ -30,6 +30,21 @@ namespace LeisoBlog2_Repo.Concrete
             _db.WpisTags.Add(wpisTag);
         }
 
+
+        public void Add(IfPlusowalWpis ifplusowal)
+        {
+            _db.IfPlusowalWpis.Add(ifplusowal);
+
+        }
+
+        public IfPlusowalWpis GetPlusWpis(int? idWpis, int? idUser)
+        {
+            var plusedWpis = _db.IfPlusowalWpis
+                .Where(x => x.WpisID == idWpis)
+                .Where(x => x.UserID == idUser)
+                .SingleOrDefault();
+            return plusedWpis;
+        }
 
 
         public void Delete(Wpis wpis)
@@ -180,5 +195,19 @@ namespace LeisoBlog2_Repo.Concrete
             _db.Entry(wpis).Property("Plusy").IsModified = true;
             _db.Entry(wpis).Property("EditingDate").IsModified = true;
         }
+
+
+        public void UpdateOnlyPlusy(Wpis wpis)
+        {
+            _db.Wpis.Attach(wpis);
+            _db.Entry(wpis).Property("Plusy").IsModified = true;
+        }
+
+        public void UpdateIfWpisState(IfPlusowalWpis ifplus)
+        {
+            _db.IfPlusowalWpis.Attach(ifplus);
+            _db.Entry(ifplus).Property("IfPlusWpis").IsModified = true;
+        }
+
     }
 }

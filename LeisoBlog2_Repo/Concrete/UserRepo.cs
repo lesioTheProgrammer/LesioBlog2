@@ -1,8 +1,8 @@
-﻿using LeisoBlog2_Repo.Abstract;
+﻿using LesioBlog2_Repo.Abstract;
 using LesioBlog2_Repo.Models;
 using System.Linq;
 
-namespace LeisoBlog2_Repo.Concrete
+namespace LesioBlog2_Repo.Concrete
 {
     public class UserRepo : IUserRepo
     {

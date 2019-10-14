@@ -1,10 +1,6 @@
-﻿using LeisoBlog2_Repo.Models;
-using System;
+﻿using LesioBlog2_Repo.Models;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Web;
 
 namespace LesioBlog2_Repo.Models
 {
@@ -12,7 +8,7 @@ namespace LesioBlog2_Repo.Models
     {
         public int UserID { get; set; }
         public int GenderID { get; set; }
-    
+
 
 
         [Required]
@@ -29,9 +25,9 @@ namespace LesioBlog2_Repo.Models
         public string Password { get; set; }
 
         public string PasswordSalt { get; set; }  //prevent reverse engineering to get password
-        
-       [Required]
-       [Display(ShortName = "Nick:")]
+
+        [Required]
+        [Display(ShortName = "Nick:")]
         public string NickName { get; set; }
         public string FullName { get; set; }
         public string City { get; set; }
@@ -43,5 +39,6 @@ namespace LesioBlog2_Repo.Models
         public virtual ICollection<Comment> Comments { get; set; }
 
         public virtual Gender Gender { get; set; } //1 gender to one user
+        public virtual ICollection<IfPlusowalWpis> IfPlusowalWpis {get; set;}
     }
 }

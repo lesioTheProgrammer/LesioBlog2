@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LesioBlog2", "LesioBlog2\Le
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LesioBlog2.Tests", "LesioBlog2.Tests\LesioBlog2.Tests.csproj", "{2D642778-7476-4982-9B2E-E13930B1C712}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LeisoBlog2_Repo", "LeisoBlog2_Repo\LeisoBlog2_Repo.csproj", "{3F8D1812-38C4-40E8-9337-141FF41189CE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LesioBlog2_Repo", "LeisoBlog2_Repo\LesioBlog2_Repo.csproj", "{3F8D1812-38C4-40E8-9337-141FF41189CE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

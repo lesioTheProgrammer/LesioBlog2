@@ -12,19 +12,19 @@
         using (Html.BeginForm("Create", "Wpis", FormMethod.Post))
         {
             @Html.AntiForgeryToken()
-    <div style="margin-left: 30px; padding: 2px">
-        Dodaj wpis:
-        <br>
-        <textarea name="content"  style="margin-top: 12px; min-width: 90%; border-radius: 0.25rem;  resize: none"></textarea>
-        <br />
-        <span style="margin-left: 0px">
-            <div class="form-group">
-                <div class=" col-md-1">
-                    <input type="submit" value="Send wpis" class="btn btn-secondary" />
-                </div>
+            <div style="margin-left: 30px; padding: 2px">
+                Dodaj wpis:
+                <br>
+                <textarea name="content" style="margin-top: 12px; min-width: 90%; border-radius: 0.25rem;  resize: none"></textarea>
+                <br />
+                <span style="margin-left: 0px">
+                    <div class="form-group">
+                        <div class=" col-md-1">
+                            <input type="submit" value="Send wpis" class="btn btn-secondary" />
+                        </div>
+                    </div>
+                </span>
             </div>
-        </span>
-    </div>
         }
     }
 </p>
@@ -46,9 +46,16 @@
         </span>
         <span style="float:right ; padding:4px">
             <span>
-                <button>
-                    @Html.DisplayFor(modelItem => item.Plusy)
-                </button>
+                @using (Html.BeginForm("Index", "Wpis", FormMethod.Post))
+                {
+
+                    @Html.AntiForgeryToken()
+                    if (Request.IsAuthenticated)
+                    {
+                        <input type="hidden" name="WpisID" value="@item.WpisID" />
+                        <input type="submit" value="@Html.DisplayFor(modelItem => item.Plusy)" />
+                    }
+                }
             </span>
         </span>
     </div>
@@ -74,40 +81,40 @@
                 }
             </div>
         </div>
-    <div>
-        @*Tu o dodanie komentarza*@
         <div>
-            @Html.Partial("~/Views/Comments/_CommentAddPartial.cshtml", new ViewDataDictionary { { "WpisID", item.WpisID } })
+            @*Tu o dodanie komentarza*@
+            <div>
+                @Html.Partial("~/Views/Comments/_CommentAddPartial.cshtml", new ViewDataDictionary { { "WpisID", item.WpisID } })
+            </div>
         </div>
-    </div>
 
         @* View comments bellow the wpis *@
-    <div style="border: solid 2px !important">
-        @foreach (var item2 in item.Comments.OrderByDescending(x => x.Plusy))
-        {
-            <div style="border-bottom:dashed 2px;">
-                <div style="margin-left: 30px; padding: 2px">
-                    Author: @Html.DisplayFor(modelItem => item2.User.NickName)
-                    <span style="font-size: 12px">
-                        @Html.DisplayFor(modelItem => item2.AddingDate)
-                    </span>
-                    <span>
-                        <span style="float:right; padding: 0px">
-                            <button>
-                                @Html.DisplayFor(modelItem => item2.Plusy)
-                            </button>
+        <div style="border: solid 2px !important">
+            @foreach (var item2 in item.Comments.OrderByDescending(x => x.Plusy))
+            {
+                <div style="border-bottom:dashed 2px;">
+                    <div style="margin-left: 30px; padding: 2px">
+                        Author: @Html.DisplayFor(modelItem => item2.User.NickName)
+                        <span style="font-size: 12px">
+                            @Html.DisplayFor(modelItem => item2.AddingDate)
                         </span>
-                    </span>
-                    <br>
-                    @Html.DisplayFor(modelItem => item2.Content)
-                    <br />
-                </div>
+                        <span>
+                            <span style="float:right; padding: 0px">
+                                <button>
+                                    @Html.DisplayFor(modelItem => item2.Plusy)
+                                </button>
+                            </span>
+                        </span>
+                        <br>
+                        @Html.DisplayFor(modelItem => item2.Content)
+                        <br />
+                    </div>
 
-                <div style="padding-bottom: 0px; font-size: 12px">
-                    @Html.Partial("~/Views/Comments/_CommentPartial.cshtml", item2)
+                    <div style="padding-bottom: 0px; font-size: 12px">
+                        @Html.Partial("~/Views/Comments/_CommentPartial.cshtml", item2)
+                    </div>
                 </div>
-            </div>
-        }
-    </div>
+            }
+        </div>
     </div>
 }

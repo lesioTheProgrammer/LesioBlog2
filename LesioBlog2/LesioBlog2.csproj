@@ -295,9 +295,9 @@
     <TypeScriptCompile Include="Scripts\index.d.ts" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\LeisoBlog2_Repo\LeisoBlog2_Repo.csproj">
+    <ProjectReference Include="..\LeisoBlog2_Repo\LesioBlog2_Repo.csproj">
       <Project>{3f8d1812-38c4-40e8-9337-141ff41189ce}</Project>
-      <Name>LeisoBlog2_Repo</Name>
+      <Name>LesioBlog2_Repo</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

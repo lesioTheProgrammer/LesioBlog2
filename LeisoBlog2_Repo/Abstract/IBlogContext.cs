@@ -1,16 +1,11 @@
-﻿using LeisoBlog2_Repo.Models;
+﻿using LesioBlog2_Repo.Models;
 using LesioBlog2_Repo.Models;
-using System;
-using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace LeisoBlog2_Repo.Abstract
+namespace LesioBlog2_Repo.Abstract
 {
-       public  interface IBlogContext
+    public  interface IBlogContext
     {
          DbSet<User> Users { get; set; }
          DbSet<Tag> Tags { get; set; }
@@ -23,6 +18,9 @@ namespace LeisoBlog2_Repo.Abstract
          DbSet<WpisTag> WpisTags { get; set; }
 
          DbSet<Gender> Genders { get; set; }
+
+        DbSet<IfPlusowalWpis> IfPlusowalWpis { get; set; }
+
 
         Database Database { get; }
         DbEntityEntry Entry(object entity);

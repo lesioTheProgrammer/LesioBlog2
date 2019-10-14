@@ -7,18 +7,18 @@ namespace LesioBlog2_Repo.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.2.0-61023")]
-    public sealed partial class renameCommentID : IMigrationMetadata
+    public sealed partial class IfPlusTable : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(renameCommentID));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(IfPlusTable));
         
         string IMigrationMetadata.Id
         {
-            get { return "201910091413114_renameCommentID"; }
+            get { return "201910141138249_IfPlusTable"; }
         }
         
         string IMigrationMetadata.Source
         {
-            get { return Resources.GetString("Source"); }
+            get { return null; }
         }
         
         string IMigrationMetadata.Target

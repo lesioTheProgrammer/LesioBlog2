@@ -1,11 +1,7 @@
-﻿using LeisoBlog2_Repo.Abstract;
-using LeisoBlog2_Repo.Models;
-using System;
-using System.Collections.Generic;
+﻿using LesioBlog2_Repo.Abstract;
+using LesioBlog2_Repo.Models;
 using System.Data.Entity;
 using System.Data.Entity.ModelConfiguration.Conventions;
-using System.Linq;
-using System.Web;
 
 namespace LesioBlog2_Repo.Models.Context
 {
@@ -36,6 +32,8 @@ namespace LesioBlog2_Repo.Models.Context
 
         public DbSet<Gender> Genders { get; set; }
 
+        public DbSet<IfPlusowalWpis> IfPlusowalWpis { get; set; }
+
 
 
 
@@ -58,6 +56,7 @@ namespace LesioBlog2_Repo.Models.Context
             modelBuilder.Entity<WpisTag>().HasKey(key => new { key.TagID, key.WpisID });
             modelBuilder.Entity<CommentTag>().HasKey(key => new { key.TagID, key.CommentID });
 
+            modelBuilder.Entity<IfPlusowalWpis>().HasKey(key => new { key.UserID, key.WpisID });
 
             ///////  cascade on delete on wpistag
 

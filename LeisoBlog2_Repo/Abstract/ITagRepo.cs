@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace LeisoBlog2_Repo.Abstract
+namespace LesioBlog2_Repo.Abstract
 {
     public interface ITagRepo
     {

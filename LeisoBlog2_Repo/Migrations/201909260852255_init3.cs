@@ -1,4 +1,4 @@
-namespace LeisoBlog2_Repo.Migrations
+namespace LesioBlog2_Repo.Migrations
 {
     using System;
     using System.Data.Entity.Migrations;

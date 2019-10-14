@@ -1,4 +1,4 @@
-﻿using LeisoBlog2_Repo.Abstract;
+﻿using LesioBlog2_Repo.Abstract;
 using LesioBlog2_Repo.Models;
 using System;
 using System.Collections.Generic;
@@ -29,6 +29,8 @@ namespace LesioBlog2.Controllers
             var wpis = _wpis.GetWpis();
 
 
+
+
             if (string.IsNullOrEmpty(userNickName) && string.IsNullOrEmpty(tagName))
             {
                 return View(wpis.ToList());
@@ -44,6 +46,59 @@ namespace LesioBlog2.Controllers
             }
 
             return View(wpis.ToList());
+
+        }
+
+        [HttpPost]
+        [AuthorizeUserAttribute]
+        [ValidateAntiForgeryToken]
+        //POST Plus
+        public ActionResult Index([Bind(Include = "WpisID,Plusy")] Wpis wpis)
+        {
+            var currentlyLoggedUserID = _user.GetIDOfCurrentlyLoggedUser().Value;
+            var wpisToPlus = _wpis.GetWpisById(wpis.WpisID);
+
+            bool checkWpisState = true;
+            var IFWpisPlus =  _wpis.GetPlusWpis(wpisToPlus.WpisID, currentlyLoggedUserID);
+
+            //prevent user from double plsuing
+            if (wpisToPlus != null)
+            {
+                if (IFWpisPlus != null)
+                {
+                  checkWpisState = IFWpisPlus.IfPlusWpis;
+                }
+                else 
+                {
+                    var ifplus = new IfPlusowalWpis()
+                    {
+                        UserID = currentlyLoggedUserID,
+                        WpisID = wpisToPlus.WpisID,
+                        IfPlusWpis = false
+                    };
+                    _wpis.Add(ifplus);
+                    _wpis.SaveChanges();
+                    checkWpisState = ifplus.IfPlusWpis;
+                }
+            }
+
+            if (wpisToPlus != null && User.Identity.Name != wpisToPlus.User.NickName && !checkWpisState)
+            {
+                wpisToPlus.Plusy = wpisToPlus.Plusy + 1;
+                IFWpisPlus = _wpis.GetPlusWpis(wpisToPlus.WpisID, currentlyLoggedUserID);
+                IFWpisPlus.IfPlusWpis = true;
+
+
+               _wpis.UpdateOnlyPlusy(wpisToPlus);
+               _wpis.UpdateIfWpisState(IFWpisPlus);
+               _wpis.SaveChanges();
+              
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                return RedirectToAction("Index");
+            }
 
         }
 
@@ -176,15 +231,10 @@ namespace LesioBlog2.Controllers
         [AuthorizeUserAttribute]
         public ActionResult Edit([Bind(Include = "Content,WpisID")] Wpis wpis)
         {
-
             var logic = new HiddenLogic();
-
-
-
             wpis.AddingDate = _wpis.GetWpisWithAddDate(wpis);
             wpis.EditingDate = DateTime.Now;
             wpis.Plusy = 0;
-
             if (ModelState.IsValid)
             {
                 //tutaj updejt contentu nastepuje 
@@ -226,8 +276,6 @@ namespace LesioBlog2.Controllers
                                 //id radnom
                                 _tag.Add(tagz);
                                 _tag.SaveChanges();
-
-                                //tylko po dodaniu nowego tagu zmieni sie status tabeli wpistag?? WRONG
                                 var wpisTag = new WpisTag()
                                 {
                                     TagID = tagz.TagID,
@@ -243,7 +291,6 @@ namespace LesioBlog2.Controllers
                                 int tagID = tagz.TagID;
                                 int wpisID = wpis.WpisID;
                                 _tag.RemoveWpisTag(tagID, wpisID);
-
                                 var wpisTag = new WpisTag()
                                 {
                                     TagID = tagz.TagID,
@@ -253,7 +300,6 @@ namespace LesioBlog2.Controllers
                                 _wpis.SaveChanges();
                             }
                         }
-
                     }
                     //jak nie ma nigdzie tagu ani uzytego ani nic to gerara
                     //check po to zeby ogarnac gdy po edicie nie zostaje nic zwiazanego z tagami
@@ -314,7 +360,6 @@ namespace LesioBlog2.Controllers
                             }
                         }
                     }
-
                 }
                 //jak pusty wpis przed ale po juz nie
                 else if (wpis.WpisTags == null && matches != null)
@@ -374,7 +419,6 @@ namespace LesioBlog2.Controllers
                             }
                         }
                     }
-
                 }
 
                 return RedirectToAction("Index");
@@ -413,6 +457,9 @@ namespace LesioBlog2.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "You can't DELETE someone else wpis gierarka hir \n FOR REAL");
             }
         }
+
+      
+
 
         // POST: Wpis/Delete/5
         [HttpPost, ActionName("Delete")]

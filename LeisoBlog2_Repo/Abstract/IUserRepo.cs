@@ -1,7 +1,7 @@
 ﻿using LesioBlog2_Repo.Models;
 using System;
 
-namespace LeisoBlog2_Repo.Abstract
+namespace LesioBlog2_Repo.Abstract
 {
     public interface IUserRepo : IDisposable
     {

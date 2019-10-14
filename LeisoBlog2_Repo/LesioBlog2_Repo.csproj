@@ -122,11 +122,24 @@
     <Compile Include="Migrations\201910091413114_renameCommentID.Designer.cs">
       <DependentUpon>201910091413114_renameCommentID.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201910141107151_ifPlusowane.cs" />
+    <Compile Include="Migrations\201910141107151_ifPlusowane.Designer.cs">
+      <DependentUpon>201910141107151_ifPlusowane.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201910141115177_ifPlCancel.cs" />
+    <Compile Include="Migrations\201910141115177_ifPlCancel.Designer.cs">
+      <DependentUpon>201910141115177_ifPlCancel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201910141138249_IfPlusTable.cs" />
+    <Compile Include="Migrations\201910141138249_IfPlusTable.Designer.cs">
+      <DependentUpon>201910141138249_IfPlusTable.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Context\blogContext.cs" />
     <Compile Include="Models\Comment.cs" />
     <Compile Include="Models\CommentTag.cs" />
     <Compile Include="Models\Gender.cs" />
+    <Compile Include="Models\IfPlusowalWpis.cs" />
     <Compile Include="Models\RepeatedFields.cs" />
     <Compile Include="Models\Tag.cs" />
     <Compile Include="Models\User.cs" />
@@ -155,6 +168,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201910091413114_renameCommentID.resx">
       <DependentUpon>201910091413114_renameCommentID.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201910141107151_ifPlusowane.resx">
+      <DependentUpon>201910141107151_ifPlusowane.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201910141115177_ifPlCancel.resx">
+      <DependentUpon>201910141115177_ifPlCancel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201910141138249_IfPlusTable.resx">
+      <DependentUpon>201910141138249_IfPlusTable.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

@@ -1,6 +1,6 @@
-namespace LeisoBlog2_Repo.Migrations
+namespace LesioBlog2_Repo.Migrations
 {
-    using LeisoBlog2_Repo.Models;
+    using LesioBlog2_Repo.Models;
     using LesioBlog2_Repo.Models;
     using LesioBlog2_Repo.Models.Context;
     using System;
@@ -28,7 +28,23 @@ namespace LeisoBlog2_Repo.Migrations
             SeedTags(context);
             SeedWpisTag(context);
             SeedCommentTag(context);
+            SeedIfPlus(context);
         }
+
+        private void SeedIfPlus(BlogContext context)
+        {
+
+            var ifplus = new IfPlusowalWpis
+            {
+                WpisID = 2,
+                UserID = 3,
+                IfPlusWpis = false
+            };
+            context.Set<IfPlusowalWpis>().AddOrUpdate(ifplus);
+
+            context.SaveChanges();
+        }
+
 
         private void SeedComments(BlogContext context)
         {
@@ -46,6 +62,7 @@ namespace LeisoBlog2_Repo.Migrations
                     AddingDate = DateTime.Now,
                     Plusy = random.Next(0, 100),
                     EditingDate = DateTime.Now.AddDays(1)
+
                 };
                 context.Set<Comment>().AddOrUpdate(comment);
             }
@@ -66,6 +83,7 @@ namespace LeisoBlog2_Repo.Migrations
                     AddingDate = DateTime.Now,
                     Plusy = random.Next(0, 100),
                     EditingDate = DateTime.Now.AddDays(3)
+
 
                 };
                 context.Set<Wpis>().AddOrUpdate(wpis);
@@ -89,18 +107,18 @@ namespace LeisoBlog2_Repo.Migrations
 
         private void SeedGenders(BlogContext context)
         {
-            
-                for (int i = 1; i < 3; i++)
-                {
+
+            for (int i = 1; i < 3; i++)
+            {
                 var gender = new Gender
                 {
                     GenderID = i,
-                    GenderName = i <2 ?  "Male" : "Female"
-                 };
+                    GenderName = i < 2 ? "Male" : "Female"
+                };
                 context.Set<Gender>().AddOrUpdate(gender);
 
 
-                }
+            }
             context.SaveChanges();
         }
 
