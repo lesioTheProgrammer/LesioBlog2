@@ -27,10 +27,6 @@ namespace LesioBlog2.Controllers
         public ActionResult Index(string userNickName, string tagName)
         {
             var wpis = _wpis.GetWpis();
-
-
-
-
             if (string.IsNullOrEmpty(userNickName) && string.IsNullOrEmpty(tagName))
             {
                 return View(wpis.ToList());
@@ -49,11 +45,13 @@ namespace LesioBlog2.Controllers
 
         }
 
+
+
         [HttpPost]
-        [AuthorizeUserAttribute]
-        [ValidateAntiForgeryToken]
-        //POST Plus
-        public ActionResult Index([Bind(Include = "WpisID,Plusy")] Wpis wpis)
+       // [AuthorizeUserAttribute]
+     //   [ValidateAntiForgeryToken]
+
+        public ActionResult AddPlus(Wpis wpis)
         {
             var currentlyLoggedUserID = _user.GetIDOfCurrentlyLoggedUser().Value;
             var wpisToPlus = _wpis.GetWpisById(wpis.WpisID);
@@ -92,12 +90,13 @@ namespace LesioBlog2.Controllers
                _wpis.UpdateOnlyPlusy(wpisToPlus);
                _wpis.UpdateIfWpisState(IFWpisPlus);
                _wpis.SaveChanges();
-              
-                return RedirectToAction("Index");
+
+                return Json(new { result = true },
+                            JsonRequestBehavior.AllowGet); ;
             }
             else
             {
-                return RedirectToAction("Index");
+                return Json(new { result = false }, JsonRequestBehavior.AllowGet); ;
             }
 
         }
@@ -114,7 +113,14 @@ namespace LesioBlog2.Controllers
             return View(wpis);
         }
 
-
+//        [HttpPost]
+//[AuthorizeUserAttribute]
+//[ValidateAntiForgeryToken]
+//public bool PlusujKurwo(int wpisId)
+//        {
+//            return this.AddPlus(wpisId);
+            
+//        }
 
 
         // GET: Wpis/Details/5

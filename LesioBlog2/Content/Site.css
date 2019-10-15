@@ -22,3 +22,20 @@ select,
 textarea {
     max-width: 280px;
 }
+
+
+/*bootstrap ovverides*/
+
+.btn {
+    background-color: brown
+}
+
+
+.colorA {
+   
+    background-color: brown
+}
+
+.colorB {
+    background-color: green
+}

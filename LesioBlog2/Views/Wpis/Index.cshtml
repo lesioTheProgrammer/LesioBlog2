@@ -45,16 +45,37 @@
 
         </span>
         <span style="float:right ; padding:4px">
-            <span>
-                @using (Html.BeginForm("Index", "Wpis", FormMethod.Post))
-                {
+            <span class="colorA">
+                @*
 
-                    @Html.AntiForgeryToken()
-                    if (Request.IsAuthenticated)
-                    {
-                        <input type="hidden" name="WpisID" value="@item.WpisID" />
-                        <input type="submit" value="@Html.DisplayFor(modelItem => item.Plusy)" />
-                    }
+         @using (Html.BeginForm("Index", "Wpis", FormMethod.Post))
+        {
+
+            @Html.AntiForgeryToken()*@
+                @Html.AntiForgeryToken()
+                @if (Request.IsAuthenticated)
+                {
+                    @*
+                    <input type="hidden" name="WpisID" value="@item.WpisID" />
+
+            <input id="btnPlus_@item.WpisID" type="button"
+                    onclick="clicking()" value="@Html.DisplayFor(modelItem => item.Plusy)" />*@
+
+                    <button class="btn btn-info js-toggle-plusing"
+                            data-wpis-id="@item.WpisID">
+                        @Html.DisplayFor(modelitem => item.Plusy)
+                    </button>
+
+                }
+                else
+                {
+                    <span style="float:right; padding: 0px">
+                        <button>
+                            @Html.DisplayFor(modelItem => item.Plusy)
+                        </button>
+                    </span>
+
+                }
                 }
             </span>
         </span>
@@ -118,3 +139,53 @@
         </div>
     </div>
 }
+
+
+@section scripts
+{
+    <script>
+
+        $(document).ready(function () {
+            $(".js-toggle-plusing").click(function (e) {
+
+                debugger
+                var token = $('[name=__RequestVerificationToken]').val();
+                var wpis = {};
+                wpis["wpisID"] = $(e.target).attr("data-wpis-id");
+                var theData = $.extend({}, token, wpis, true);
+                $.ajax({
+                    type: "POST",
+                    url: "/Wpis/AddPlus",
+                    data: {wpis: theData},
+                    success: function (result) {
+                        debugger;
+                        if (result === true) {
+                            $(e.target).removeClass("btn btn-info")
+                                .addClass("btn btn-sucess");
+                        }
+                        else {
+                             $(e.target).removeClass("btn btn-info")
+                            .addClass("btn btn-warning");
+                        }
+                    }
+                });
+            });
+        })
+
+        @*
+
+         $.post("/wpis/index", { "": $(e.target).attr("data-wpis-id").val() })
+                        .done(function () {
+                            $(e.target).removeClass("btn btn-info")
+                                .addClass("btn btn-sucess");
+                        })
+                        .fail(function () {
+                            $(e.target).removeClass("btn btn-info")
+                                .addClass("btn btn-warning");
+                        });
+                });
+            });
+            *@
+    </script>
+}
+
