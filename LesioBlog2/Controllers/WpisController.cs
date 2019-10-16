@@ -48,8 +48,8 @@ namespace LesioBlog2.Controllers
 
 
         [HttpPost]
-       // [AuthorizeUserAttribute]
-     //   [ValidateAntiForgeryToken]
+        [AuthorizeUserAttribute]
+        [ValidateAntiForgeryToken]
 
         public ActionResult AddPlus(Wpis wpis)
         {

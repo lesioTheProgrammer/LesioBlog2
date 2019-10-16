@@ -151,7 +151,9 @@
 
                 debugger
 
-                var token = $('[name=__RequestVerificationToken]').val();
+                var token = $('input[name=__RequestVerificationToken]').val();
+              //  var headers = {};
+              //  headers['__RequestVerificationToken'] = token;
                 var wpis = {};
                 wpis["wpisID"] = $(e.target).attr("data-wpis-id");
                 wpis["plusy"] = $(e.target).attr("data-plusy-count");
@@ -160,7 +162,8 @@
                     context: this,
                     type: "POST",
                     url: "/Wpis/AddPlus",
-                    data: {wpis: theData},
+                   // headers: headers,
+                    data: {__RequestVerificationToken: token, wpis: theData},
                     success: function (result) {
                         var plusing = result.plusy;
                         var resultCheck = result.result;
