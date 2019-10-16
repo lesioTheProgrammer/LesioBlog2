@@ -91,12 +91,14 @@ namespace LesioBlog2.Controllers
                _wpis.UpdateIfWpisState(IFWpisPlus);
                _wpis.SaveChanges();
 
-                return Json(new { result = true },
+                var result = new { result = true, plusy = wpisToPlus.Plusy };
+                return Json(result,
                             JsonRequestBehavior.AllowGet); ;
             }
             else
             {
-                return Json(new { result = false }, JsonRequestBehavior.AllowGet); ;
+                var result = new { result = false, plusy = wpisToPlus.Plusy };
+                return Json( result , JsonRequestBehavior.AllowGet); 
             }
 
         }

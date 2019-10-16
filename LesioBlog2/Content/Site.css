@@ -26,16 +26,18 @@ textarea {
 
 /*bootstrap ovverides*/
 
-.btn {
-    background-color: brown
-}
+
 
 
 .colorA {
    
-    background-color: brown
+    background-color: cyan
 }
 
 .colorB {
-    background-color: green
+    background-color: chartreuse
+}
+
+.colorC {
+    background-color:red
 }

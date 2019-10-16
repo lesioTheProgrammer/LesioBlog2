@@ -45,7 +45,7 @@
 
         </span>
         <span style="float:right ; padding:4px">
-            <span class="colorA">
+            <span class="">
                 @*
 
          @using (Html.BeginForm("Index", "Wpis", FormMethod.Post))
@@ -61,8 +61,9 @@
             <input id="btnPlus_@item.WpisID" type="button"
                     onclick="clicking()" value="@Html.DisplayFor(modelItem => item.Plusy)" />*@
 
-                    <button class="btn btn-info js-toggle-plusing"
-                            data-wpis-id="@item.WpisID">
+                    <button class="colorA js-toggle-plusing"
+                            data-wpis-id="@item.WpisID" data-plusy-count="@item.Plusy">
+
                         @Html.DisplayFor(modelitem => item.Plusy)
                     </button>
 
@@ -75,7 +76,7 @@
                         </button>
                     </span>
 
-                }
+                
                 }
             </span>
         </span>
@@ -148,44 +149,38 @@
         $(document).ready(function () {
             $(".js-toggle-plusing").click(function (e) {
 
-                debugger
+            //    debugger
+
                 var token = $('[name=__RequestVerificationToken]').val();
                 var wpis = {};
                 wpis["wpisID"] = $(e.target).attr("data-wpis-id");
+                wpis["plusy"] = $(e.target).attr("data-plusy-count");
                 var theData = $.extend({}, token, wpis, true);
                 $.ajax({
+                    context: this,
                     type: "POST",
                     url: "/Wpis/AddPlus",
                     data: {wpis: theData},
                     success: function (result) {
-                        debugger;
-                        if (result === true) {
-                            $(e.target).removeClass("btn btn-info")
-                                .addClass("btn btn-sucess");
+                        var plusing = result.plusy;
+                        var resultCheck = result.result;
+                  //      debugger;
+                        if (resultCheck) {
+                            $(e.target).removeClass("colorA")
+                                .addClass("colorB")
+                                .text(plusing);
+                            
                         }
                         else {
-                             $(e.target).removeClass("btn btn-info")
-                            .addClass("btn btn-warning");
+                             $(e.target).removeClass("colorA")
+                            .addClass("colorC");
                         }
                     }
                 });
             });
         })
 
-        @*
-
-         $.post("/wpis/index", { "": $(e.target).attr("data-wpis-id").val() })
-                        .done(function () {
-                            $(e.target).removeClass("btn btn-info")
-                                .addClass("btn btn-sucess");
-                        })
-                        .fail(function () {
-                            $(e.target).removeClass("btn btn-info")
-                                .addClass("btn btn-warning");
-                        });
-                });
-            });
-            *@
+       
     </script>
 }
 
