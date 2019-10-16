@@ -86,7 +86,6 @@ namespace LesioBlog2.Controllers
                 IFWpisPlus = _wpis.GetPlusWpis(wpisToPlus.WpisID, currentlyLoggedUserID);
                 IFWpisPlus.IfPlusWpis = true;
 
-
                _wpis.UpdateOnlyPlusy(wpisToPlus);
                _wpis.UpdateIfWpisState(IFWpisPlus);
                _wpis.SaveChanges();
@@ -95,13 +94,31 @@ namespace LesioBlog2.Controllers
                 return Json(result,
                             JsonRequestBehavior.AllowGet); ;
             }
-            else
+
+
+            else if (wpisToPlus != null && User.Identity.Name != wpisToPlus.User.NickName && checkWpisState)
             {
+                wpisToPlus.Plusy = wpisToPlus.Plusy - 1;
+                IFWpisPlus = _wpis.GetPlusWpis(wpisToPlus.WpisID, currentlyLoggedUserID);
+                IFWpisPlus.IfPlusWpis = false;
+                _wpis.UpdateOnlyPlusy(wpisToPlus);
+                _wpis.UpdateIfWpisState(IFWpisPlus);
+                _wpis.SaveChanges();
                 var result = new { result = false, plusy = wpisToPlus.Plusy };
                 return Json( result , JsonRequestBehavior.AllowGet); 
             }
+            else
+            {
+                var result = new { result = false, plusy = wpisToPlus.Plusy };
+                return Json(result, JsonRequestBehavior.AllowGet);
+            }
 
         }
+
+       
+
+
+
 
         public ActionResult GoToParentWpis(int? id)
         {

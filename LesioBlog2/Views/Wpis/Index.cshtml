@@ -149,7 +149,7 @@
         $(document).ready(function () {
             $(".js-toggle-plusing").click(function (e) {
 
-            //    debugger
+                debugger
 
                 var token = $('[name=__RequestVerificationToken]').val();
                 var wpis = {};
@@ -164,7 +164,7 @@
                     success: function (result) {
                         var plusing = result.plusy;
                         var resultCheck = result.result;
-                  //      debugger;
+                        debugger;
                         if (resultCheck) {
                             $(e.target).removeClass("colorA")
                                 .addClass("colorB")
@@ -172,8 +172,10 @@
                             
                         }
                         else {
-                             $(e.target).removeClass("colorA")
-                            .addClass("colorC");
+                            $(e.target)
+                                .removeClass("colorB")
+                                .addClass("colorA")
+                                 .text(plusing);
                         }
                     }
                 });
