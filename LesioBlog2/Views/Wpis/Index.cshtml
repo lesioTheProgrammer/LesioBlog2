@@ -1,4 +1,8 @@
-﻿@model IEnumerable<LesioBlog2_Repo.Models.Wpis>
+﻿@model PagedList.IPagedList<LesioBlog2_Repo.Models.Wpis>
+
+@using PagedList.Mvc;
+@using System.Web.Mvc.Html;
+
 
 @{
     ViewBag.Title = "Index";
@@ -46,37 +50,19 @@
         </span>
         <span style="float:right ; padding:4px">
             <span class="">
-                @*
-
-         @using (Html.BeginForm("Index", "Wpis", FormMethod.Post))
-        {
-
-            @Html.AntiForgeryToken()*@
                 @Html.AntiForgeryToken()
                 @if (Request.IsAuthenticated)
                 {
-                    @*
-                    <input type="hidden" name="WpisID" value="@item.WpisID" />
-
-            <input id="btnPlus_@item.WpisID" type="button"
-                    onclick="clicking()" value="@Html.DisplayFor(modelItem => item.Plusy)" />*@
-
                     <button class="colorA js-toggle-plusing"
                             data-wpis-id="@item.WpisID" data-plusy-count="@item.Plusy">
-
                         @Html.DisplayFor(modelitem => item.Plusy)
                     </button>
-
                 }
                 else
                 {
                     <span style="float:right; padding: 0px">
-                        <button>
-                            @Html.DisplayFor(modelItem => item.Plusy)
-                        </button>
+                        @Html.DisplayFor(modelItem => item.Plusy)
                     </span>
-
-                
                 }
             </span>
         </span>
@@ -120,11 +106,23 @@
                         <span style="font-size: 12px">
                             @Html.DisplayFor(modelItem => item2.AddingDate)
                         </span>
-                        <span>
-                            <span style="float:right; padding: 0px">
-                                <button>
-                                    @Html.DisplayFor(modelItem => item2.Plusy)
-                                </button>
+
+                        <span style="float:right ; padding:0px">
+                            <span class="">
+                                @Html.AntiForgeryToken()
+                                @if (Request.IsAuthenticated)
+                                {
+                                    <button class="colorA js-toggle-plusing2"
+                                            data-comm-id="@item2.CommentID" data-plusy-count2="@item2.Plusy">
+                                        @Html.DisplayFor(modelitem => item2.Plusy)
+                                    </button>
+                                }
+                                else
+                                {
+                                    <span style="float:right; padding: 0px">
+                                        @Html.DisplayFor(modelItem => item2.Plusy)
+                                    </span>
+                                }
                             </span>
                         </span>
                         <br>
@@ -142,6 +140,20 @@
 }
 
 
+
+
+
+
+<div class="pagination">
+
+    @Html.PagedListPager(Model, page => Url.Action("Index", new { page }),
+    new PagedListRenderOptions
+    {
+        LiElementClasses = new string[] { "page-item", "page-link" }
+    })
+</div>
+
+
 @section scripts
 {
     <script>
@@ -150,10 +162,7 @@
             $(".js-toggle-plusing").click(function (e) {
 
                 debugger
-
                 var token = $('input[name=__RequestVerificationToken]').val();
-              //  var headers = {};
-              //  headers['__RequestVerificationToken'] = token;
                 var wpis = {};
                 wpis["wpisID"] = $(e.target).attr("data-wpis-id");
                 wpis["plusy"] = $(e.target).attr("data-plusy-count");
@@ -162,8 +171,7 @@
                     context: this,
                     type: "POST",
                     url: "/Wpis/AddPlus",
-                   // headers: headers,
-                    data: {__RequestVerificationToken: token, wpis: theData},
+                    data: { __RequestVerificationToken: token, wpis: theData },
                     success: function (result) {
                         var plusing = result.plusy;
                         var resultCheck = result.result;
@@ -172,20 +180,67 @@
                             $(e.target).removeClass("colorA")
                                 .addClass("colorB")
                                 .text(plusing);
-                            
+
                         }
                         else {
                             $(e.target)
                                 .removeClass("colorB")
                                 .addClass("colorA")
-                                 .text(plusing);
+                                .text(plusing);
                         }
                     }
                 });
             });
         })
 
-       
+
+
+        $(document).ready(function () {
+            $(".js-toggle-plusing2").click(function (e) {
+
+                debugger
+                var token = $('input[name=__RequestVerificationToken]').val();
+                var comment = {};
+                comment["commentID"] = $(e.target).attr("data-comm-id");
+                comment["plusy"] = $(e.target).attr("data-plusy-count2");
+                var theData = $.extend({}, token, comment, true);
+                $.ajax({
+                    context: this,
+                    type: "POST",
+                    url: "/Comments/AddPlus",
+                    data: { __RequestVerificationToken: token, comment: theData },
+                    success: function (result) {
+                        var plusing = result.plusy;
+                        var resultCheck = result.result;
+                        debugger;
+                        if (resultCheck) {
+                            $(e.target).removeClass("colorA")
+                                .addClass("colorB")
+                                .text(plusing);
+
+                        }
+                        else {
+                            $(e.target)
+                                .removeClass("colorB")
+                                .addClass("colorA")
+                                .text(plusing);
+                        }
+                    }
+                });
+            });
+        })
+
+
+
+
+
+
+
+
+
+
+
+
     </script>
 }
 

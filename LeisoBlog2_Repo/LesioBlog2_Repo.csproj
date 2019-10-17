@@ -56,6 +56,12 @@
     <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
     </Reference>
+    <Reference Include="PagedList, Version=1.17.0.0, Culture=neutral, PublicKeyToken=abbb863e9397c5e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\PagedList.1.17.0.0\lib\net40\PagedList.dll</HintPath>
+    </Reference>
+    <Reference Include="PagedList.Mvc, Version=4.5.0.0, Culture=neutral, PublicKeyToken=abbb863e9397c5e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\PagedList.Mvc.4.5.0.0\lib\net40\PagedList.Mvc.dll</HintPath>
+    </Reference>
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -92,6 +98,7 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\PagedList.css" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
@@ -106,39 +113,12 @@
     <Compile Include="Concrete\TagRepo.cs" />
     <Compile Include="Concrete\UserRepo.cs" />
     <Compile Include="Concrete\WpisRepo.cs" />
-    <Compile Include="Migrations\201909260852255_init3.cs" />
-    <Compile Include="Migrations\201909260852255_init3.Designer.cs">
-      <DependentUpon>201909260852255_init3.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201910051037286_EditingDateField.cs" />
-    <Compile Include="Migrations\201910051037286_EditingDateField.Designer.cs">
-      <DependentUpon>201910051037286_EditingDateField.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201910061536179_editingDateToNullable.cs" />
-    <Compile Include="Migrations\201910061536179_editingDateToNullable.Designer.cs">
-      <DependentUpon>201910061536179_editingDateToNullable.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201910091413114_renameCommentID.cs" />
-    <Compile Include="Migrations\201910091413114_renameCommentID.Designer.cs">
-      <DependentUpon>201910091413114_renameCommentID.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201910141107151_ifPlusowane.cs" />
-    <Compile Include="Migrations\201910141107151_ifPlusowane.Designer.cs">
-      <DependentUpon>201910141107151_ifPlusowane.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201910141115177_ifPlCancel.cs" />
-    <Compile Include="Migrations\201910141115177_ifPlCancel.Designer.cs">
-      <DependentUpon>201910141115177_ifPlCancel.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201910141138249_IfPlusTable.cs" />
-    <Compile Include="Migrations\201910141138249_IfPlusTable.Designer.cs">
-      <DependentUpon>201910141138249_IfPlusTable.cs</DependentUpon>
-    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Context\blogContext.cs" />
     <Compile Include="Models\Comment.cs" />
     <Compile Include="Models\CommentTag.cs" />
     <Compile Include="Models\Gender.cs" />
+    <Compile Include="Models\IfPlusowalComment.cs" />
     <Compile Include="Models\IfPlusowalWpis.cs" />
     <Compile Include="Models\RepeatedFields.cs" />
     <Compile Include="Models\Tag.cs" />
@@ -155,29 +135,6 @@
     <None Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Migrations\201909260852255_init3.resx">
-      <DependentUpon>201909260852255_init3.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201910051037286_EditingDateField.resx">
-      <DependentUpon>201910051037286_EditingDateField.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201910061536179_editingDateToNullable.resx">
-      <DependentUpon>201910061536179_editingDateToNullable.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201910091413114_renameCommentID.resx">
-      <DependentUpon>201910091413114_renameCommentID.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201910141107151_ifPlusowane.resx">
-      <DependentUpon>201910141107151_ifPlusowane.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201910141115177_ifPlCancel.resx">
-      <DependentUpon>201910141115177_ifPlCancel.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201910141138249_IfPlusTable.resx">
-      <DependentUpon>201910141138249_IfPlusTable.cs</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

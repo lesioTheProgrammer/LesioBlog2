@@ -1,7 +1,6 @@
 namespace LesioBlog2_Repo.Migrations
 {
     using LesioBlog2_Repo.Models;
-    using LesioBlog2_Repo.Models;
     using LesioBlog2_Repo.Models.Context;
     using System;
     using System.Data.Entity.Migrations;
@@ -29,7 +28,28 @@ namespace LesioBlog2_Repo.Migrations
             SeedWpisTag(context);
             SeedCommentTag(context);
             SeedIfPlus(context);
+            SeedIfPlusWpis(context);
+
+
         }
+
+        private void SeedIfPlusWpis(BlogContext context)
+        {
+
+            var ifplus = new IfPlusowalComment
+            {
+                CommentID = context.Comments.FirstOrDefault().CommentID,
+                UserID = context.Users.FirstOrDefault().UserID,
+                IfPlusWpis = false
+            };
+            context.Set<IfPlusowalComment>().AddOrUpdate(ifplus);
+
+            context.SaveChanges();
+        }
+
+
+
+
 
         private void SeedIfPlus(BlogContext context)
         {

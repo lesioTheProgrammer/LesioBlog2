@@ -1,5 +1,4 @@
 ﻿using LesioBlog2_Repo.Models;
-using LesioBlog2_Repo.Models;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 
@@ -20,6 +19,7 @@ namespace LesioBlog2_Repo.Abstract
          DbSet<Gender> Genders { get; set; }
 
         DbSet<IfPlusowalWpis> IfPlusowalWpis { get; set; }
+         DbSet<IfPlusowalComment> IfPlusowalComment { get; set; }
 
 
         Database Database { get; }

@@ -115,7 +115,7 @@ namespace LesioBlog2_Repo.Concrete
 
         public IQueryable<Wpis> GetWpis()
         {
-            var listofWpis = _db.Wpis.Include(x => x.Comments).Include(x => x.User);
+            var listofWpis = _db.Wpis.Include(x => x.Comments).Include(x => x.User).Include(x=>x.Comments.Select(u=>u.User));
             return listofWpis;
         }
 

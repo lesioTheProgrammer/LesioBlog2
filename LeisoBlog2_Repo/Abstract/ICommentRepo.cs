@@ -24,8 +24,13 @@ namespace LesioBlog2_Repo.Abstract
         int GetIdOfCommentCreator(int? id);
         void UpdateContentAndPlusyAndEditDate(Comment comment);
 
-
+        IfPlusowalComment GetPlusComment(int? idComment, int? idUser);
         void Add(CommentTag commTag);
+        void Add(IfPlusowalComment plusComm);
+        void UpdateOnlyPlusy(Comment comment);
+        void UpdateIfCommState(IfPlusowalComment ifplus);
+
+
 
 
     }

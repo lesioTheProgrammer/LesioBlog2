@@ -1,5 +1,4 @@
 ﻿using LesioBlog2_Repo.Abstract;
-using LesioBlog2_Repo.Models;
 using System.Data.Entity;
 using System.Data.Entity.ModelConfiguration.Conventions;
 
@@ -34,6 +33,8 @@ namespace LesioBlog2_Repo.Models.Context
 
         public DbSet<IfPlusowalWpis> IfPlusowalWpis { get; set; }
 
+        public DbSet<IfPlusowalComment> IfPlusowalComment { get; set; }
+
 
 
 
@@ -56,7 +57,9 @@ namespace LesioBlog2_Repo.Models.Context
             modelBuilder.Entity<WpisTag>().HasKey(key => new { key.TagID, key.WpisID });
             modelBuilder.Entity<CommentTag>().HasKey(key => new { key.TagID, key.CommentID });
 
+
             modelBuilder.Entity<IfPlusowalWpis>().HasKey(key => new { key.UserID, key.WpisID });
+            modelBuilder.Entity<IfPlusowalComment>().HasKey(key => new { key.UserID, key.CommentID });
 
             ///////  cascade on delete on wpistag
 
@@ -64,11 +67,11 @@ namespace LesioBlog2_Repo.Models.Context
 
             //one to one
 
-          //  modelBuilder.Entity<User>().HasOptional(x => x.Gender).WithRequired(x => x.User);
+            //  modelBuilder.Entity<User>().HasOptional(x => x.Gender).WithRequired(x => x.User);
         }
 
 
-        
+
 
 
     }

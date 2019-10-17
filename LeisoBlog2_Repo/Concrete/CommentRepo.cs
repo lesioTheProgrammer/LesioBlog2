@@ -27,6 +27,13 @@ namespace LesioBlog2_Repo.Concrete
             _db.CommentTags.Add(commTag);
         }
 
+         public void Add(IfPlusowalComment plusComm)
+        {
+            _db.IfPlusowalComment.Add(plusComm);
+        }
+
+
+
         public void Delete(Comment comment)
         {
             //remove tags if are not used anywhere else
@@ -72,7 +79,16 @@ namespace LesioBlog2_Repo.Concrete
 
         }
 
-     
+        public IfPlusowalComment GetPlusComment(int? idComment, int? idUser)
+        {
+            var plusedComment = _db.IfPlusowalComment
+                .Where(x => x.CommentID == idComment)
+                .Where(x => x.UserID == idUser)
+                .SingleOrDefault();
+            return plusedComment;
+        }
+
+
 
         public List<Comment> GetCommentByUserNickName(string name)
         {
@@ -164,6 +180,20 @@ namespace LesioBlog2_Repo.Concrete
         {
             var ID = _db.Comments.SingleOrDefault(x => x.CommentID == id).UserID;
             return ID;
+        }
+
+
+
+        public void UpdateOnlyPlusy(Comment comment)
+        {
+            _db.Comments.Attach(comment);
+            _db.Entry(comment).Property("Plusy").IsModified = true;
+        }
+
+        public void UpdateIfCommState(IfPlusowalComment ifplus)
+        {
+            _db.IfPlusowalComment.Attach(ifplus);
+            _db.Entry(ifplus).Property("IfPlusWpis").IsModified = true;
         }
 
 

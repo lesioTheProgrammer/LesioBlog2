@@ -27,7 +27,7 @@ namespace LesioBlog2.Controllers
             var comments = _comm.GetComment();
             if (string.IsNullOrEmpty(userNickName))
             {
-              return View(comments.ToList());
+                return View(comments.ToList());
             }
             else
             {
@@ -60,6 +60,93 @@ namespace LesioBlog2.Controllers
             return View();
         }
 
+
+
+
+
+        [HttpPost]
+        [AuthorizeUserAttribute]
+        [ValidateAntiForgeryToken]
+
+        public ActionResult AddPlus(Comment comment)
+        {
+            var currentlyLoggedUserID = _user.GetIDOfCurrentlyLoggedUser().Value;
+            var commToPlus = _comm.GetCommentById(comment.CommentID);
+
+            bool checkWpisState = true;
+            var ifCommPlus= _comm.GetPlusComment(commToPlus.CommentID, currentlyLoggedUserID);
+
+           // prevent user from double plsuing
+            if (commToPlus != null)
+            {
+                if (ifCommPlus != null)
+                {
+                    checkWpisState = ifCommPlus.IfPlusWpis;
+                }
+                else
+                {
+                    var ifplus = new IfPlusowalComment()
+                    {
+                        UserID = currentlyLoggedUserID,
+                        CommentID = commToPlus.CommentID,
+                        IfPlusWpis = false
+                    };
+                         _comm.Add(ifplus);
+                        _comm.SaveChanges();
+                    checkWpisState = ifplus.IfPlusWpis;
+                }
+            }
+
+            if (commToPlus != null && User.Identity.Name != commToPlus.User.NickName && !checkWpisState)
+            {
+                commToPlus.Plusy = commToPlus.Plusy + 1;
+                ifCommPlus = _comm.GetPlusComment(commToPlus.CommentID, currentlyLoggedUserID);
+                ifCommPlus.IfPlusWpis = true;
+                _comm.UpdateOnlyPlusy(commToPlus);
+                _comm.UpdateIfCommState(ifCommPlus);
+                _comm.SaveChanges();
+
+                var result = new { result = true, plusy = commToPlus.Plusy };
+                return Json(result,
+                            JsonRequestBehavior.AllowGet); ;
+            }
+
+
+            else if (commToPlus != null && User.Identity.Name != commToPlus.User.NickName && checkWpisState)
+            {
+                commToPlus.Plusy = commToPlus.Plusy - 1;
+                ifCommPlus = _comm.GetPlusComment(commToPlus.CommentID, currentlyLoggedUserID);
+                ifCommPlus.IfPlusWpis = false;
+                _comm.UpdateOnlyPlusy(commToPlus);
+                _comm.UpdateIfCommState(ifCommPlus);
+                _comm.SaveChanges();
+                var result = new { result = false, plusy = commToPlus.Plusy };
+                return Json(result, JsonRequestBehavior.AllowGet);
+            }
+            else
+            {
+                var result = new { result = false, plusy = commToPlus.Plusy };
+                return Json(result, JsonRequestBehavior.AllowGet);
+            }
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         // POST: Comments/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
@@ -69,7 +156,7 @@ namespace LesioBlog2.Controllers
         {
             comment.Plusy = 0;
             comment.AddingDate = DateTime.Now;
-          //  comment.WpisID = 8;
+            //  comment.WpisID = 8;
             //wpisID is not passed?????
             //load from users:
             var nullableUserID = _user.GetIDOfCurrentlyLoggedUser();
@@ -107,7 +194,7 @@ namespace LesioBlog2.Controllers
                     var commTag = new CommentTag()
                     {
                         TagID = tag.TagID,
-                        CommentID= comment.CommentID
+                        CommentID = comment.CommentID
                     };
                     _comm.Add(commTag);
                     _comm.SaveChanges();
@@ -115,7 +202,7 @@ namespace LesioBlog2.Controllers
 
                 return RedirectToAction("Index", "Wpis");
             }
-            return PartialView(comment);
+            return RedirectToAction("Index", "Wpis");
         }
 
         // GET: Comments/Edit/5

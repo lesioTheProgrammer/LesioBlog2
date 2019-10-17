@@ -1,5 +1,6 @@
 ﻿using LesioBlog2_Repo.Abstract;
 using LesioBlog2_Repo.Models;
+using PagedList;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,25 +25,35 @@ namespace LesioBlog2.Controllers
             this._user = user;
         }
         // GET: Wpis
-        public ActionResult Index(string userNickName, string tagName)
+        public ActionResult Index(string userNickName, string tagName, int? page)
         {
-            var wpis = _wpis.GetWpis();
+
+            int currentPage = page ?? 1;
+            if (page == 0)
+            {
+                currentPage = 1;
+            }
+            int onPage = 5;
+
+                var wpis = _wpis.GetWpis();
+                 var wpisList = wpis.ToList();
+
             if (string.IsNullOrEmpty(userNickName) && string.IsNullOrEmpty(tagName))
             {
-                return View(wpis.ToList());
+                return View(wpisList.ToPagedList<Wpis>(currentPage, onPage));
             }
             else if (!string.IsNullOrEmpty(userNickName))
             {
                 //get wpis by user id
                 wpis = _wpis.GetWpisByUserNickName(userNickName).AsQueryable();
+                wpisList = wpis.ToList();
             }
             else if (!string.IsNullOrEmpty(tagName))
             {
                 wpis = _tag.getWpisWithSelectedTag(tagName).AsQueryable();
+                wpisList = wpis.ToList();
             }
-
-            return View(wpis.ToList());
-
+            return View(wpisList.ToPagedList<Wpis>(currentPage, onPage));
         }
 
 
@@ -115,7 +126,6 @@ namespace LesioBlog2.Controllers
 
         }
 
-       
 
 
 
@@ -213,7 +223,7 @@ namespace LesioBlog2.Controllers
 
                 return RedirectToAction("Index");
             }
-            return View(wpis);
+            return RedirectToAction("Index");
         }
 
         // GET: Wpis/Edit/5

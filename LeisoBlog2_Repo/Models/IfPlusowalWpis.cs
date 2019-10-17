@@ -1,6 +1,4 @@
-﻿using LesioBlog2_Repo.Models;
-
-namespace LesioBlog2_Repo.Models
+﻿namespace LesioBlog2_Repo.Models
 {
     public class IfPlusowalWpis
     {
