@@ -18,6 +18,7 @@ namespace LesioBlog2_Repo.Abstract
         void RemoveTagsIfNotUsed(int id);
 
         void RemoveWpisTag(int id, int id2);
+        void RemoveCommentTag(int id, int id2);
 
 
     }

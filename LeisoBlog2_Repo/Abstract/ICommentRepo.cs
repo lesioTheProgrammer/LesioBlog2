@@ -29,8 +29,7 @@ namespace LesioBlog2_Repo.Abstract
         void Add(IfPlusowalComment plusComm);
         void UpdateOnlyPlusy(Comment comment);
         void UpdateIfCommState(IfPlusowalComment ifplus);
-
-
+        List<CommentTag> GetAllCommTagsByCommId(int? id);
 
 
     }

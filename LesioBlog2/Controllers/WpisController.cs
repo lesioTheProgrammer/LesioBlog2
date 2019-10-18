@@ -142,14 +142,6 @@ namespace LesioBlog2.Controllers
             return View(wpis);
         }
 
-//        [HttpPost]
-//[AuthorizeUserAttribute]
-//[ValidateAntiForgeryToken]
-//public bool PlusujKurwo(int wpisId)
-//        {
-//            return this.AddPlus(wpisId);
-            
-//        }
 
 
         // GET: Wpis/Details/5
@@ -429,8 +421,8 @@ namespace LesioBlog2.Controllers
 
                             var wpisTag = new WpisTag()
                             {
-                                TagID = tagz.TagID,
-                                WpisID = wpis.WpisID
+                                TagID = tagID,
+                                WpisID = wpisID
                             };
                             _wpis.Add(wpisTag);
                             _wpis.SaveChanges();

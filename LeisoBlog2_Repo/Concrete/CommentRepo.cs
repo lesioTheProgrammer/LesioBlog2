@@ -65,7 +65,7 @@ namespace LesioBlog2_Repo.Concrete
 
         public Comment GetCommentById(int? id)
         {
-            var comment = _db.Comments.Include(a=>a.User).SingleOrDefault(x => x.CommentID == id);
+            var comment = _db.Comments.Include(a=>a.User).Include(x=>x.CommentTags).SingleOrDefault(x => x.CommentID == id);
             return comment;
         }
 
@@ -195,6 +195,25 @@ namespace LesioBlog2_Repo.Concrete
             _db.IfPlusowalComment.Attach(ifplus);
             _db.Entry(ifplus).Property("IfPlusWpis").IsModified = true;
         }
+
+
+
+
+        public List<CommentTag> GetAllCommTagsByCommId(int? id)
+        {
+
+            var returning = _db.CommentTags.Where(x => x.CommentID == id).Select(x => x).ToList();
+            return returning;
+        }
+
+
+        
+
+
+
+
+
+
 
 
     }

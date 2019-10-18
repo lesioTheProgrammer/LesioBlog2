@@ -69,6 +69,18 @@ namespace LesioBlog2_Repo.Concrete
             _db.SaveChanges();
         }
 
+
+
+        public void RemoveCommentTag(int id, int id2)
+        {
+            var listaforLoop = _db.CommentTags.Where(x => x.CommentID == id2 && x.TagID == id)
+               .Select(x => x).SingleOrDefault();
+            _db.CommentTags.Remove(listaforLoop);
+            //save changes
+            _db.SaveChanges();
+
+        }
+
        
 
 
