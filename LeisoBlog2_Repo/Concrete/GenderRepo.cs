@@ -24,7 +24,7 @@ namespace LesioBlog2_Repo.Concrete
 
         public IQueryable<Gender> GetGenders()
         {
-            var genders = _db.Genders.Select(x => x);
+            var genders = _db.Genders;
             return genders;
         }
 

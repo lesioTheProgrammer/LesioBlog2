@@ -33,7 +33,7 @@
     }
 </p>
 
-@foreach (var item in Model.OrderByDescending(x => x.Plusy))
+@foreach (var item in Model.OrderByDescending(x => x.AddingDate))
 {
     <div>
         <span style="float:left">
@@ -98,7 +98,7 @@
 
         @* View comments bellow the wpis *@
         <div style="border: solid 2px !important">
-            @foreach (var item2 in item.Comments.OrderByDescending(x => x.Plusy))
+            @foreach (var item2 in item.Comments.OrderBy(x => x.AddingDate))
             {
                 <div style="border-bottom:dashed 2px;">
                     <div style="margin-left: 30px; padding: 2px">

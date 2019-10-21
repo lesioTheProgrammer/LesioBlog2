@@ -65,9 +65,17 @@
                 @Html.LabelFor(x => x.Gender)
             </div>
             <div class="editor-field">
-                @Html.DropDownList("GenderID")
-                @Html.ValidationMessageFor(x => x.Gender)
+                @*@Html.DropDownList("GenderID")
+                @Html.ValidationMessageFor(x => x.Gender)*@
             </div>
+            <div>
+                Male
+                @Html.RadioButtonFor(x => x.GenderID, 1)
+                Female
+                @Html.RadioButtonFor(x => x.GenderID, 2)
+            </div>
+
+
 
 
 

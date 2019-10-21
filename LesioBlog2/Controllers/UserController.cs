@@ -111,7 +111,7 @@ namespace LesioBlog2.Controllers
         {
 
             var genderlist = this._gender.GetGenders();
-            ViewBag.GenderID = new SelectList(genderlist, "GenderID", "GenderName", genderlist.Select(x=>x.GenderID));
+          //  ViewBag.GenderID = new SelectList(genderlist, "GenderID", "GenderName", genderlist.Select(x=>x.GenderID));
 
             return View();
         }
