@@ -1,6 +1,5 @@
 ﻿using LesioBlog2_Repo.Abstract;
 using System;
-using System.Linq;
 using System.Web.Mvc;
 using System.Web.Security;
 
@@ -101,10 +100,7 @@ namespace LesioBlog2.Controllers
                 }
             }
             return View(user);
-
-
         }
-
 
         [HttpGet]
         public ActionResult Registration()
@@ -236,6 +232,15 @@ namespace LesioBlog2.Controllers
             }
             return IsEUValid;
         }
+
+
+        [HttpGet]
+        public ActionResult ResetPasword()
+        {
+            return View();
+        }
+
+
 
 
 
