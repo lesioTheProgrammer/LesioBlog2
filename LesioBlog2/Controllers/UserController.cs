@@ -246,11 +246,11 @@ namespace LesioBlog2.Controllers
         public ActionResult ResetPasswordSent(User user)
         {
 
-            int userId = _user.GetUserByEmail(user.Email).UserID;
-            user = _user.GetUserByEmail(user.Email);
 
             if (!string.IsNullOrEmpty(user.Email))
             {
+               int userId = _user.GetUserByEmail(user.Email).UserID;
+               user = _user.GetUserByEmail(user.Email);
                bool ifExist =  _user.CheckIfUserEmailVaild(user.Email);
                if (ifExist == true)
                 {
