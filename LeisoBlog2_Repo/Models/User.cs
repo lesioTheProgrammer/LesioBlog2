@@ -1,5 +1,4 @@
-﻿using LesioBlog2_Repo.Models;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace LesioBlog2_Repo.Models
@@ -31,6 +30,9 @@ namespace LesioBlog2_Repo.Models
         public string NickName { get; set; }
         public string FullName { get; set; }
         public string City { get; set; }
+
+        public int Code { get; set; }
+
 
 
 

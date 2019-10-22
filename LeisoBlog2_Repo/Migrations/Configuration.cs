@@ -22,13 +22,13 @@ namespace LesioBlog2_Repo.Migrations
             //  to avoid creating duplicate seed data.
             SeedGenders(context);
             SeedUsers(context);
-            SeedWpis(context);
-            SeedComments(context);
-            SeedTags(context);
-            SeedWpisTag(context);
-            SeedCommentTag(context);
-            SeedIfPlus(context);
-            SeedIfPlusWpis(context);
+          //  SeedWpis(context);
+          //  SeedComments(context);
+          //  SeedTags(context);
+          //  SeedWpisTag(context);
+          //  SeedCommentTag(context);
+          //  SeedIfPlus(context);
+          //  SeedIfPlusWpis(context);
 
 
         }
@@ -157,7 +157,8 @@ namespace LesioBlog2_Repo.Migrations
                     City = "Breslau" + i.ToString(),
                     Email = "lesio" + i.ToString() + "@gmail.com",
                     Password = "piespies" + i.ToString(),
-                    GenderID = i < 5 ? 1 : 2
+                    GenderID = i < 5 ? 1 : 2,
+                    Code = 232445 + i
                 };
                 context.Set<User>().AddOrUpdate(user);
             }

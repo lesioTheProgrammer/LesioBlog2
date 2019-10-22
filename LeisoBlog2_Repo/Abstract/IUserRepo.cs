@@ -19,5 +19,10 @@ namespace LesioBlog2_Repo.Abstract
         User GetUserByNickname(string nickname);
         int? GetIDOfCurrentlyLoggedUser();
 
+        bool CheckIfUserEmailVaild(string email);
+        void UpdateOnlyCode(User user);
+        User GetUserByID(int id);
+
+
     }
 }

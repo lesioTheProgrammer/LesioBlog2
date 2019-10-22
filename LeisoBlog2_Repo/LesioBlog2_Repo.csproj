@@ -113,6 +113,10 @@
     <Compile Include="Concrete\TagRepo.cs" />
     <Compile Include="Concrete\UserRepo.cs" />
     <Compile Include="Concrete\WpisRepo.cs" />
+    <Compile Include="Migrations\201910220853088_code.cs" />
+    <Compile Include="Migrations\201910220853088_code.Designer.cs">
+      <DependentUpon>201910220853088_code.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Context\blogContext.cs" />
     <Compile Include="Models\Comment.cs" />
@@ -135,6 +139,11 @@
     <None Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201910220853088_code.resx">
+      <DependentUpon>201910220853088_code.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
