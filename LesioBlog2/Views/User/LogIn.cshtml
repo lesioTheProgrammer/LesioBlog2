@@ -21,26 +21,24 @@
             <div>@Html.LabelFor(x => x.Email)</div>
             <div>
                 @Html.TextBoxFor(x => x.Email)
-            @Html.ValidationMessageFor(x => x.Email)
-        </div>
+                @Html.ValidationMessageFor(x => x.Email)
+            </div>
 
-        <div>@Html.LabelFor(x => x.Password)</div>
-        <div>
-            @Html.PasswordFor(x => x.Password)
-        @Html.ValidationMessageFor(x => x.Password)
-        </div>
+            <div>@Html.LabelFor(x => x.Password)</div>
+            <div>
+                @Html.PasswordFor(x => x.Password)
+                @Html.ValidationMessageFor(x => x.Password)
+            </div>
 
 
-            <input type="submit" value="Log In"/>
+            <input type="submit" value="Log In" />
 
 
 
         </fieldset>
-
-
-
     </div>
-
-
-
 }
+
+Forgot your password?
+@Html.ActionLink("Reset password", "ResetPassword", "User")
+

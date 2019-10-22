@@ -238,6 +238,11 @@ namespace LesioBlog2.Controllers
         }
 
 
+        [HttpGet]
+        public ActionResult ResetPassword()
+        {
+            return View();
+        }
 
 
     }
