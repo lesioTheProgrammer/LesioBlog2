@@ -32,14 +32,16 @@ namespace LesioBlog2.Controllers
         public ActionResult Index(string Name)
         {
             bool isUserLogged = (System.Web.HttpContext.Current.User != null) && System.Web.HttpContext.Current.User.Identity.IsAuthenticated;
-           
-            if (isUserLogged && string.IsNullOrEmpty(Name))
+            var user = _user.GetUserByNickname(Name);
+
+
+            if (isUserLogged && string.IsNullOrEmpty(Name) || isUserLogged && user == null)
             {
               var FakeUser = System.Web.HttpContext.Current.User;
               string userName = FakeUser.Identity.Name;
                 //search by name
                 //cant be empty
-                var user = _user.GetUserByNickname(userName);
+                user = _user.GetUserByNickname(userName);
                 //gender nie ma kolumny userID
 
                 user.Gender = _gender.GetGenderByID(user.GenderID);
@@ -50,13 +52,14 @@ namespace LesioBlog2.Controllers
             }
             else if ((isUserLogged && !string.IsNullOrEmpty(Name)))
             {
-                var user = _user.GetUserByNickname(Name);
+                user = _user.GetUserByNickname(Name);
 
-                user.Gender = _gender.GetGenderByID(user.GenderID);
-                user.Comments = _comm.GetCommentByUserID(user.UserID);
-                user.Wpis = _wpisRepo.GetWpisByUserID(user.UserID);
+                    user.Gender = _gender.GetGenderByID(user.GenderID);
+                    user.Comments = _comm.GetCommentByUserID(user.UserID);
+                    user.Wpis = _wpisRepo.GetWpisByUserID(user.UserID);
 
-                return View(user);
+                    return View(user);
+                
             }
 
             else
