@@ -1,22 +1,45 @@
-﻿@model IEnumerable<LesioBlog2_Repo.Models.Wpis>
+﻿@model PagedList.IPagedList<LesioBlog2_Repo.Models.Wpis>
+
+@using PagedList.Mvc;
+@using System.Web.Mvc.Html;
+
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Wpisy";
 }
 
-<h2>Wpisy</h2>
+<div style="margin-left:10px;">
+    <h2>Wpisy</h2>
+
+</div>
 
 <p>
     @if (Request.IsAuthenticated)
     {
-        @Html.ActionLink("Create New", "Create")
+        using (Html.BeginForm("Create", "Wpis", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+            <div style="margin-left: 30px; padding: 2px; width:auto">
+                Dodaj wpis:
+                <br>
+                <textarea name="content" style="margin-top: 12px; min-width: 90%; border-radius: 0.25rem;  resize: none"></textarea>
+                <br />
+                <span style="margin-left: 0px">
+                    <div class="form-group">
+                        <div class=" col-md-1">
+                            <input type="submit" value="Send wpis" class="btn btn-success" />
+                        </div>
+                    </div>
+                </span>
+            </div>
+        }
     }
 </p>
 
-@foreach (var item in Model.OrderByDescending(x => x.Plusy))
+@foreach (var item in Model.OrderByDescending(x => x.AddingDate))
 {
-    <div>
-        <span style="float:left">
+    <div id="papito">
+        <span style="float:left; margin-left:1.5%;" class="">
             Author: @Html.DisplayFor(modelItem => item.User.NickName)
             <span style="font-size: 12px">
 
@@ -26,89 +49,207 @@
                 Edited:
                 @Html.DisplayFor(modelItem => item.EditingDate)
             </span>
-
         </span>
-        <span style="float:right ; padding:4px">
-            <span>
-                <button>
-                    @Html.DisplayFor(modelItem => item.Plusy)
-                </button>
+        <span style="float:right ; padding:8px">
+            <span class="">
+                @Html.AntiForgeryToken()
+                @if (Request.IsAuthenticated)
+                {
+                    <div id="kid">
+                        <button class="colorA js-toggle-plusing"
+                                data-wpis-id="@item.WpisID" data-plusy-count="@item.Plusy">
+                            @Html.DisplayFor(modelitem => item.Plusy)
+                        </button>
+                    </div>
+                }
+                else
+                {
+                    <div id="kid" style="margin-right:40px;">
+                        @Html.DisplayFor(modelItem => item.Plusy)
+                    </div>
+
+                }
             </span>
         </span>
     </div>
     <div>
-        <div style="border: solid 2px !important">
+        <div style="border:groove 5px; border-radius:10px; border-color:lavenderblush;  background-color:ghostwhite; margin-left:1%; margin-right:1%">
             <br>
             @Html.DisplayFor(modelItem => item.Content)
             <br />
             <div style="padding-bottom: 0px; font-size: 12px">
                 @if (Request.IsAuthenticated)
                 {
-                    @Html.ActionLink("Details", "Details", new { id = item.WpisID })
-
+                    @Html.ActionLink("Details", "Details", new { id = item.WpisID }, new { @class = "btn btn-sm", @style = "color:white" })
 
                     if (System.Web.HttpContext.Current.User.Identity.Name == item.User.NickName)
-                    {
-                        <span> || </span>
-                        @Html.ActionLink("Edit", "Edit", new { id = item.WpisID });
-                        <span> || </span>
-
-                        @Html.ActionLink("Delete", "Delete", new { id = item.WpisID })
+                    { <span style="margin-left:0.1%;"></span>
+                        @Html.ActionLink("Edit", "Edit", new { id = item.WpisID }, new { @class = "btn btn-sm", @style = "color:white" });
+                        <span style="margin-left:0.1%;"></span>
+                        @Html.ActionLink("Delete", "Delete", new { id = item.WpisID }, new { @class = "btn btn-sm", @style = "color:white" })
                     }
                 }
             </div>
         </div>
-        @*Tu o dodanie komentarza*@
-    <div>
-
-        
-        @*@Html.Partial("~/Views/Comments/_CommentAddPartial.cshtml",new { })*@
-        
-
-        @*Renderuje spoko ale jest lipa przy creacie jak daje redirect to aciton wtedy i akcja to wpis index xd*@
-
-
-
-        @{Html.RenderAction("Create", "Comments", new { WpisID = item.WpisID });}
-    </div>
-
+        <div>
+            @*Tu o dodanie komentarza*@
+            <div>
+                @Html.Partial("~/Views/Comments/_CommentAddPartial.cshtml", new ViewDataDictionary { { "WpisID", item.WpisID } })
+            </div>
+        </div>
         @* View comments bellow the wpis *@
-        <div style="border: solid 2px !important">
-            @foreach (var item2 in item.Comments.OrderByDescending(x => x.Plusy))
+
+        @*2 pokaz ostatnie reszte zawin*@
+        <div style="">
+            @foreach (var item2 in item.Comments.OrderBy(x => x.AddingDate))
             {
-                <div style="border-bottom:dashed 2px;">
-                    <div style="margin-left: 30px; padding: 2px">
+                <div style="border:groove 5px; border-radius:10px; border-color:lavenderblush;  background-color:honeydew; margin-left:5%; margin-right:1%">
+
+                    <div style="margin-left: 0%; padding: 0px" class="">
                         Author: @Html.DisplayFor(modelItem => item2.User.NickName)
                         <span style="font-size: 12px">
                             @Html.DisplayFor(modelItem => item2.AddingDate)
                         </span>
-                        <span>
-                            <span style="float:right; padding: 0px">
-                                <button>
-                                    @Html.DisplayFor(modelItem => item2.Plusy)
-                                </button>
+                        <span style="float:right ; padding:0px">
+                            <span class="">
+                                @Html.AntiForgeryToken()
+                                @if (Request.IsAuthenticated)
+                                {
+                                    <div id="kid">
+                                        <button class="colorA js-toggle-plusing2"
+                                                data-comm-id="@item2.CommentID" data-plusy-count2="@item2.Plusy">
+                                            @Html.DisplayFor(modelitem => item2.Plusy)
+                                        </button>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div id="kid" style="margin-right:40px;">
+
+                                        @Html.DisplayFor(modelItem => item2.Plusy)
+                                    </div>
+                                }
                             </span>
                         </span>
+
                         <br>
                         @Html.DisplayFor(modelItem => item2.Content)
                         <br />
                     </div>
-
                     <div style="padding-bottom: 0px; font-size: 12px">
                         @Html.Partial("~/Views/Comments/_CommentPartial.cshtml", item2)
                     </div>
                 </div>
-
-
-
-
-
-
+                <div style="padding-top:5px;">
+                </div>
             }
+            <div style="padding-top:10px;"></div>
         </div>
     </div>
+}
 
 
 
+
+
+
+<div class="pagination">
+
+    @Html.PagedListPager(Model, page => Url.Action("Index", new { page }),
+    new PagedListRenderOptions
+    {
+        LiElementClasses = new string[] { "page-item", "page-link" }
+    })
+</div>
+
+
+@section scripts
+{
+    <script>
+
+        $(document).ready(function () {
+            $(".js-toggle-plusing").click(function (e) {
+
+                debugger
+                var token = $('input[name=__RequestVerificationToken]').val();
+                var wpis = {};
+                wpis["wpisID"] = $(e.target).attr("data-wpis-id");
+                wpis["plusy"] = $(e.target).attr("data-plusy-count");
+                var theData = $.extend({}, token, wpis, true);
+                $.ajax({
+                    context: this,
+                    type: "POST",
+                    url: "/Wpis/AddPlus",
+                    data: { __RequestVerificationToken: token, wpis: theData },
+                    success: function (result) {
+                        var plusing = result.plusy;
+                        var resultCheck = result.result;
+                        debugger;
+                        if (resultCheck) {
+                            $(e.target).removeClass("colorA")
+                                .addClass("colorB")
+                                .text(plusing);
+
+                        }
+                        else {
+                            $(e.target)
+                                .removeClass("colorB")
+                                .addClass("colorA")
+                                .text(plusing);
+                        }
+                    }
+                });
+            });
+        })
+
+
+
+        $(document).ready(function () {
+            $(".js-toggle-plusing2").click(function (e) {
+
+                debugger
+                var token = $('input[name=__RequestVerificationToken]').val();
+                var comment = {};
+                comment["commentID"] = $(e.target).attr("data-comm-id");
+                comment["plusy"] = $(e.target).attr("data-plusy-count2");
+                var theData = $.extend({}, token, comment, true);
+                $.ajax({
+                    context: this,
+                    type: "POST",
+                    url: "/Comments/AddPlus",
+                    data: { __RequestVerificationToken: token, comment: theData },
+                    success: function (result) {
+                        var plusing = result.plusy;
+                        var resultCheck = result.result;
+                        debugger;
+                        if (resultCheck) {
+                            $(e.target).removeClass("colorA")
+                                .addClass("colorB")
+                                .text(plusing);
+
+                        }
+                        else {
+                            $(e.target)
+                                .removeClass("colorB")
+                                .addClass("colorA")
+                                .text(plusing);
+                        }
+                    }
+                });
+            });
+        })
+
+
+
+
+
+
+
+
+
+
+
+
+    </script>
 }
 

@@ -1,11 +1,11 @@
-﻿using LeisoBlog2_Repo.Abstract;
+﻿using LesioBlog2_Repo.Abstract;
 using LesioBlog2_Repo.Models;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 
-namespace LeisoBlog2_Repo.Concrete
+namespace LesioBlog2_Repo.Concrete
 {
     public class WpisRepo : IWpisRepo, IDisposable
     {
@@ -25,10 +25,70 @@ namespace LeisoBlog2_Repo.Concrete
             _db.Wpis.Add(wpis);
         }
 
+        public void Add(WpisTag wpisTag)
+        {
+            _db.WpisTags.Add(wpisTag);
+        }
+
+
+        public void Add(IfPlusowalWpis ifplusowal)
+        {
+            _db.IfPlusowalWpis.Add(ifplusowal);
+
+        }
+
+        public IfPlusowalWpis GetPlusWpis(int? idWpis, int? idUser)
+        {
+            var plusedWpis = _db.IfPlusowalWpis
+                .Where(x => x.WpisID == idWpis)
+                .Where(x => x.UserID == idUser)
+                .SingleOrDefault();
+            return plusedWpis;
+        }
+
+
         public void Delete(Wpis wpis)
         {
+            //remove comments
+            var commentsChildren = _db.Comments.Where(x => x.WpisID == wpis.WpisID).Select(x=>x);
+            foreach (var item in commentsChildren)
+            {
+                _db.Comments.Remove(item);
+            }
+
+            //remove tags if are not used anywhere else
+            var wpisTags = _db.WpisTags.Where(x => x.WpisID == wpis.WpisID).Select(x => x);
+            //lista wpistagow'
+            //Ilist because this allows to perform Savechanges in Foreach
+            IList<WpisTag> listaforLoop = _db.WpisTags.Where(x => x.WpisID == wpis.WpisID)
+                .Select(x => x)
+                .ToList();
+
+            foreach (var item in listaforLoop)
+            {
+                var tagID = item.TagID;
+                //get list of ID 
+                _db.WpisTags.Remove(item);
+                //save changes
+                _db.SaveChanges();
+                if (!_db.WpisTags.Any(x=>x.TagID == tagID) && !_db.CommentTags.Any(x => x.TagID == tagID))
+                {
+                    var tagToRemove =_db.Tags.Where(x => x.TagID == tagID).SingleOrDefault();
+                    _db.Tags.Remove(tagToRemove);
+                }
+            }
+
+
             _db.Wpis.Remove(wpis);
         }
+
+        public void DeleteTagAndWpisTag(int? id)
+        {
+
+        }
+
+
+
         //disposing- garb collecting
         private bool disposed = false;
         protected virtual void Dispose(bool disposing)
@@ -55,13 +115,13 @@ namespace LeisoBlog2_Repo.Concrete
 
         public IQueryable<Wpis> GetWpis()
         {
-            var listofWpis = _db.Wpis.Include(x => x.Comments).Include(x => x.User);
+            var listofWpis = _db.Wpis.Include(x => x.Comments).Include(x => x.User).Include(x=>x.Comments.Select(u=>u.User));
             return listofWpis;
         }
 
         public Wpis GetWpisById(int? id)
         {
-            var wpis = _db.Wpis.Include(x=>x.User).Include(x => x.Comments.Select(c=>c.User)).SingleOrDefault(x => x.WpisID == id);
+            var wpis = _db.Wpis.Include(x=>x.User).Include(x => x.WpisTags).Include(x => x.Comments.Select(c=>c.User)).SingleOrDefault(x => x.WpisID == id);
             return wpis;
         }
 
@@ -108,6 +168,14 @@ namespace LeisoBlog2_Repo.Concrete
             }
             return data;
         }
+
+
+        public List<WpisTag> GetAllWpisTagsByWpisId(int? id)
+        {
+
+            var returning = _db.WpisTags.Where(x => x.WpisID == id).Select(x => x).ToList();
+            return returning;
+        }
       
 
         public void SaveChanges()
@@ -127,5 +195,19 @@ namespace LeisoBlog2_Repo.Concrete
             _db.Entry(wpis).Property("Plusy").IsModified = true;
             _db.Entry(wpis).Property("EditingDate").IsModified = true;
         }
+
+
+        public void UpdateOnlyPlusy(Wpis wpis)
+        {
+            _db.Wpis.Attach(wpis);
+            _db.Entry(wpis).Property("Plusy").IsModified = true;
+        }
+
+        public void UpdateIfWpisState(IfPlusowalWpis ifplus)
+        {
+            _db.IfPlusowalWpis.Attach(ifplus);
+            _db.Entry(ifplus).Property("IfPlusWpis").IsModified = true;
+        }
+
     }
 }

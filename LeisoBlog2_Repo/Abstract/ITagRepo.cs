@@ -1,11 +1,8 @@
 ﻿using LesioBlog2_Repo.Models;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace LeisoBlog2_Repo.Abstract
+namespace LesioBlog2_Repo.Abstract
 {
     public interface ITagRepo
     {
@@ -15,6 +12,13 @@ namespace LeisoBlog2_Repo.Abstract
 
         void Add(Tag tag);
         void SaveChanges();
+        string GetTagNamesByTagID(int? id);
+        List<Wpis> getWpisWithSelectedTag(string tagName);
+        bool IfWpisOrCommentsHasTag(int id);
+        void RemoveTagsIfNotUsed(int id);
+
+        void RemoveWpisTag(int id, int id2);
+        void RemoveCommentTag(int id, int id2);
 
 
     }

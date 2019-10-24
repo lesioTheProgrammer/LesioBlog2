@@ -1,11 +1,11 @@
-﻿using LeisoBlog2_Repo.Abstract;
-using LeisoBlog2_Repo.Models;
+﻿using LesioBlog2_Repo.Abstract;
+using LesioBlog2_Repo.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace LeisoBlog2_Repo.Concrete
+namespace LesioBlog2_Repo.Concrete
 {
     public class GenderRepo : IGender
     {
@@ -24,7 +24,7 @@ namespace LeisoBlog2_Repo.Concrete
 
         public IQueryable<Gender> GetGenders()
         {
-            var genders = _db.Genders.Select(x => x);
+            var genders = _db.Genders;
             return genders;
         }
 

@@ -3,32 +3,67 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title - My ASP.NET Application</title>
+    <title>@ViewBag.Title - Welcome on LesioBlog!</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
 </head>
-<body>
-    
-    <div style="width: auto; background-color: aliceblue">
+<body style="padding-top: 56px; padding-bottom: 0%;">
+    <div style="width: auto; height: auto;  background-color:#DAE0E6">
 
         @if (Request.IsAuthenticated)
         {
-            <strong>@Html.Encode(User.Identity.Name)</strong>
-            @Html.ActionLink("Log Out", "Logout", "User")
-            <span> | </span>
-            @Html.ActionLink("View all wpisy", "Index", "Wpis")
-            <span> | </span>
-            @Html.ActionLink("User control panel ", "Index", "User")
+            <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
+                <a class="navbar-brand" href="@Url.Action("Index", "Wpis")">View all wpisy</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
+                    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+                        <li class="nav-item active">
+                            <a class="nav-link" href="@Url.Action("Index", "User")">@Url.Encode(User.Identity.Name) <span class="sr-only">(current)</span></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="@Url.Action("Logout", "User")">Sign out</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="@Url.Action("Index", "User")">User control panel</a>
+                        </li>
+                    </ul>
+                    <form class="form-inline my-2 my-lg-0" asp-controller="Wpis" asp-action="Index" method="Get">
+                        <input class="form-control mr-sm-2" type="text" placeholder="Search tag" name="tagName">
+                        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                    </form>
+                </div>
+            </nav>
         }
         else
         {
-            @Html.ActionLink("Register", "Registration", "User")
-            <span> | </span>
-            @Html.ActionLink("Log In", "Login", "User")
-            <span> | </span>
-            @Html.ActionLink("View all wpisy", "Index", "Wpis")
-            <span> | </span>
-            @Html.ActionLink("User control panel ", "Index", "User")
+
+            <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
+                <a class="navbar-brand" href="@Url.Action("Index", "Wpis")">View all wpisy</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
+                    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+                        <li class="nav-item active">
+                            <a class="nav-link" href="@Url.Action("Registration", "User")">Register <span class="sr-only">(current)</span></a>
+                        </li>
+                        <li class="nav-item active">
+                            <a class="nav-link" href="@Url.Action("Login", "User")">Sign in</a>
+                        </li>
+                        <li class="nav-item ">
+                            <a class="nav-link" href="@Url.Action("Index", "User")">User control panel</a>
+                        </li>
+                    </ul>
+
+                </div>
+            </nav>
+
+
+
 
         }
 

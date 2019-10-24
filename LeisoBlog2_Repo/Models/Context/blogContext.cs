@@ -1,11 +1,6 @@
-﻿using LeisoBlog2_Repo.Abstract;
-using LeisoBlog2_Repo.Models;
-using System;
-using System.Collections.Generic;
+﻿using LesioBlog2_Repo.Abstract;
 using System.Data.Entity;
 using System.Data.Entity.ModelConfiguration.Conventions;
-using System.Linq;
-using System.Web;
 
 namespace LesioBlog2_Repo.Models.Context
 {
@@ -36,6 +31,10 @@ namespace LesioBlog2_Repo.Models.Context
 
         public DbSet<Gender> Genders { get; set; }
 
+        public DbSet<IfPlusowalWpis> IfPlusowalWpis { get; set; }
+
+        public DbSet<IfPlusowalComment> IfPlusowalComment { get; set; }
+
 
 
 
@@ -59,19 +58,20 @@ namespace LesioBlog2_Repo.Models.Context
             modelBuilder.Entity<CommentTag>().HasKey(key => new { key.TagID, key.CommentID });
 
 
-            ///////  KOLUMNY COMMENT ID I WPIS ID JAK KURWICZKI JAKO FOREIGN KEJE
+            modelBuilder.Entity<IfPlusowalWpis>().HasKey(key => new { key.UserID, key.WpisID });
+            modelBuilder.Entity<IfPlusowalComment>().HasKey(key => new { key.UserID, key.CommentID });
 
-
+            ///////  cascade on delete on wpistag
 
 
 
             //one to one
 
-          //  modelBuilder.Entity<User>().HasOptional(x => x.Gender).WithRequired(x => x.User);
+            //  modelBuilder.Entity<User>().HasOptional(x => x.Gender).WithRequired(x => x.User);
         }
 
 
-        
+
 
 
     }

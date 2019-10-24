@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 
-namespace LeisoBlog2_Repo.Models
+namespace LesioBlog2_Repo.Models
 {
     public class Gender
     {

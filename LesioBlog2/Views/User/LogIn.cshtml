@@ -3,13 +3,15 @@
 
 
 @{
-    ViewBag.Title = "LogIn";
+    ViewBag.Title = "Login";
 
     Layout = "~/Views/Shared/_Layout.cshtml";
 
 }
-<div style="width: auto; background-color: aquamarine"> </div>
-<h2>LogIn</h2>
+<div style="margin-left:10px;">
+    <h2>Login</h2>
+
+</div>
 
 @using (Html.BeginForm())
 {
@@ -17,28 +19,41 @@
 
     <div>
         <fieldset>
-            <legend>Login Form</legend>
-            <div>@Html.LabelFor(x => x.Email)</div>
-            <div>
-                @Html.TextBoxFor(x => x.Email)
-                @Html.ValidationMessageFor(x => x.Email)
+            <div class="form-group" style="margin-left: 30px; margin-top:50px;">
+                @Html.LabelFor(x => x.Email)
+
+                @Html.TextBoxFor(x => x.Email, new { @class = "form-control", aria_describedby = "emailHelp", placeholder = "Enter email" })
+                <small id="emailHelp" class="form-text text-muted">
+                    @Html.ValidationMessageFor(x => x.Email)
+                </small>
             </div>
 
-            <div>@Html.LabelFor(x => x.Password)</div>
-            <div>
-                @Html.PasswordFor(x => x.Password)
-                @Html.ValidationMessageFor(x => x.Password)
+            <div class="form-group" style="margin-left: 30px; margin-top:20px;">
+                @Html.LabelFor(x => x.Password)
+                @Html.PasswordFor(x => x.Password, new { @class = "form-control", aria_describedby = "passHelp", placeholder = "Password" })
+                <small id="passHelp" class="form-text text-muted">
+                    @Html.ValidationMessageFor(x => x.Password)
+                </small>
+
             </div>
 
+            <button type="submit" class="btn btn-primary" style="margin-left: 30px; margin-top:30px;">Sign in</button>
 
-            <input type="submit" value="Log In" />
 
 
 
         </fieldset>
+
+
+
     </div>
+
+
+
 }
 
-Forgot your password?
-@Html.ActionLink("Reset password", "ResetPassword", "User")
+<br>
+ Forgot your password?
+@Html.ActionLink("Reset your password", "ResetPasswordSent", "User")
 
+<br />

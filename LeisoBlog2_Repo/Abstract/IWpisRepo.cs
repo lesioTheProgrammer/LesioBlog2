@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace LeisoBlog2_Repo.Abstract
+namespace LesioBlog2_Repo.Abstract
 {
     public interface IWpisRepo : IDisposable
     {
@@ -23,5 +23,16 @@ namespace LeisoBlog2_Repo.Abstract
         int GetIdOfWpisCreator(int? id);
 
         void UpdateContentAndPlusyAndEditDate(Wpis wpis);
+        void Add(WpisTag wpisTag);
+
+        void UpdateOnlyPlusy(Wpis wpis);
+
+
+        List<WpisTag> GetAllWpisTagsByWpisId(int? id);
+        void Add(IfPlusowalWpis ifplusowal);
+        IfPlusowalWpis GetPlusWpis(int? idWpis, int? idUser);
+
+
+        void UpdateIfWpisState(IfPlusowalWpis ifplus);
     }
 }

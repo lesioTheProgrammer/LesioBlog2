@@ -45,6 +45,11 @@
     </dl>
 </div>
 <p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.WpisID }) |
+    @if (System.Web.HttpContext.Current.User.Identity.Name == Model.User.NickName)
+    {
+        @Html.ActionLink("Edit", "Edit", new { id = Model.WpisID })
+        <span>|</span>
+    }
+
     @Html.ActionLink("Back to List", "Index")
 </p>

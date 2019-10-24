@@ -1,8 +1,8 @@
-﻿using LeisoBlog2_Repo.Abstract;
+﻿using LesioBlog2_Repo.Abstract;
 using LesioBlog2_Repo.Models;
 using System.Linq;
 
-namespace LeisoBlog2_Repo.Concrete
+namespace LesioBlog2_Repo.Concrete
 {
     public class UserRepo : IUserRepo
     {
@@ -123,6 +123,33 @@ namespace LeisoBlog2_Repo.Concrete
             // GC.SuppressFinalize(this);
         }
         #endregion
+
+
+        public bool CheckIfUserEmailVaild(string email)
+        {
+            bool output = false;
+            if (_db.Users.Any(x=>x.Email == email))
+            {
+                output = true;
+            }
+            return output;
+        }
+
+        public void UpdateOnlyCode(User user)
+        {
+
+           // _db.Entry(user).State = EntityState.Modified;
+          // _db.Users.Attach(user);
+         //  _db.Entry(user).Property("Code").IsModified = true;
+
+        }
+
+
+        public User GetUserByID(int id)
+        {
+             var user =  _db.Users.SingleOrDefault(x => x.UserID == id);
+            return user;
+        }
 
 
 

@@ -1,10 +1,12 @@
-﻿using LeisoBlog2_Repo.Abstract;
+﻿using LesioBlog2_Repo.Abstract;
 using LesioBlog2_Repo.Models;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 
-namespace LeisoBlog2_Repo.Concrete
+
+namespace LesioBlog2_Repo.Concrete
 {
     public class CommentRepo : ICommentRepo
     {
@@ -20,8 +22,41 @@ namespace LeisoBlog2_Repo.Concrete
             _db.Comments.Add(comment);
         }
 
+        public void Add(CommentTag commTag)
+        {
+            _db.CommentTags.Add(commTag);
+        }
+
+         public void Add(IfPlusowalComment plusComm)
+        {
+            _db.IfPlusowalComment.Add(plusComm);
+        }
+
+
+
         public void Delete(Comment comment)
         {
+            //remove tags if are not used anywhere else
+            var commTags = _db.CommentTags.Where(x => x.CommentID == comment.CommentID).Select(x => x);
+            //lista wpistagow'
+            //Ilist because this allows to perform Savechanges in Foreach
+            IList<CommentTag> listaforLoop = _db.CommentTags.Where(x => x.CommentID == comment.CommentID)
+                .Select(x => x)
+                .ToList();
+
+            foreach (var item in listaforLoop)
+            {
+                var tagID = item.TagID;
+                //get list of ID 
+                _db.CommentTags.Remove(item);
+                //save changes
+                _db.SaveChanges();
+                if (!_db.CommentTags.Any(x => x.TagID == tagID) && !_db.WpisTags.Any(x => x.TagID == tagID))
+                {
+                    var tagToRemove = _db.Tags.Where(x => x.TagID == tagID).SingleOrDefault();
+                    _db.Tags.Remove(tagToRemove);
+                }
+            }
 
             _db.Comments.Remove(comment);
         }
@@ -30,7 +65,7 @@ namespace LeisoBlog2_Repo.Concrete
 
         public Comment GetCommentById(int? id)
         {
-            var comment = _db.Comments.SingleOrDefault(x => x.ID == id);
+            var comment = _db.Comments.Include(a=>a.User).Include(x=>x.CommentTags).SingleOrDefault(x => x.CommentID == id);
             return comment;
         }
 
@@ -44,7 +79,16 @@ namespace LeisoBlog2_Repo.Concrete
 
         }
 
-     
+        public IfPlusowalComment GetPlusComment(int? idComment, int? idUser)
+        {
+            var plusedComment = _db.IfPlusowalComment
+                .Where(x => x.CommentID == idComment)
+                .Where(x => x.UserID == idUser)
+                .SingleOrDefault();
+            return plusedComment;
+        }
+
+
 
         public List<Comment> GetCommentByUserNickName(string name)
         {
@@ -77,9 +121,9 @@ namespace LeisoBlog2_Repo.Concrete
 
             DateTime data;
 
-            int id = comment.ID;
+            int id = comment.CommentID;
 
-            data = _db.Comments.AsNoTracking().SingleOrDefault(x => x.ID == id).AddingDate;
+            data = _db.Comments.AsNoTracking().SingleOrDefault(x => x.CommentID == id).AddingDate;
 
 
             return data;
@@ -88,7 +132,7 @@ namespace LeisoBlog2_Repo.Concrete
 
         public Comment FindCommentByID(int? id)
         {
-            var comment = _db.Comments.SingleOrDefault(x => x.ID == id);
+            var comment = _db.Comments.SingleOrDefault(x => x.CommentID == id);
             return comment;
         }
 
@@ -102,6 +146,15 @@ namespace LeisoBlog2_Repo.Concrete
         {
             _db.Entry(comment).State = System.Data.Entity.EntityState.Modified;
         }
+
+        public void UpdateContentAndPlusyAndEditDate(Comment comment)
+        {
+            _db.Comments.Attach(comment);
+            _db.Entry(comment).Property("Content").IsModified = true;
+            _db.Entry(comment).Property("Plusy").IsModified = true;
+            _db.Entry(comment).Property("EditingDate").IsModified = true;
+        }
+
 
 
         private bool disposed = false;
@@ -121,6 +174,47 @@ namespace LeisoBlog2_Repo.Concrete
             Dispose(true);
             GC.SuppressFinalize(this);
         }
+
+
+        public int GetIdOfCommentCreator(int? id)
+        {
+            var ID = _db.Comments.SingleOrDefault(x => x.CommentID == id).UserID;
+            return ID;
+        }
+
+
+
+        public void UpdateOnlyPlusy(Comment comment)
+        {
+            _db.Comments.Attach(comment);
+            _db.Entry(comment).Property("Plusy").IsModified = true;
+        }
+
+        public void UpdateIfCommState(IfPlusowalComment ifplus)
+        {
+            _db.IfPlusowalComment.Attach(ifplus);
+            _db.Entry(ifplus).Property("IfPlusWpis").IsModified = true;
+        }
+
+
+
+
+        public List<CommentTag> GetAllCommTagsByCommId(int? id)
+        {
+
+            var returning = _db.CommentTags.Where(x => x.CommentID == id).Select(x => x).ToList();
+            return returning;
+        }
+
+
+        
+
+
+
+
+
+
+
 
     }
 }
