@@ -26,9 +26,12 @@ namespace LesioBlog2_Repo.Models
         public string PasswordSalt { get; set; }  //prevent reverse engineering to get password
 
         [Required]
-        [Display(ShortName = "Nick:")]
+        [Display(Name = "Nickname:")]
         public string NickName { get; set; }
+        [Display(Name = "Full Name:")]
+
         public string FullName { get; set; }
+        [Display(Name = "City:")]
         public string City { get; set; }
 
         public int Code { get; set; }
