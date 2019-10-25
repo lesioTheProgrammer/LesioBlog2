@@ -55,7 +55,7 @@
             @Html.ActionLink("Details", "Details", new { id = item.WpisID })
 
 
-            if (System.Web.HttpContext.Current.User.Identity.Name == item.User.NickName)
+            if (System.Web.HttpContext.Current.User.Identity.Name.ToLower() == item.User.NickName.ToLower())
             {
                 <span> || </span>
                 @Html.ActionLink("Edit", "Edit", new { id = item.WpisID });

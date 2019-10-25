@@ -1,7 +1,7 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8" />
+    <meta content="text/html; charset=utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title - Welcome on LesioBlog!</title>
     @Styles.Render("~/Content/css")
@@ -21,7 +21,7 @@
                 <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
                     <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
                         <li class="nav-item active">
-                            <a class="nav-link" href="@Url.Action("Index", "User")">@Url.Encode(User.Identity.Name) <span class="sr-only">(current)</span></a>
+                            <a class="nav-link" style="" href="@Url.Action("Index", "User")">@Url.Encode(User.Identity.Name) <span class="sr-only">(current)</span></a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="@Url.Action("Logout", "User")">Sign out</a>

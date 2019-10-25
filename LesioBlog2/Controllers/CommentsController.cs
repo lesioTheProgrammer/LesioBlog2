@@ -169,7 +169,7 @@ namespace LesioBlog2.Controllers
                     if (tag == null)
                     {
                         tag = new Tag();
-                        tag.TagName = tagName.ToString();
+                        tag.TagName = tagName.ToString().ToLower();
                         //id radnom
                         _tag.Add(tag);
                         _tag.SaveChanges();
@@ -253,7 +253,7 @@ namespace LesioBlog2.Controllers
                 {
                     foreach (var tag in matches)
                     {
-                        if (listOfTagNames.Any(p => p.Contains(tag.ToString())))
+                        if (listOfTagNames.Any(p => p.Contains(tag.ToString().ToLower())))
                         {
                             logic.CheckTheDifferenceBetween(matches.Count, listOfTagNames.Count);
                             continue;
@@ -263,12 +263,12 @@ namespace LesioBlog2.Controllers
                             //sprawdz czy jest w bazie tagowej
                             //jak nie ma to dodaj i dodaj wpistag
                             //1. get tag from DB tags by tag name
-                            var tagz = _tag.GetTagByName(tag.ToString());
+                            var tagz = _tag.GetTagByName(tag.ToString().ToLower());
                             // if no existing add so
                             if (tagz == null)
                             {
                                 tagz = new Tag();
-                                tagz.TagName = tag.ToString();
+                                tagz.TagName = tag.ToString().ToLower();
                                 //id radnom
                                 _tag.Add(tagz);
                                 _tag.SaveChanges();
@@ -309,7 +309,7 @@ namespace LesioBlog2.Controllers
                             //jak matchesTag jest w listofTagsActual to zostaw jak nie to gerara
                             foreach (var tag in matches)
                             {
-                                var tagz = _tag.GetTagByName(tag.ToString());
+                                var tagz = _tag.GetTagByName(tag.ToString().ToLower());
                                 //   var TagName =_tag.GetTagNamesByTagID(tagz.TagID);
                                 //   var itemName = _tag.GetTagNamesByTagID(item.TagID);
 
@@ -362,12 +362,12 @@ namespace LesioBlog2.Controllers
                 {
                     foreach (var tag in matches)
                     {
-                        var tagz = _tag.GetTagByName(tag.ToString());
+                        var tagz = _tag.GetTagByName(tag.ToString().ToLower());
                         // if no existing add so
                         if (tagz == null)
                         {
                             tagz = new Tag();
-                            tagz.TagName = tag.ToString();
+                            tagz.TagName = tag.ToString().ToLower();
                             //id radnom
                             _tag.Add(tagz);
                             _tag.SaveChanges();

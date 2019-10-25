@@ -27,6 +27,7 @@ namespace LesioBlog2_Repo.Models
 
         [Required]
         [Display(Name = "Nickname:")]
+        [RegularExpression(@"[A-Za-z0-9_]*", ErrorMessage = "No white space or special chars allowed")]
         public string NickName { get; set; }
         [Display(Name = "Full Name:")]
 

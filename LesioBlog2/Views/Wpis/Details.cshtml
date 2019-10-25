@@ -45,7 +45,7 @@
     </dl>
 </div>
 <p>
-    @if (System.Web.HttpContext.Current.User.Identity.Name == Model.User.NickName)
+    @if (System.Web.HttpContext.Current.User.Identity.Name.ToLower() == Model.User.NickName.ToLower())
     {
         @Html.ActionLink("Edit", "Edit", new { id = Model.WpisID })
         <span>|</span>

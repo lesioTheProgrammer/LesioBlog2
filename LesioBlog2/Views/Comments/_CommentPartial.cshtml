@@ -7,7 +7,7 @@
         @if (Request.IsAuthenticated)
         {
             @Html.ActionLink("Details", "Details", "Comments", new { id = Model.CommentID }, new { @class = "btn btn-sm", @style = "color:white" })
-            if (System.Web.HttpContext.Current.User.Identity.Name == Model.User.NickName)
+            if (System.Web.HttpContext.Current.User.Identity.Name.ToLower() == Model.User.NickName.ToLower())
             {
                 { <span style="margin-left:0.1%;"></span>
                     @Html.ActionLink("Edit", "Edit",  "Comments", new { id = Model.CommentID }, new { @class = "btn btn-sm", @style = "color:white" });
