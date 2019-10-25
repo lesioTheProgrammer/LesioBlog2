@@ -2,10 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace LeisoBlog2_Repo.Abstract
+namespace LesioBlog2_Repo.Abstract
 {
     public interface ICommentRepo : IDisposable
     {
@@ -23,6 +21,16 @@ namespace LeisoBlog2_Repo.Abstract
 
         Comment FindCommentByID(int? id);
         void Delete(Comment comment);
+        int GetIdOfCommentCreator(int? id);
+        void UpdateContentAndPlusyAndEditDate(Comment comment);
+
+        IfPlusowalComment GetPlusComment(int? idComment, int? idUser);
+        void Add(CommentTag commTag);
+        void Add(IfPlusowalComment plusComm);
+        void UpdateOnlyPlusy(Comment comment);
+        void UpdateIfCommState(IfPlusowalComment ifplus);
+        List<CommentTag> GetAllCommTagsByCommId(int? id);
+
 
     }
 }

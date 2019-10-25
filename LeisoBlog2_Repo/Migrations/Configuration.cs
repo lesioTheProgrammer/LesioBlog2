@@ -1,6 +1,5 @@
-namespace LeisoBlog2_Repo.Migrations
+namespace LesioBlog2_Repo.Migrations
 {
-    using LeisoBlog2_Repo.Models;
     using LesioBlog2_Repo.Models;
     using LesioBlog2_Repo.Models.Context;
     using System;
@@ -23,12 +22,49 @@ namespace LeisoBlog2_Repo.Migrations
             //  to avoid creating duplicate seed data.
             SeedGenders(context);
             SeedUsers(context);
-            SeedWpis(context);
-            SeedComments(context);
-            SeedTags(context);
-            SeedWpisTag(context);
-            SeedCommentTag(context);
+          //  SeedWpis(context);
+          //  SeedComments(context);
+          //  SeedTags(context);
+          //  SeedWpisTag(context);
+          //  SeedCommentTag(context);
+          //  SeedIfPlus(context);
+          //  SeedIfPlusWpis(context);
+
+
         }
+
+        private void SeedIfPlusWpis(BlogContext context)
+        {
+
+            var ifplus = new IfPlusowalComment
+            {
+                CommentID = context.Comments.FirstOrDefault().CommentID,
+                UserID = context.Users.FirstOrDefault().UserID,
+                IfPlusWpis = false
+            };
+            context.Set<IfPlusowalComment>().AddOrUpdate(ifplus);
+
+            context.SaveChanges();
+        }
+
+
+
+
+
+        private void SeedIfPlus(BlogContext context)
+        {
+
+            var ifplus = new IfPlusowalWpis
+            {
+                WpisID = 2,
+                UserID = 3,
+                IfPlusWpis = false
+            };
+            context.Set<IfPlusowalWpis>().AddOrUpdate(ifplus);
+
+            context.SaveChanges();
+        }
+
 
         private void SeedComments(BlogContext context)
         {
@@ -39,13 +75,14 @@ namespace LeisoBlog2_Repo.Migrations
             {
                 var comment = new Comment()
                 {
-                    ID = i,
+                    CommentID = i,
                     UserID = context.Users.FirstOrDefault().UserID,
                     WpisID = context.Wpis.FirstOrDefault().WpisID,
                     Content = "Gerara" + i.ToString(),
                     AddingDate = DateTime.Now,
                     Plusy = random.Next(0, 100),
                     EditingDate = DateTime.Now.AddDays(1)
+
                 };
                 context.Set<Comment>().AddOrUpdate(comment);
             }
@@ -66,6 +103,7 @@ namespace LeisoBlog2_Repo.Migrations
                     AddingDate = DateTime.Now,
                     Plusy = random.Next(0, 100),
                     EditingDate = DateTime.Now.AddDays(3)
+
 
                 };
                 context.Set<Wpis>().AddOrUpdate(wpis);
@@ -89,18 +127,18 @@ namespace LeisoBlog2_Repo.Migrations
 
         private void SeedGenders(BlogContext context)
         {
-            
-                for (int i = 1; i < 3; i++)
-                {
+
+            for (int i = 1; i < 3; i++)
+            {
                 var gender = new Gender
                 {
                     GenderID = i,
-                    GenderName = i <2 ?  "Male" : "Female"
-                 };
+                    GenderName = i < 2 ? "Male" : "Female"
+                };
                 context.Set<Gender>().AddOrUpdate(gender);
 
 
-                }
+            }
             context.SaveChanges();
         }
 
@@ -119,7 +157,8 @@ namespace LeisoBlog2_Repo.Migrations
                     City = "Breslau" + i.ToString(),
                     Email = "lesio" + i.ToString() + "@gmail.com",
                     Password = "piespies" + i.ToString(),
-                    GenderID = i < 5 ? 1 : 2
+                    GenderID = i < 5 ? 1 : 2,
+                    Code = 232445 + i
                 };
                 context.Set<User>().AddOrUpdate(user);
             }

@@ -5,8 +5,8 @@ namespace LesioBlog2.App_Start
 {
     using System;
     using System.Web;
-    using LeisoBlog2_Repo.Abstract;
-    using LeisoBlog2_Repo.Concrete;
+    using LesioBlog2_Repo.Abstract;
+    using LesioBlog2_Repo.Concrete;
     using LesioBlog2_Repo.Models.Context;
     using Microsoft.Web.Infrastructure.DynamicModuleHelper;
 

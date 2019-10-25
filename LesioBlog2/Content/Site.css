@@ -23,3 +23,55 @@ select,
 textarea {
     max-width: 280px;
 }
+
+
+/*bootstrap ovverides*/
+
+
+
+
+.colorA {
+    position:absolute;
+    right:40px;
+    background-color:aqua;
+    border-radius: 8px;
+}
+
+.colorB {
+    position: absolute;
+    right: 40px;
+    background-color: chartreuse;
+    border-radius: 8px;
+}
+
+.colorC {
+    position: absolute;
+    right: 40px;
+    background-color: red;
+    border-radius: 8px;
+}
+
+
+
+.site-check {
+    vertical-align: baseline;
+}
+
+
+.btn-sm {
+    background-color:deepskyblue;
+    font-size:x-small;
+    margin-bottom:2px;
+    margin-left:2px;
+    
+}
+
+#papito {
+    position: relative;
+}
+
+#kid{
+    position:absolute;
+
+    right:0.6%;
+}

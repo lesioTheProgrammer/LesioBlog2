@@ -5,12 +5,32 @@
 }
 
 <h2>Wpis</h2>
-@if (Request.IsAuthenticated)
-{
-    <p>
-        @Html.ActionLink("Create New", "Create")
-    </p>
-}
+
+<p>
+    @if (Request.IsAuthenticated)
+    {
+        using (Html.BeginForm("Create", "Wpis", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+            <div style="margin-left: 30px; padding: 2px">
+                Dodaj wpis:
+                <br>
+                <textarea name="content" style="margin-top: 12px; min-width: 90%; border-radius: 0.25rem;  resize: none"></textarea>
+                <br />
+                <span style="margin-left: 0px">
+                    <div class="form-group">
+                        <div class=" col-md-1">
+                            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                            @Html.ValidationMessageFor(model => model.Content, "", new { @class = "text-danger" })
+                            <input type="submit" value="Send wpis" class="btn btn-secondary" />
+                        </div>
+                    </div>
+                </span>
+            </div>
+        }
+    }
+</p>
+
 
 <div>
     <span style="float:left">
@@ -20,10 +40,21 @@
         </span>
     </span>
     <span style="float:right ; padding:4px">
-        <span>
-            <button>
-                @Html.DisplayFor(modelItem => Model.Plusy)
-            </button>
+        <span class="">
+            @Html.AntiForgeryToken()
+            @if (Request.IsAuthenticated)
+            {
+                <button class="colorA js-toggle-plusing"
+                        data-wpis-id="@Model.WpisID" data-plusy-count="@Model.Plusy">
+                    @Html.DisplayFor(modelitem => Model.Plusy)
+                </button>
+            }
+            else
+            {
+                <span style="float:right; padding: 0px">
+                    @Html.DisplayFor(modelItem => Model.Plusy)
+                </span>
+            }
         </span>
     </span>
 </div>
@@ -49,6 +80,9 @@
             }
         </div>
     </div>
+    <div>
+        @Html.Partial("~/Views/Comments/_CommentAddPartial.cshtml", new ViewDataDictionary { { "WpisID", Model.WpisID } })
+    </div>
 
     <div style="border: solid 2px !important">
         @foreach (var Model2 in Model.Comments.OrderByDescending(x => x.Plusy))
@@ -60,10 +94,23 @@
                         @Html.DisplayFor(modelModel => Model.AddingDate)
                     </span>
                     <span>
-                        <span style="float:right; padding: 0px">
-                            <button>
-                                @Html.DisplayFor(modelModel => Model2.Plusy)
-                            </button>
+                        <span style="float:right ; padding:0px">
+                            <span class="">
+                                @Html.AntiForgeryToken()
+                                @if (Request.IsAuthenticated)
+                                {
+                                    <button class="colorA js-toggle-plusing2"
+                                            data-comm-id="@Model2.CommentID" data-plusy-count2="@Model2.Plusy">
+                                        @Html.DisplayFor(modelitem => Model2.Plusy)
+                                    </button>
+                                }
+                                else
+                                {
+                                    <span style="float:right; padding: 0px">
+                                        @Html.DisplayFor(modelItem => Model2.Plusy)
+                                    </span>
+                                }
+                            </span>
                         </span>
                     </span>
                 </div>
@@ -92,3 +139,93 @@
         }
     </div>
 </div>
+
+
+
+
+@section scripts
+{
+    <script>
+
+        $(document).ready(function () {
+            $(".js-toggle-plusing").click(function (e) {
+
+                debugger
+                var token = $('input[name=__RequestVerificationToken]').val();
+                var wpis = {};
+                wpis["wpisID"] = $(e.target).attr("data-wpis-id");
+                wpis["plusy"] = $(e.target).attr("data-plusy-count");
+                var theData = $.extend({}, token, wpis, true);
+                $.ajax({
+                    context: this,
+                    type: "POST",
+                    url: "/Wpis/AddPlus",
+                    data: {__RequestVerificationToken: token, wpis: theData},
+                    success: function (result) {
+                        var plusing = result.plusy;
+                        var resultCheck = result.result;
+                        debugger;
+                        if (resultCheck) {
+                            $(e.target).removeClass("colorA")
+                                .addClass("colorB")
+                                .text(plusing);
+
+                        }
+                        else {
+                            $(e.target)
+                                .removeClass("colorB")
+                                .addClass("colorA")
+                                 .text(plusing);
+                        }
+                    }
+                });
+            });
+        })
+
+        //komentarz
+        $(document).ready(function () {
+            $(".js-toggle-plusing2").click(function (e) {
+
+                debugger
+                var token = $('input[name=__RequestVerificationToken]').val();
+                var comment = {};
+                comment["commentID"] = $(e.target).attr("data-comm-id");
+                comment["plusy"] = $(e.target).attr("data-plusy-count2");
+                var theData = $.extend({}, token, comment, true);
+                $.ajax({
+                    context: this,
+                    type: "POST",
+                    url: "/Comments/AddPlus",
+                    data: {__RequestVerificationToken: token, comment: theData},
+                    success: function (result) {
+                        var plusing = result.plusy;
+                        var resultCheck = result.result;
+                        debugger;
+                        if (resultCheck) {
+                            $(e.target).removeClass("colorA")
+                                .addClass("colorB")
+                                .text(plusing);
+                            
+                        }
+                        else {
+                            $(e.target)
+                                .removeClass("colorB")
+                                .addClass("colorA")
+                                 .text(plusing);
+                        }
+                    }
+                });
+            });
+        })
+
+
+
+
+
+
+
+
+
+
+    </script>
+}
