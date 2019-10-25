@@ -98,7 +98,7 @@ namespace LesioBlog2.Controllers
                 }
             }
 
-            if (commToPlus != null && User.Identity.Name != commToPlus.User.NickName && !checkWpisState)
+            if (commToPlus != null && User.Identity.Name.ToLower() != commToPlus.User.NickName.ToLower() && !checkWpisState)
             {
                 commToPlus.Plusy = commToPlus.Plusy + 1;
                 ifCommPlus = _comm.GetPlusComment(commToPlus.CommentID, currentlyLoggedUserID);
@@ -113,7 +113,7 @@ namespace LesioBlog2.Controllers
             }
 
 
-            else if (commToPlus != null && User.Identity.Name != commToPlus.User.NickName && checkWpisState)
+            else if (commToPlus != null && User.Identity.Name.ToLower() != commToPlus.User.NickName.ToLower() && checkWpisState)
             {
                 commToPlus.Plusy = commToPlus.Plusy - 1;
                 ifCommPlus = _comm.GetPlusComment(commToPlus.CommentID, currentlyLoggedUserID);
@@ -131,23 +131,6 @@ namespace LesioBlog2.Controllers
             }
 
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         // POST: Comments/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.

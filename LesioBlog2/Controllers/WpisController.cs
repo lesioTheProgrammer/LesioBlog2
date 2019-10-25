@@ -91,7 +91,7 @@ namespace LesioBlog2.Controllers
                 }
             }
 
-            if (wpisToPlus != null && User.Identity.Name != wpisToPlus.User.NickName && !checkWpisState)
+            if (wpisToPlus != null && User.Identity.Name.ToLower() != wpisToPlus.User.NickName.ToLower() && !checkWpisState)
             {
                 wpisToPlus.Plusy = wpisToPlus.Plusy + 1;
                 IFWpisPlus = _wpis.GetPlusWpis(wpisToPlus.WpisID, currentlyLoggedUserID);
@@ -107,7 +107,7 @@ namespace LesioBlog2.Controllers
             }
 
 
-            else if (wpisToPlus != null && User.Identity.Name != wpisToPlus.User.NickName && checkWpisState)
+            else if (wpisToPlus != null && User.Identity.Name.ToLower() != wpisToPlus.User.NickName.ToLower() && checkWpisState)
             {
                 wpisToPlus.Plusy = wpisToPlus.Plusy - 1;
                 IFWpisPlus = _wpis.GetPlusWpis(wpisToPlus.WpisID, currentlyLoggedUserID);
