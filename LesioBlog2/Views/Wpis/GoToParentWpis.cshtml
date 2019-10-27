@@ -4,7 +4,10 @@
     ViewBag.Title = "GoToParentWpis";
 }
 
-<h2>Wpis</h2>
+    <div style="margin-left:10px;">
+        <h2>Wpisy</h2>
+
+    </div>
 
 <p>
     @if (Request.IsAuthenticated)
@@ -22,7 +25,7 @@
                         <div class=" col-md-1">
                             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                             @Html.ValidationMessageFor(model => model.Content, "", new { @class = "text-danger" })
-                            <input type="submit" value="Send wpis" class="btn btn-secondary" />
+                            <input type="submit" value="Send wpis" class="btn btn-success" />
                         </div>
                     </div>
                 </span>
@@ -30,114 +33,118 @@
         }
     }
 </p>
-
-
-<div>
-    <span style="float:left">
+@*dodaj wpis*@
+<div id="papito">
+    <span style="float:left; margin-left:1.5%;" class="">
         Author: @Html.DisplayFor(modelItem => Model.User.NickName)
         <span style="font-size: 12px">
-            @Html.DisplayFor(modelItem => Model.AddingDate)
+
+            @Html.DisplayFor(modelItem => Model.AddingDate).ToString()
+        </span>
+        <span style="font-size: 12px">
+            Edited:
+            @Html.DisplayFor(modelItem => Model.EditingDate)
         </span>
     </span>
-    <span style="float:right ; padding:4px">
+    <span style="float:right ; padding:8px">
         <span class="">
             @Html.AntiForgeryToken()
             @if (Request.IsAuthenticated)
             {
-                <button class="colorA js-toggle-plusing"
-                        data-wpis-id="@Model.WpisID" data-plusy-count="@Model.Plusy">
-                    @Html.DisplayFor(modelitem => Model.Plusy)
-                </button>
+                <div id="kid">
+                    <button class="colorA js-toggle-plusing"
+                            data-wpis-id="@Model.WpisID" data-plusy-count="@Model.Plusy">
+                        @Html.DisplayFor(modelitem => Model.Plusy)
+                    </button>
+                </div>
             }
             else
             {
-                <span style="float:right; padding: 0px">
+                <div id="kid" style="margin-right:40px;">
                     @Html.DisplayFor(modelItem => Model.Plusy)
-                </span>
+                </div>
+
             }
         </span>
     </span>
 </div>
+
+@*content*@
 <div>
-    <div style="border: solid 2px !important">
+    <div style="border:groove 5px; border-radius:10px; border-color:lavenderblush;  background-color:ghostwhite; margin-left:1%; margin-right:1%">
         <br>
         @Html.DisplayFor(modelItem => Model.Content)
         <br />
         <div style="padding-bottom: 0px; font-size: 12px">
             @if (Request.IsAuthenticated)
             {
-                @Html.ActionLink("Details", "Details", new { id = Model.WpisID })
-
+                @Html.ActionLink("Details", "Details", new { id = Model.WpisID }, new { @class = "btn btn-sm", @style = "color:white" })
 
                 if (System.Web.HttpContext.Current.User.Identity.Name.ToLower() == Model.User.NickName.ToLower())
-                {
-                    <span> || </span>
-                    @Html.ActionLink("Edit", "Edit", new { id = Model.WpisID });
-                    <span> || </span>
-
-                    @Html.ActionLink("Delete", "Delete", new { id = Model.WpisID })
+                { <span style="margin-left:0.1%;"></span>
+                    @Html.ActionLink("Edit", "Edit", new { id = Model.WpisID }, new { @class = "btn btn-sm", @style = "color:white" });
+                    <span style="margin-left:0.1%;"></span>
+                    @Html.ActionLink("Delete", "Delete", new { id = Model.WpisID }, new { @class = "btn btn-sm", @style = "color:white" })
                 }
             }
         </div>
     </div>
     <div>
-        @Html.Partial("~/Views/Comments/_CommentAddPartial.cshtml", new ViewDataDictionary { { "WpisID", Model.WpisID } })
+        @*Tu o dodanie komentarza*@
+        <div>
+            @Html.Partial("~/Views/Comments/_CommentAddPartial.cshtml", new ViewDataDictionary { { "WpisID", Model.WpisID } })
+        </div>
     </div>
 
-    <div style="border: solid 2px !important">
-        @foreach (var Model2 in Model.Comments.OrderByDescending(x => x.Plusy))
-        {
-            <div style="border-bottom:dashed 2px;">
-                <div style="margin-left: 30px; padding: 2px">
-                    Author: @Html.DisplayFor(modelModel => Model2.User.NickName)
-                    <span style="font-size: 12px">
-                        @Html.DisplayFor(modelModel => Model.AddingDate)
-                    </span>
-                    <span>
-                        <span style="float:right ; padding:0px">
-                            <span class="">
-                                @Html.AntiForgeryToken()
-                                @if (Request.IsAuthenticated)
-                                {
-                                    <button class="colorA js-toggle-plusing2"
-                                            data-comm-id="@Model2.CommentID" data-plusy-count2="@Model2.Plusy">
-                                        @Html.DisplayFor(modelitem => Model2.Plusy)
-                                    </button>
-                                }
-                                else
-                                {
-                                    <span style="float:right; padding: 0px">
-                                        @Html.DisplayFor(modelItem => Model2.Plusy)
-                                    </span>
-                                }
-                            </span>
-                        </span>
-                    </span>
-                </div>
-                <div style="margin-left:30px;padding: 5px;">
-                    @Html.DisplayFor(modelModel => Model2.Content)
-                    <div style="padding-bottom: 0px; font-size: 12px">
+
+    @*komenty*@
+
+
+<div style="">
+    @foreach (var item2 in Model.Comments.OrderBy(x => x.AddingDate))
+    {
+        <div style="border:groove 5px; border-radius:10px; border-color:lavenderblush;  background-color:honeydew; margin-left:5%; margin-right:1%">
+
+            <div style="margin-left: 0%; padding: 0px" class="">
+                Author: @Html.DisplayFor(modelItem => item2.User.NickName)
+                <span style="font-size: 12px">
+                    @Html.DisplayFor(modelItem => item2.AddingDate)
+                </span>
+                <span style="float:right ; padding:0px">
+                    <span class="">
+                        @Html.AntiForgeryToken()
                         @if (Request.IsAuthenticated)
                         {
-                            @Html.ActionLink("Details", "Details", new { id = Model.WpisID })
-
-
-                            if (System.Web.HttpContext.Current.User.Identity.Name.ToLower() == Model.User.NickName.ToLower())
-                            {
-                                <span> || </span>
-                                @Html.ActionLink("Edit", "Edit", new { id = Model.WpisID });
-                                <span> || </span>
-
-                                @Html.ActionLink("Delete", "Delete", new { id = Model.WpisID })
-                            }
+                            <div id="kid">
+                                <button class="colorA js-toggle-plusing2"
+                                        data-comm-id="@item2.CommentID" data-plusy-count2="@item2.Plusy">
+                                    @Html.DisplayFor(modelitem => item2.Plusy)
+                                </button>
+                            </div>
                         }
-                    </div>
-                </div>
+                        else
+                        {
+                            <div id="kid" style="margin-right:40px;">
 
+                                @Html.DisplayFor(modelItem => item2.Plusy)
+                            </div>
+                        }
+                    </span>
+                </span>
+
+                <br>
+                @Html.DisplayFor(modelItem => item2.Content)
+                <br />
             </div>
-
-        }
-    </div>
+            <div style="padding-bottom: 0px; font-size: 12px">
+                @Html.Partial("~/Views/Comments/_CommentPartial.cshtml", item2)
+            </div>
+        </div>
+        <div style="padding-top:5px;">
+        </div>
+    }
+    <div style="padding-top:10px;"></div>
+</div>
 </div>
 
 
