@@ -9,6 +9,7 @@ namespace LesioBlog2_Repo.Abstract
     {
         IQueryable<Wpis> GetWpis();
         List<Wpis> GetWpisByUserNickName(string name);
+        List<Wpis> GetWpisCointaintnCommWithNickname(string name);
         Wpis GetWpisById(int? id);
         void SaveChanges();
         void Add(Wpis wpis);

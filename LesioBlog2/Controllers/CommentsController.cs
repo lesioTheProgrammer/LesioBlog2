@@ -25,16 +25,7 @@ namespace LesioBlog2.Controllers
         // GET: Comments
         public ActionResult Index(string userNickName)
         {
-            var comments = _comm.GetComment();
-            if (string.IsNullOrEmpty(userNickName))
-            {
-                return View(comments.ToList());
-            }
-            else
-            {
-                comments = _comm.GetCommentByUserNickName(userNickName).AsQueryable();
-            }
-            return View(comments);
+            return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
         }
 
@@ -42,29 +33,15 @@ namespace LesioBlog2.Controllers
         public ActionResult Details(int? id)
         {
 
-            var comment = _comm.GetCommentById(id);
-
-            if (id == null)
-            {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            if (comment == null)
-            {
-                return HttpNotFound();
-            }
-            return View(comment);
         }
 
         // GET: Comments/Create
         public ActionResult Create()
         {
-            return View();
+            return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Gerarka hir");
+
         }
-
-
-
-
-
         [HttpPost]
         [AuthorizeUserAttribute]
         [ValidateAntiForgeryToken]

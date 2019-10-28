@@ -49,12 +49,49 @@ namespace LesioBlog2_Repo.Concrete
 
         public void Delete(Wpis wpis)
         {
-            //remove comments
+            //remove comments proper way
+            #region
             var commentsChildren = _db.Comments.Where(x => x.WpisID == wpis.WpisID).Select(x=>x);
-            foreach (var item in commentsChildren)
+            
+            var commentChildenlist = commentsChildren.ToList(); // to avoid dataReader excep - caused by iterating on IQueryable
+            foreach (var item in commentChildenlist)
             {
+                //komenty gerara 
+                var commTags = _db.CommentTags.Where(x => x.CommentID == item.CommentID).Select(x => x);
+                //lista wpistagow'
+                //Ilist because this allows to perform Savechanges in Foreach
+
+                IList<CommentTag> listaCommentLoop = _db.CommentTags.Where(x => x.CommentID == item.CommentID)
+                    .Select(x => x)
+                    .ToList();
+
+                foreach (var item2 in listaCommentLoop)
+                {
+                    var tagID = item2.TagID;
+                    //get list of ID 
+                    _db.CommentTags.Remove(item2);
+                    //save changes
+                    _db.SaveChanges();
+                    if (!_db.CommentTags.Any(x => x.TagID == tagID) && !_db.WpisTags.Any(x => x.TagID == tagID))
+                    {
+                        var tagToRemove = _db.Tags.Where(x => x.TagID == tagID).SingleOrDefault();
+                        _db.Tags.Remove(tagToRemove);
+                    }
+                }
+                IList<IfPlusowalComment> listaifPlusComm = _db.IfPlusowalComment
+                .Where(x => x.CommentID == item.CommentID)
+                .ToList();
+
+                foreach (var item3 in listaifPlusComm)
+                {
+                    _db.IfPlusowalComment.Remove(item3);
+                    _db.SaveChanges();
+                }
+
                 _db.Comments.Remove(item);
+
             }
+            #endregion
 
             //remove tags if are not used anywhere else
             var wpisTags = _db.WpisTags.Where(x => x.WpisID == wpis.WpisID).Select(x => x);
@@ -76,6 +113,15 @@ namespace LesioBlog2_Repo.Concrete
                     var tagToRemove =_db.Tags.Where(x => x.TagID == tagID).SingleOrDefault();
                     _db.Tags.Remove(tagToRemove);
                 }
+            }
+            IList<IfPlusowalWpis> listaIfPlusWpis = _db.IfPlusowalWpis
+              .Where(x => x.WpisID == wpis.WpisID)
+              .ToList();
+
+            foreach (var item in listaIfPlusWpis)
+            {
+                _db.IfPlusowalWpis.Remove(item);
+                _db.SaveChanges();
             }
 
 
@@ -145,6 +191,28 @@ namespace LesioBlog2_Repo.Concrete
             //else:
             return new List<Wpis>();
         }
+
+        public List<Wpis> GetWpisCointaintnCommWithNickname(string name)
+        {
+            var user = _db.Users.FirstOrDefault(x => x.NickName.ToLower() == name.ToLower());
+            if (user != null)
+            {
+                var wpis = _db.Wpis
+                    .Where (x=>x.Comments.Any(c=>c.UserID== user.UserID))
+                    .Include(x => x.Comments.Select(u => u.User))
+                    .Include(x => x.User)
+                    .ToList();
+                return wpis;
+
+            }
+            return new List<Wpis>();
+
+
+        }
+
+
+
+
 
         public int GetIdOfWpisCreator(int? id)
         {

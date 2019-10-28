@@ -4,18 +4,20 @@
 
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "User panel";
     Layout = "~/Views/Shared/_Layout.cshtml";
 
 }
+<div style="margin-left:10px;">
+    <h4>Search the user by the nickname or check your  profile details</h4>
 
-<h2>Search the user by the nickname or check your  profile details</h2>
+</div>
 
 @if (Request.IsAuthenticated)
 {
 
 
-    <table class="table">
+    <table class="table table-bordered table-dark">
 
         <tr>
             <th>
@@ -32,17 +34,14 @@
             </th>
 
             <th>
-                @Html.DisplayNameFor(model => model.Gender)
+                @Html.DisplayNameFor(model => model.Gender):
             </th>
             <th>
-                @Html.DisplayName("Comment count")
+                @Html.DisplayName("Comment count:")
             </th>
             <th>
-                @Html.DisplayName("Wpis count")
+                @Html.DisplayName("Wpis count:")
             </th>
-
-
-            <th></th>
         </tr>
 
         <tr>
@@ -64,15 +63,15 @@
             </td>
             <td>
                 @Html.DisplayFor(model => model.Comments.Count)
-                @Html.ActionLink("Go to user's comments", "Index", "Comments", new { userNickName = Model.NickName }, null)
+                @Html.ActionLink("Go to user's comments", "Index", "Wpis", new { userCommentNickname = Model.NickName }, null)
 
 
 
             </td>
             <td>
                 @Html.DisplayFor(model => model.Wpis.Count)
-                @Html.ActionLink("Go to user's wpis", "Index", "Wpis", new { userNickName = Model.NickName }, null )
-               
+                @Html.ActionLink("Go to user's wpis", "Index", "Wpis", new { userNickName = Model.NickName }, null)
+
             </td>
 
         </tr>
@@ -81,15 +80,16 @@
 
 
 }
-
-
-
 else
 {
+<div style=" margin-left:30px;">
     <h3> Please log in to search the user or view the user details.</h3>
-    @Html.ActionLink("Log In", "Login", "User")
-    <span>  ||  </span>
-    @Html.ActionLink("Register", "Registration", "User")
+    <button class=" btn-success" onclick="location.href='@Url.Action("Login", "User")';return false;">Sign in</button>
+    <button class=" btn-dark" onclick="location.href='@Url.Action("Registration", "User")';return false;">Register</button>
+
+</div>
+   
+
 }
 
 
@@ -100,15 +100,28 @@ else
         {
             <div>
                 <fieldset>
-                    <legend>Search for another user</legend>
-                    <div class="editor-label">
-                        @Html.Label("Search another user by name")
-                    </div>
-                    <div class="editor-field">
-                        @Html.TextBox("Name")
-                        @Html.ValidationMessageFor(x => x.NickName)
-                    </div>
-                    <input type="submit" value="Search" />
+                    <div style="margin-left:30px;">
+                        <div class="editor-label">
+                            @Html.Label("Search another user by name")
+                        </div>
+                        <div style="border-radius:5px;">
+
+                        </div>
+
+                        <div class="editor-field" style="border-radius:5px">
+                            <form class="form-inline my-2 my-lg-0" asp-controller="User" asp-action="Index" method="Get">
+                                <input class="form-control mr-sm-2" type="text" placeholder="Search user" name="name">
+                                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                @Html.ValidationMessageFor(model => model.NickName, "", new { @class = "text-danger" })
+                                <div style=" margin-top:10px;">
+                                </div>
+                                <button class="btn btn-success my-2 my-sm-0" type="submit">Search</button>
+                            </form>
+
+
+
+                        </div>
+
                 </fieldset>
             </div>
 

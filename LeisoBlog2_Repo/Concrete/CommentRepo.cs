@@ -58,6 +58,16 @@ namespace LesioBlog2_Repo.Concrete
                 }
             }
 
+            IList<IfPlusowalComment> listaifPlusComm = _db.IfPlusowalComment
+                .Where(x => x.CommentID == comment.CommentID)
+                .ToList();
+
+            foreach (var item in listaifPlusComm)
+            {
+                _db.IfPlusowalComment.Remove(item);
+                _db.SaveChanges();
+            }
+
             _db.Comments.Remove(comment);
         }
 

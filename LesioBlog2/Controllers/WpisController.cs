@@ -25,7 +25,7 @@ namespace LesioBlog2.Controllers
             this._user = user;
         }
         // GET: Wpis
-        public ActionResult Index(string userNickName, string tagName, int? page)
+        public ActionResult Index(string userNickName, string tagName, int? page, string userCommentNickname)
         {
 
             int currentPage = page ?? 1;
@@ -38,13 +38,13 @@ namespace LesioBlog2.Controllers
                 var wpis = _wpis.GetWpis();
                  var wpisList = wpis.ToList();
 
-            if (string.IsNullOrEmpty(userNickName) && string.IsNullOrEmpty(tagName))
+            if (string.IsNullOrEmpty(userNickName) && string.IsNullOrEmpty(tagName) && string.IsNullOrEmpty(userCommentNickname))
             {
                 return View(wpisList.ToPagedList<Wpis>(currentPage, onPage));
             }
             else if (!string.IsNullOrEmpty(userNickName))
             {
-                //get wpis by user id
+                //get wpis by user name
                 wpis = _wpis.GetWpisByUserNickName(userNickName).AsQueryable();
                 wpisList = wpis.ToList();
             }
@@ -52,6 +52,13 @@ namespace LesioBlog2.Controllers
             {
                 wpis = _tag.getWpisWithSelectedTag(tagName).AsQueryable();
                 wpisList = wpis.ToList();
+            }
+            else if (!string.IsNullOrEmpty(userCommentNickname))
+            {
+                //get wpis cointating commentName
+                wpis = _wpis.GetWpisCointaintnCommWithNickname(userCommentNickname).AsQueryable();
+                wpisList = wpis.ToList();
+
             }
             return View(wpisList.ToPagedList<Wpis>(currentPage, onPage));
         }
@@ -149,16 +156,7 @@ namespace LesioBlog2.Controllers
         public ActionResult Details(int? id)
         {
 
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Wpis wpis = _wpis.GetWpisById(id);
-            if (wpis == null)
-            {
-                return HttpNotFound();
-            }
-            return View(wpis);
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Gerara pls");
 
         }
 
@@ -166,7 +164,7 @@ namespace LesioBlog2.Controllers
         [AuthorizeUserAttribute]
         public ActionResult Create()
         {
-            return View();
+           return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
         }
 
         // POST: Wpis/Create
@@ -495,6 +493,8 @@ namespace LesioBlog2.Controllers
         public ActionResult DeleteConfirmed(int id)
         {
             Wpis wpis = _wpis.GetWpisById(id);
+
+         
 
             _wpis.Delete(wpis);
             _wpis.SaveChanges();

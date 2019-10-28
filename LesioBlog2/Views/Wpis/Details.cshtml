@@ -9,40 +9,7 @@
 <div>
     <h4>Wpis</h4>
     <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.User.NickName)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.User.NickName)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Content)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Content)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.AddingDate)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.AddingDate)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Plusy)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Plusy)
-        </dd>
-
-    </dl>
+    
 </div>
 <p>
     @if (System.Web.HttpContext.Current.User.Identity.Name.ToLower() == Model.User.NickName.ToLower())

@@ -52,7 +52,6 @@
     <td>
         @if (Request.IsAuthenticated)
         {
-            @Html.ActionLink("Details", "Details", new { id = item.WpisID })
 
 
             if (System.Web.HttpContext.Current.User.Identity.Name.ToLower() == item.User.NickName.ToLower())
