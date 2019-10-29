@@ -32,17 +32,14 @@ namespace LesioBlog2_Repo.Concrete
             _db.IfPlusowalComment.Add(plusComm);
         }
 
-
-
         public void Delete(Comment comment)
         {
             //remove tags if are not used anywhere else
-            var commTags = _db.CommentTags.Where(x => x.CommentID == comment.CommentID).Select(x => x);
+            var commTags = _db.CommentTags.Where(x => x.CommentID == comment.CommentID);
             //lista wpistagow'
             //Ilist because this allows to perform Savechanges in Foreach
-            IList<CommentTag> listaforLoop = _db.CommentTags.Where(x => x.CommentID == comment.CommentID)
-                .Select(x => x)
-                .ToList();
+            IList<CommentTag> listaforLoop = _db.CommentTags.Where(x => x.CommentID == comment.CommentID).ToList();
+
 
             foreach (var item in listaforLoop)
             {
@@ -53,7 +50,12 @@ namespace LesioBlog2_Repo.Concrete
                 _db.SaveChanges();
                 if (!_db.CommentTags.Any(x => x.TagID == tagID) && !_db.WpisTags.Any(x => x.TagID == tagID))
                 {
-                    var tagToRemove = _db.Tags.Where(x => x.TagID == tagID).SingleOrDefault();
+                    var tagToRemove = _db.Tags.FirstOrDefault(x => x.TagID == tagID);
+                    if (tagToRemove == null)
+                    {
+                        break; //???
+                    }
+
                     _db.Tags.Remove(tagToRemove);
                 }
             }
@@ -75,34 +77,32 @@ namespace LesioBlog2_Repo.Concrete
 
         public Comment GetCommentById(int? id)
         {
-            var comment = _db.Comments.Include(a=>a.User).Include(x=>x.CommentTags).SingleOrDefault(x => x.CommentID == id);
+            var comment = _db.Comments.Include(a=>a.User).Include(x=>x.CommentTags).FirstOrDefault(x => x.CommentID == id);
+            if (comment == null)
+            {
+                return new Comment();
+            }
             return comment;
         }
 
         public ICollection<Comment>  GetCommentByUserID(int? id)
         {
-            var comment = _db.Comments.Where(x => x.UserID == id).Select(x=>x);
-
-            var list = comment.ToList();
-
-            return list;
-
+            var comment = _db.Comments.Where(x => x.UserID == id).ToList();
+            return comment;
         }
 
         public IfPlusowalComment GetPlusComment(int? idComment, int? idUser)
         {
-            var plusedComment = _db.IfPlusowalComment
-                .Where(x => x.CommentID == idComment)
-                .Where(x => x.UserID == idUser)
-                .SingleOrDefault();
+            var plusedComment = _db.IfPlusowalComment.FirstOrDefault(x => x.CommentID == idComment && x.UserID == idUser);
+            if (plusedComment == null)
+            {
+                //null ref ex in controler OK
+            }
             return plusedComment;
         }
-
-
-
         public List<Comment> GetCommentByUserNickName(string name)
         {
-            var user = _db.Users.SingleOrDefault(x => x.NickName.ToLower() == name.ToLower());
+            var user = _db.Users.FirstOrDefault(x => x.NickName.ToLower() == name.ToLower());
             if (user != null)
             {
                 var comments = _db.Comments.Include("Wpis").Include("User").Where(x => x.UserID == user.UserID);
@@ -112,7 +112,6 @@ namespace LesioBlog2_Repo.Concrete
             {
                 return new List<Comment>();
             }
-
         }
 
         public IQueryable<Comment> GetComment()
@@ -133,8 +132,11 @@ namespace LesioBlog2_Repo.Concrete
 
             int id = comment.CommentID;
 
-            data = _db.Comments.AsNoTracking().SingleOrDefault(x => x.CommentID == id).AddingDate;
-
+            data = _db.Comments.AsNoTracking().FirstOrDefault(x => x.CommentID == id).AddingDate;
+            if (data == null)
+            {
+                return new DateTime(); 
+            }
 
             return data;
         }
@@ -142,7 +144,11 @@ namespace LesioBlog2_Repo.Concrete
 
         public Comment FindCommentByID(int? id)
         {
-            var comment = _db.Comments.SingleOrDefault(x => x.CommentID == id);
+            var comment = _db.Comments.FirstOrDefault(x => x.CommentID == id);
+            if (comment == null)
+            {
+                return new Comment();
+            }
             return comment;
         }
 
@@ -188,8 +194,12 @@ namespace LesioBlog2_Repo.Concrete
 
         public int GetIdOfCommentCreator(int? id)
         {
-            var ID = _db.Comments.SingleOrDefault(x => x.CommentID == id).UserID;
-            return ID;
+            int? ID = _db.Comments.FirstOrDefault(x => x.CommentID == id).UserID;
+            if (ID == null)
+            {
+                return 0;
+            }
+            return ID.GetValueOrDefault();
         }
 
 
@@ -212,19 +222,8 @@ namespace LesioBlog2_Repo.Concrete
         public List<CommentTag> GetAllCommTagsByCommId(int? id)
         {
 
-            var returning = _db.CommentTags.Where(x => x.CommentID == id).Select(x => x).ToList();
+            var returning = _db.CommentTags.Where(x => x.CommentID == id).ToList();
             return returning;
         }
-
-
-        
-
-
-
-
-
-
-
-
     }
 }

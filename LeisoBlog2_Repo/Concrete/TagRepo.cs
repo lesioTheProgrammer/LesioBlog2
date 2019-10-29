@@ -26,7 +26,11 @@ namespace LesioBlog2_Repo.Concrete
 
         public Tag GetTagByName(string name)
         {
-            var tag = _db.Tags.Include("WpisTag").SingleOrDefault(x => x.TagName == name);
+            var tag = _db.Tags.Include("WpisTag").FirstOrDefault(x => x.TagName == name);
+            if (tag == null)
+            {
+                return new Tag();
+            }
             return tag;
         }
 
@@ -38,16 +42,17 @@ namespace LesioBlog2_Repo.Concrete
 
 
         public string GetTagNamesByTagID(int? id)
-        {
-            var returnList = _db.Tags.Where(x => x.TagID == id).Select(x => x.TagName).SingleOrDefault();
+        { 
+        //    var returnList = _db.Tags.Where(x => x.TagID == id).Select(x => x.TagName).SingleOrDefault();
+            var returnList = _db.Tags.FirstOrDefault(x => x.TagID == id).TagName;
             return returnList;
         }
 
-        
+
         public void RemoveTagsIfNotUsed(int id)
         {
-                var tagToRemove = _db.Tags.Where(x => x.TagID == id).SingleOrDefault();
-                _db.Tags.Remove(tagToRemove);
+            var tagToRemove = _db.Tags.FirstOrDefault(x => x.TagID == id);
+            _db.Tags.Remove(tagToRemove);
         }
 
         public bool IfWpisOrCommentsHasTag(int id)
@@ -55,15 +60,14 @@ namespace LesioBlog2_Repo.Concrete
             bool hastag = false;
             if (!_db.WpisTags.Any(x => x.TagID == id) && !_db.CommentTags.Any(x => x.TagID == id))
             {
-                hastag = true ;
+                hastag = true;
             }
             return hastag;
         }
 
         public void RemoveWpisTag(int id, int id2)
         {
-            var listaforLoop = _db.WpisTags.Where(x => x.WpisID == id2 && x.TagID == id)
-               .Select(x => x).SingleOrDefault();
+            var listaforLoop = _db.WpisTags.FirstOrDefault(x => x.WpisID == id2 && x.TagID == id);
             _db.WpisTags.Remove(listaforLoop);
             //save changes
             _db.SaveChanges();
@@ -73,29 +77,28 @@ namespace LesioBlog2_Repo.Concrete
 
         public void RemoveCommentTag(int id, int id2)
         {
-            var listaforLoop = _db.CommentTags.Where(x => x.CommentID == id2 && x.TagID == id)
-               .Select(x => x).SingleOrDefault();
+            var listaforLoop = _db.CommentTags.FirstOrDefault(x => x.CommentID == id2 && x.TagID == id);
             _db.CommentTags.Remove(listaforLoop);
             //save changes
             _db.SaveChanges();
-
         }
-
-       
-
 
         public List<Wpis> getWpisWithSelectedTag(string tagName)
         {
-            //first get tahId by tagName
+            //first get tagId by tagName
+            //int tagIdByTagName = _db.Tags
+            //    .Where(x => x.TagName == tagName)
+            //    .Select(x => x.TagID)
+            //    .SingleOrDefault();
+
             int tagIdByTagName = _db.Tags
-                .Where(x => x.TagName == tagName)
-                .Select(x=>x.TagID)
-                .SingleOrDefault();
+               .FirstOrDefault(x => x.TagName == tagName).TagID;
+
 
 
             var listOfWpisIncludingTags = _db.WpisTags
-                .Where(x=>x.TagID == tagIdByTagName)
-                .Select(x=>x.Wpis)
+                .Where(x => x.TagID == tagIdByTagName)
+                .Select(x => x.Wpis)
                 .Include(x => x.Comments.Select(u => u.User))
                 .Include(x => x.User)
                 .ToList();

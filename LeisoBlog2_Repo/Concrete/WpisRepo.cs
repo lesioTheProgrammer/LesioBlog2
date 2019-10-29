@@ -34,37 +34,29 @@ namespace LesioBlog2_Repo.Concrete
         public void Add(IfPlusowalWpis ifplusowal)
         {
             _db.IfPlusowalWpis.Add(ifplusowal);
-
         }
 
         public IfPlusowalWpis GetPlusWpis(int? idWpis, int? idUser)
         {
             var plusedWpis = _db.IfPlusowalWpis
-                .Where(x => x.WpisID == idWpis)
-                .Where(x => x.UserID == idUser)
-                .SingleOrDefault();
+                .FirstOrDefault(x => x.WpisID == idWpis && x.UserID == idUser);
+            //null ref ex in controller OK
             return plusedWpis;
         }
-
 
         public void Delete(Wpis wpis)
         {
             //remove comments proper way
             #region
-            var commentsChildren = _db.Comments.Where(x => x.WpisID == wpis.WpisID).Select(x=>x);
-            
+            var commentsChildren = _db.Comments.Where(x => x.WpisID == wpis.WpisID);
             var commentChildenlist = commentsChildren.ToList(); // to avoid dataReader excep - caused by iterating on IQueryable
             foreach (var item in commentChildenlist)
             {
                 //komenty gerara 
-                var commTags = _db.CommentTags.Where(x => x.CommentID == item.CommentID).Select(x => x);
+                var commTags = _db.CommentTags.Where(x => x.CommentID == item.CommentID);
                 //lista wpistagow'
                 //Ilist because this allows to perform Savechanges in Foreach
-
-                IList<CommentTag> listaCommentLoop = _db.CommentTags.Where(x => x.CommentID == item.CommentID)
-                    .Select(x => x)
-                    .ToList();
-
+                IList<CommentTag> listaCommentLoop = _db.CommentTags.Where(x => x.CommentID == item.CommentID).ToList();
                 foreach (var item2 in listaCommentLoop)
                 {
                     var tagID = item2.TagID;
@@ -74,33 +66,30 @@ namespace LesioBlog2_Repo.Concrete
                     _db.SaveChanges();
                     if (!_db.CommentTags.Any(x => x.TagID == tagID) && !_db.WpisTags.Any(x => x.TagID == tagID))
                     {
-                        var tagToRemove = _db.Tags.Where(x => x.TagID == tagID).SingleOrDefault();
+                        var tagToRemove = _db.Tags.FirstOrDefault(x => x.TagID == tagID);
+                        if (tagToRemove == null)
+                        {
+                            break; //???
+                        }
                         _db.Tags.Remove(tagToRemove);
                     }
                 }
                 IList<IfPlusowalComment> listaifPlusComm = _db.IfPlusowalComment
-                .Where(x => x.CommentID == item.CommentID)
-                .ToList();
+                .Where(x => x.CommentID == item.CommentID).ToList();
 
                 foreach (var item3 in listaifPlusComm)
                 {
                     _db.IfPlusowalComment.Remove(item3);
                     _db.SaveChanges();
                 }
-
                 _db.Comments.Remove(item);
-
             }
             #endregion
-
             //remove tags if are not used anywhere else
-            var wpisTags = _db.WpisTags.Where(x => x.WpisID == wpis.WpisID).Select(x => x);
+            var wpisTags = _db.WpisTags.Where(x => x.WpisID == wpis.WpisID);
             //lista wpistagow'
             //Ilist because this allows to perform Savechanges in Foreach
-            IList<WpisTag> listaforLoop = _db.WpisTags.Where(x => x.WpisID == wpis.WpisID)
-                .Select(x => x)
-                .ToList();
-
+            IList<WpisTag> listaforLoop = _db.WpisTags.Where(x => x.WpisID == wpis.WpisID).ToList();
             foreach (var item in listaforLoop)
             {
                 var tagID = item.TagID;
@@ -110,31 +99,23 @@ namespace LesioBlog2_Repo.Concrete
                 _db.SaveChanges();
                 if (!_db.WpisTags.Any(x=>x.TagID == tagID) && !_db.CommentTags.Any(x => x.TagID == tagID))
                 {
-                    var tagToRemove =_db.Tags.Where(x => x.TagID == tagID).SingleOrDefault();
+                    var tagToRemove = _db.Tags.FirstOrDefault(x => x.TagID == tagID);
+                    if (tagToRemove == null)
+                    {
+                        break; //???
+                    }
                     _db.Tags.Remove(tagToRemove);
                 }
             }
             IList<IfPlusowalWpis> listaIfPlusWpis = _db.IfPlusowalWpis
-              .Where(x => x.WpisID == wpis.WpisID)
-              .ToList();
-
+              .Where(x => x.WpisID == wpis.WpisID).ToList();
             foreach (var item in listaIfPlusWpis)
             {
                 _db.IfPlusowalWpis.Remove(item);
                 _db.SaveChanges();
             }
-
-
             _db.Wpis.Remove(wpis);
         }
-
-        public void DeleteTagAndWpisTag(int? id)
-        {
-
-        }
-
-
-
         //disposing- garb collecting
         private bool disposed = false;
         protected virtual void Dispose(bool disposing)
@@ -153,12 +134,6 @@ namespace LesioBlog2_Repo.Concrete
             Dispose(true);
             GC.SuppressFinalize(this);
         }
-
-        public IQueryable<Wpis> GetPages(int? page, int? pagesize)
-        {
-            throw new NotImplementedException();
-        }
-
         public IQueryable<Wpis> GetWpis()
         {
             var listofWpis = _db.Wpis.Include(x => x.Comments).Include(x => x.User).Include(x=>x.Comments.Select(u=>u.User));
@@ -167,17 +142,18 @@ namespace LesioBlog2_Repo.Concrete
 
         public Wpis GetWpisById(int? id)
         {
-            var wpis = _db.Wpis.Include(x=>x.User).Include(x => x.WpisTags).Include(x => x.Comments.Select(c=>c.User)).SingleOrDefault(x => x.WpisID == id);
+            var wpis = _db.Wpis.Include(x=>x.User).Include(x => x.WpisTags).Include(x => x.Comments.Select(c=>c.User)).FirstOrDefault(x => x.WpisID == id);
+            if (wpis == null)
+            {
+                return new Wpis(); //??
+            }
             return wpis;
         }
 
         public ICollection<Wpis> GetWpisByUserID(int? id)
         {
-            //var wpis = _db.Wpis.Where(x => x.UserID == id);
-
-            var wpis = _db.Wpis.Where(x => x.UserID == id).Select(x=>x);
-            var list = wpis.ToList();
-            return list;
+            var wpis = _db.Wpis.Where(x => x.UserID == id).ToList();
+            return wpis;
         }
 
         public List<Wpis> GetWpisByUserNickName(string name)
@@ -206,21 +182,16 @@ namespace LesioBlog2_Repo.Concrete
 
             }
             return new List<Wpis>();
-
-
         }
-
-
-
-
-
         public int GetIdOfWpisCreator(int? id)
         {
-            int wpisUserId = _db.Wpis.SingleOrDefault(x => x.WpisID == id).UserID;
-            return wpisUserId;
+            int? wpisUserId = _db.Wpis.FirstOrDefault(x => x.WpisID == id).UserID;
+            if (wpisUserId == null)
+            {
+                return 0; //??
+            }
+            return wpisUserId.GetValueOrDefault();
         }
-
-
         public DateTime GetWpisWithAddDate(Wpis wpis)
         {
             DateTime data;
@@ -241,7 +212,11 @@ namespace LesioBlog2_Repo.Concrete
         public List<WpisTag> GetAllWpisTagsByWpisId(int? id)
         {
 
-            var returning = _db.WpisTags.Where(x => x.WpisID == id).Select(x => x).ToList();
+            var returning = _db.WpisTags.Where(x => x.WpisID == id).ToList();
+            if (returning == null)
+            {
+                return new List<WpisTag>();
+            }
             return returning;
         }
       
@@ -277,5 +252,9 @@ namespace LesioBlog2_Repo.Concrete
             _db.Entry(ifplus).Property("IfPlusWpis").IsModified = true;
         }
 
+        public IQueryable<Wpis> GetPages(int? page, int? pagesize)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

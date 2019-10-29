@@ -26,23 +26,31 @@ namespace LesioBlog2_Repo.Concrete
 
         public User GetUserByEmail(string email)
         {
-            var user = _db.Users.SingleOrDefault(u => u.Email.ToLower() == email.ToLower());
+            var user = _db.Users.FirstOrDefault(u => u.Email.ToLower() == email.ToLower());
+            if (user == null)
+            {
+                return new User();
+            }
             return user;
         }
 
         public User FindUserByID(int? id)
         {
-            var user = _db.Users.SingleOrDefault(u => u.UserID == id);
+            var user = _db.Users.FirstOrDefault(u => u.UserID == id);
+            if (user == null)
+            {
+                return new User();
+            }
+
             return user;
 
         }
 
         public string GetUserNicknameByEmail(string email)
         {
-            string nickname = "THIS USER HAS NO NICKNAME WHATS WRONG HELP";
+            string nickname = "";
             //mam usera po emailu tera wygrzebac jego nickname
-            var user = _db.Users.SingleOrDefault(x => x.Email.ToLower() == email.ToLower());
-
+            var user = _db.Users.FirstOrDefault(x => x.Email.ToLower() == email.ToLower());
             if (user != null)
             {
               nickname = user.NickName;
@@ -62,7 +70,7 @@ namespace LesioBlog2_Repo.Concrete
             {
                 return null;
             }
-            var currentlyLoggedUserId = _db.Users.SingleOrDefault(x=>x.NickName == userName).UserID;
+            var currentlyLoggedUserId = _db.Users.FirstOrDefault(x=>x.NickName == userName).UserID;
             return currentlyLoggedUserId;
 
         }
@@ -70,19 +78,23 @@ namespace LesioBlog2_Repo.Concrete
 
         public User GetUserByNickname(string nickname)
         {
-            var user = _db.Users.SingleOrDefault(x => x.NickName.ToLower() == nickname.ToLower());
+            var user = _db.Users.FirstOrDefault(x => x.NickName.ToLower() == nickname.ToLower());
+            if (user == null)
+            {
+                return new User();
+            }
             return user;
         }
 
         public User GetLoggedUser()
         {
-            var user =_db.Users.SingleOrDefault();
+            var user =_db.Users.FirstOrDefault();
+            if (user == null)
+            {
+                return new User();
+            }
             return user;
-
         }
-        
-
-
         public void SaveChanges()
         {
             _db.SaveChanges();
@@ -147,12 +159,12 @@ namespace LesioBlog2_Repo.Concrete
 
         public User GetUserByID(int id)
         {
-             var user =  _db.Users.SingleOrDefault(x => x.UserID == id);
+             var user =  _db.Users.FirstOrDefault(x => x.UserID == id);
+            if (user == null)
+            {
+                user = new User();
+            }
             return user;
         }
-
-
-
-
     }
 }

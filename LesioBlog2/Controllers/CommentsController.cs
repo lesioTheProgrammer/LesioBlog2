@@ -132,11 +132,11 @@ namespace LesioBlog2.Controllers
             }
             comment.EditingDate = null;
 
+                var result = new { result = true };
             if (ModelState.IsValid)
             {
                 _comm.Add(comment);
                 _comm.SaveChanges();
-
 
                 MatchCollection matches = Regex.Matches(comment.Content, @"\B(\#[a-zA-Z0-9-,_]+\b)");
                 //wpis ID first important
@@ -160,10 +160,18 @@ namespace LesioBlog2.Controllers
                     _comm.Add(commTag);
                     _comm.SaveChanges();
                 }
-
+                //result = new { result = true };
+                //return Json(result,
+                //           JsonRequestBehavior.AllowGet); 
                 return RedirectToAction("Index", "Wpis");
             }
+                //result = new { result = false };
+                //return Json(result,
+                //       JsonRequestBehavior.AllowGet);
             return RedirectToAction("Index", "Wpis");
+
+
+            //  return RedirectToAction("Index", "Wpis");
         }
 
         // GET: Comments/Edit/5
