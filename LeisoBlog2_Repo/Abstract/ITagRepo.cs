@@ -19,6 +19,9 @@ namespace LesioBlog2_Repo.Abstract
 
         void RemoveWpisTag(int id, int id2);
         void RemoveCommentTag(int id, int id2);
+        bool CheckIfCommTagExist(int tagID, int commID);
+        bool CheckIfWpisTagExist(int tagID, int wpisID);
+
 
 
     }

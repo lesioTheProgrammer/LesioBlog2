@@ -233,7 +233,7 @@ namespace LesioBlog2.Controllers
                 //new content here
                 bool check = false;
                 MatchCollection matches = Regex.Matches(comment.Content, @"\B(\#[a-zA-Z0-9-,_]+\b)");
-                //jak wpis ma wogole tagi to idz:
+                //jak comment ma wogole tagi to idz:
                 if (comment.CommentTags != null)
                 {
                     foreach (var tag in matches)
@@ -287,18 +287,21 @@ namespace LesioBlog2.Controllers
                     if (check == false && matches.Count != 0)
                     {
                         bool enterLoop = true;
+                        var listOfMatches = new List<Tag>();
+                        foreach (var tagFake in matches)
+                        {
+                            var tag2 = _tag.GetTagByName(tagFake.ToString());
+                            listOfMatches.Add(tag2);
+                        }
                         //usuwaj z checklisty a nie z wpistagkowej bo jak 1 usuniesz a drugi zostawisz to lipa
                         foreach (var item in listaCommentTagsActual)
                         {
                             //get tag ID by match i usun pozostale?
                             //jak matchesTag jest w listofTagsActual to zostaw jak nie to gerara
-                            foreach (var tag in matches)
+                            //nowa lista tagow
+                            foreach (var tag in listOfMatches)
                             {
-                                var tagz = _tag.GetTagByName(tag.ToString().ToLower());
-                                //   var TagName =_tag.GetTagNamesByTagID(tagz.TagID);
-                                //   var itemName = _tag.GetTagNamesByTagID(item.TagID);
-
-                                if (item.TagID == tagz.TagID)
+                                if (listOfMatches.Any(x=>x.TagID == item.TagID))
                                 {
                                     enterLoop = false;
                                 }
@@ -311,15 +314,21 @@ namespace LesioBlog2.Controllers
                                 {
                                     int tagID = item.TagID;
                                     int commID = comment.CommentID;
-                                    _tag.RemoveCommentTag(tagID, commID);
-                                    //get list of ID 
-                                    //remove wpistag
-                                    //remove tag
-                                    if (_tag.IfWpisOrCommentsHasTag(item.TagID))
+                                  //  if 
+                                    if (_tag.CheckIfCommTagExist(tagID, commID))
                                     {
-                                        _tag.RemoveTagsIfNotUsed(item.TagID);
-                                        _tag.SaveChanges();
+                                        _tag.RemoveCommentTag(tagID, commID);
+                                        //get list of ID 
+                                        //remove wpistag
+                                        //remove tag
+                                        if (_tag.IfWpisOrCommentsHasTag(tagID))
+                                        {
+                                            _tag.RemoveTagsIfNotUsed(tagID);
+                                            _tag.SaveChanges();
+                                        }
+
                                     }
+                                  
                                 }
                                 enterLoop = true;
                             }

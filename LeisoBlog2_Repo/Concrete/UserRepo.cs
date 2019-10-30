@@ -27,20 +27,14 @@ namespace LesioBlog2_Repo.Concrete
         public User GetUserByEmail(string email)
         {
             var user = _db.Users.FirstOrDefault(u => u.Email.ToLower() == email.ToLower());
-            if (user == null)
-            {
-                return new User();
-            }
+           
             return user;
         }
 
         public User FindUserByID(int? id)
         {
             var user = _db.Users.FirstOrDefault(u => u.UserID == id);
-            if (user == null)
-            {
-                return new User();
-            }
+          
 
             return user;
 
@@ -79,20 +73,14 @@ namespace LesioBlog2_Repo.Concrete
         public User GetUserByNickname(string nickname)
         {
             var user = _db.Users.FirstOrDefault(x => x.NickName.ToLower() == nickname.ToLower());
-            if (user == null)
-            {
-                return new User();
-            }
+          
             return user;
         }
 
         public User GetLoggedUser()
         {
             var user =_db.Users.FirstOrDefault();
-            if (user == null)
-            {
-                return new User();
-            }
+         
             return user;
         }
         public void SaveChanges()
@@ -160,10 +148,6 @@ namespace LesioBlog2_Repo.Concrete
         public User GetUserByID(int id)
         {
              var user =  _db.Users.FirstOrDefault(x => x.UserID == id);
-            if (user == null)
-            {
-                user = new User();
-            }
             return user;
         }
     }

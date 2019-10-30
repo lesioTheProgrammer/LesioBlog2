@@ -26,11 +26,9 @@ namespace LesioBlog2_Repo.Concrete
 
         public Tag GetTagByName(string name)
         {
+           // var tag = _db.Tags.Include("WpisTag").FirstOrDefault(x => x.TagName == name);
             var tag = _db.Tags.Include("WpisTag").FirstOrDefault(x => x.TagName == name);
-            if (tag == null)
-            {
-                return new Tag();
-            }
+
             return tag;
         }
 
@@ -40,6 +38,31 @@ namespace LesioBlog2_Repo.Concrete
             return tags;
         }
 
+
+
+        public bool CheckIfCommTagExist(int tagID, int commID)
+        {
+
+            bool exist = false;
+            var commTag = _db.CommentTags.FirstOrDefault(x => x.TagID == tagID && x.CommentID == commID);
+            if (commTag != null)
+            {
+                exist = true;
+            }
+            return exist;
+        }
+
+        public bool CheckIfWpisTagExist(int tagID, int wpisID)
+        {
+
+            bool exist = false;
+            var commTag = _db.WpisTags.FirstOrDefault(x => x.TagID == tagID && x.WpisID == wpisID);
+            if (commTag != null)
+            {
+                exist = true;
+            }
+            return exist;
+        }
 
         public string GetTagNamesByTagID(int? id)
         { 

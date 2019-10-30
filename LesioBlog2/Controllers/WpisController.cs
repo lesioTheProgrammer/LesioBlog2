@@ -331,18 +331,20 @@ namespace LesioBlog2.Controllers
                     if (check == false && matches.Count != 0)
                     {
                         bool enterLoop = true;
+                        var listOfMatches = new List<Tag>();
+                        foreach (var tagFake in matches)
+                        {
+                            var tag2 = _tag.GetTagByName(tagFake.ToString());
+                            listOfMatches.Add(tag2);
+                        }
                         //usuwaj z checklisty a nie z wpistagkowej bo jak 1 usuniesz a drugi zostawisz to lipa
                         foreach (var item in listaWpisTagsActual)
                         {
                             //get tag ID by match i usun pozostale?
                             //jak matchesTag jest w listofTagsActual to zostaw jak nie to gerara
-                            foreach (var tag in matches)
+                            foreach (var tag in listOfMatches)
                             {
-                                var tagz = _tag.GetTagByName(tag.ToString().ToLower());
-                                //   var TagName =_tag.GetTagNamesByTagID(tagz.TagID);
-                                //   var itemName = _tag.GetTagNamesByTagID(item.TagID);
-
-                                if (item.TagID == tagz.TagID)
+                                if (listOfMatches.Any(x => x.TagID == item.TagID))
                                 {
                                     enterLoop = false;
                                 }
@@ -355,15 +357,19 @@ namespace LesioBlog2.Controllers
                                 {
                                     int tagID = item.TagID;
                                     int wpisID = wpis.WpisID;
-                                    _tag.RemoveWpisTag(item.TagID, wpisID);
-                                    //get list of ID 
-                                    //remove wpistag
-                                    //remove tag
-                                    if (_tag.IfWpisOrCommentsHasTag(item.TagID))
+                                    if (_tag.CheckIfWpisTagExist(tagID, wpisID))
                                     {
-                                        _tag.RemoveTagsIfNotUsed(item.TagID);
-                                        _tag.SaveChanges();
+                                        _tag.RemoveWpisTag(item.TagID, wpisID);
+                                        //get list of ID 
+                                        //remove wpistag
+                                        //remove tag
+                                        if (_tag.IfWpisOrCommentsHasTag(item.TagID))
+                                        {
+                                            _tag.RemoveTagsIfNotUsed(item.TagID);
+                                            _tag.SaveChanges();
+                                        }
                                     }
+                                    
                                 }
                                 enterLoop = true;
                             }

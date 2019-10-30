@@ -143,10 +143,7 @@ namespace LesioBlog2_Repo.Concrete
         public Wpis GetWpisById(int? id)
         {
             var wpis = _db.Wpis.Include(x=>x.User).Include(x => x.WpisTags).Include(x => x.Comments.Select(c=>c.User)).FirstOrDefault(x => x.WpisID == id);
-            if (wpis == null)
-            {
-                return new Wpis(); //??
-            }
+         
             return wpis;
         }
 
@@ -186,10 +183,6 @@ namespace LesioBlog2_Repo.Concrete
         public int GetIdOfWpisCreator(int? id)
         {
             int? wpisUserId = _db.Wpis.FirstOrDefault(x => x.WpisID == id).UserID;
-            if (wpisUserId == null)
-            {
-                return 0; //??
-            }
             return wpisUserId.GetValueOrDefault();
         }
         public DateTime GetWpisWithAddDate(Wpis wpis)
