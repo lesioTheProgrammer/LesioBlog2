@@ -27,17 +27,16 @@ namespace LesioBlog2.Controllers
         // GET: Wpis
         public ActionResult Index(string userNickName, string tagName, int? page, string userCommentNickname)
         {
-
             int currentPage = page ?? 1;
             if (page == 0)
             {
                 currentPage = 1;
             }
             int onPage = 5;
-
                 var wpis = _wpis.GetWpis();
-                 var wpisList = wpis.ToList();
 
+               //  var wpisList = wpis.ToList();
+            var wpisList = wpis.OrderByDescending(x=>x.AddingDate).ToList();
             if (string.IsNullOrEmpty(userNickName) && string.IsNullOrEmpty(tagName) && string.IsNullOrEmpty(userCommentNickname))
             {
                 return View(wpisList.ToPagedList<Wpis>(currentPage, onPage));
@@ -58,7 +57,6 @@ namespace LesioBlog2.Controllers
                 //get wpis cointating commentName
                 wpis = _wpis.GetWpisCointaintnCommWithNickname(userCommentNickname).AsQueryable();
                 wpisList = wpis.ToList();
-
             }
             return View(wpisList.ToPagedList<Wpis>(currentPage, onPage));
         }
