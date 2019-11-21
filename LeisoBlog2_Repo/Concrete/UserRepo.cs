@@ -33,17 +33,14 @@ namespace LesioBlog2_Repo.Concrete
 
         public User FindUserByID(int? id)
         {
-            var user = _db.Users.FirstOrDefault(u => u.UserID == id);
-          
-
+            var user = _db.Users.FirstOrDefault(u => u.User_Id == id);
             return user;
-
         }
 
         public string GetUserNicknameByEmail(string email)
         {
             string nickname = "";
-            //mam usera po emailu tera wygrzebac jego nickname
+            //i got user by email--get userName
             var user = _db.Users.FirstOrDefault(x => x.Email.ToLower() == email.ToLower());
             if (user != null)
             {
@@ -64,23 +61,20 @@ namespace LesioBlog2_Repo.Concrete
             {
                 return null;
             }
-            var currentlyLoggedUserId = _db.Users.FirstOrDefault(x=>x.NickName == userName).UserID;
+            var currentlyLoggedUserId = _db.Users.FirstOrDefault(x=>x.NickName == userName).User_Id;
             return currentlyLoggedUserId;
 
         }
 
-
         public User GetUserByNickname(string nickname)
         {
             var user = _db.Users.FirstOrDefault(x => x.NickName.ToLower() == nickname.ToLower());
-          
             return user;
         }
 
         public User GetLoggedUser()
         {
             var user =_db.Users.FirstOrDefault();
-         
             return user;
         }
         public void SaveChanges()
@@ -135,19 +129,9 @@ namespace LesioBlog2_Repo.Concrete
             return output;
         }
 
-        public void UpdateOnlyCode(User user)
-        {
-
-           // _db.Entry(user).State = EntityState.Modified;
-          // _db.Users.Attach(user);
-         //  _db.Entry(user).Property("Code").IsModified = true;
-
-        }
-
-
         public User GetUserByID(int id)
         {
-             var user =  _db.Users.FirstOrDefault(x => x.UserID == id);
+             var user =  _db.Users.FirstOrDefault(x => x.User_Id == id);
             return user;
         }
     }

@@ -9,17 +9,9 @@ namespace LesioBlog2_Repo.Models
 {
     public class Gender
     {
-
-
-        public int GenderID { get; set; }
+        [Key]
+        public int Gender_Id { get; set; }
         public string GenderName { get; set; }
-
-
-
-     
-
         public virtual ICollection<User> User { get; set; }
-
-
     }
 }

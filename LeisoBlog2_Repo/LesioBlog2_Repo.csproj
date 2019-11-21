@@ -107,28 +107,28 @@
     <Compile Include="Abstract\IGender.cs" />
     <Compile Include="Abstract\ITagRepo.cs" />
     <Compile Include="Abstract\IUserRepo.cs" />
-    <Compile Include="Abstract\IWpisRepo.cs" />
+    <Compile Include="Abstract\IPostRepo.cs" />
     <Compile Include="Concrete\CommentRepo.cs" />
     <Compile Include="Concrete\GenderRepo.cs" />
     <Compile Include="Concrete\TagRepo.cs" />
     <Compile Include="Concrete\UserRepo.cs" />
-    <Compile Include="Concrete\WpisRepo.cs" />
-    <Compile Include="Migrations\201910220853088_code.cs" />
-    <Compile Include="Migrations\201910220853088_code.Designer.cs">
-      <DependentUpon>201910220853088_code.cs</DependentUpon>
+    <Compile Include="Concrete\PostRepo.cs" />
+    <Compile Include="Migrations\201911201549496_init.cs" />
+    <Compile Include="Migrations\201911201549496_init.Designer.cs">
+      <DependentUpon>201911201549496_init.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Context\blogContext.cs" />
     <Compile Include="Models\Comment.cs" />
     <Compile Include="Models\CommentTag.cs" />
     <Compile Include="Models\Gender.cs" />
-    <Compile Include="Models\IfPlusowalComment.cs" />
-    <Compile Include="Models\IfPlusowalWpis.cs" />
+    <Compile Include="Models\IsCommUpvoted.cs" />
+    <Compile Include="Models\IsPostUpvd.cs" />
     <Compile Include="Models\RepeatedFields.cs" />
     <Compile Include="Models\Tag.cs" />
     <Compile Include="Models\User.cs" />
-    <Compile Include="Models\Wpis.cs" />
-    <Compile Include="Models\WpisTag.cs" />
+    <Compile Include="Models\Post.cs" />
+    <Compile Include="Models\PostTag.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -141,8 +141,8 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201910220853088_code.resx">
-      <DependentUpon>201910220853088_code.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201911201549496_init.resx">
+      <DependentUpon>201911201549496_init.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

@@ -1,11 +1,12 @@
 ﻿namespace LesioBlog2_Repo.Models
 {
-    public class CommentTag
+    public class PostTag
     {
-        public int Comment_Id { get; set; }
+        public int Post_Id { get; set; }
         public int Tag_Id { get; set; }
+
         //navis
         public Tag Tag { get; set; }
-        public Comment Comment { get; set; }
+        public Post Post { get; set; }
     }
 }

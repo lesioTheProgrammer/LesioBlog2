@@ -1,4 +1,4 @@
-﻿@model LesioBlog2_Repo.Models.Wpis
+﻿@model LesioBlog2_Repo.Models.Post
 
 @{
     ViewBag.Title = "Details";
@@ -9,14 +9,12 @@
 <div>
     <h4>Post</h4>
     <hr />
-    
 </div>
 <p>
     @if (System.Web.HttpContext.Current.User.Identity.Name.ToLower() == Model.User.NickName.ToLower())
     {
-        @Html.ActionLink("Edit", "Edit", new { id = Model.WpisID })
+        @Html.ActionLink("Edit", "Edit", new { id = Model.Post_Id })
         <span>|</span>
     }
-
     @Html.ActionLink("Back to List", "Index")
 </p>

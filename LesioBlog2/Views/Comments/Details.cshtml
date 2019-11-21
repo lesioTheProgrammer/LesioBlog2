@@ -14,7 +14,7 @@
 <p>
     @if (System.Web.HttpContext.Current.User.Identity.Name.ToLower() == Model.User.NickName.ToLower())
     {
-        @Html.ActionLink("Edit", "Edit", new { id = Model.CommentID })
+        @Html.ActionLink("Edit", "Edit", new { id = Model.Comment_Id })
         <span>|</span>
     }
 

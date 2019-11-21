@@ -63,17 +63,12 @@
             </td>
             <td>
                 @Html.DisplayFor(model => model.Comments.Count)
-                @Html.ActionLink("Go to user's comments", "Index", "Wpis", new { userCommentNickname = Model.NickName }, null)
-
-
-
+                @Html.ActionLink("Go to user's comments", "Index", "Post", new { userCommentNickname = Model.NickName }, null)
             </td>
             <td>
-                @Html.DisplayFor(model => model.Wpis.Count)
-                @Html.ActionLink("Go to user's wpis", "Index", "Wpis", new { userNickName = Model.NickName }, null)
-
+                @Html.DisplayFor(model => model.Post.Count)
+                @Html.ActionLink("Go to user's wpis", "Index", "Post", new { userNickName = Model.NickName }, null)
             </td>
-
         </tr>
     </table>
 
@@ -117,16 +112,9 @@ else
                                 </div>
                                 <button class="btn btn-success my-2 my-sm-0" type="submit">Search</button>
                             </form>
-
-
-
                         </div>
-
                 </fieldset>
             </div>
-
         }
-
-
     }
 }

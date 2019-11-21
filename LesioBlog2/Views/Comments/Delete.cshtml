@@ -33,15 +33,15 @@
                     {
                         <div id="kid">
                             <button class="colorA js-toggle-plusing"
-                                    data-wpis-id="@Model.WpisID" data-plusy-count="@Model.Plusy">
-                                @Html.DisplayFor(modelitem => Model.Plusy)
+                                    data-wpis-id="@Model.Post_Id" data-plusy-count="@Model.Votes">
+                                @Html.DisplayFor(modelitem => Model.Votes)
                             </button>
                         </div>
                     }
                     else
                     {
                         <div id="kid" style="margin-right:40px;">
-                            @Html.DisplayFor(modelItem => Model.Plusy)
+                            @Html.DisplayFor(modelItem => Model.Votes)
                         </div>
 
                     }
@@ -71,18 +71,5 @@
                 }
             </div>
         </div>
-
-        @*@using (Html.BeginForm())
-            {
-                @Html.AntiForgeryToken()
-
-                <div class="form-actions no-color">
-                    <input type="submit" value="Delete" class="btn btn-default" /> |
-                    @Html.ActionLink("Back to List", "Index")
-                </div>
-            }*@
     </div>
-
-
 }
-

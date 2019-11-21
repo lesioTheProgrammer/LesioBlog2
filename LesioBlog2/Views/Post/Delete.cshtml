@@ -1,4 +1,4 @@
-﻿@model LesioBlog2_Repo.Models.Wpis
+﻿@model LesioBlog2_Repo.Models.Post
 
 @{
     ViewBag.Title = "Delete";
@@ -34,15 +34,15 @@
                     {
                         <div id="kid">
                             <button class="colorA js-toggle-plusing"
-                                    data-wpis-id="@Model.WpisID" data-plusy-count="@Model.Plusy">
-                                @Html.DisplayFor(modelitem => Model.Plusy)
+                                    data-wpis-id="@Model.Post_Id" data-plusy-count="@Model.Votes">
+                                @Html.DisplayFor(modelitem => Model.Votes)
                             </button>
                         </div>
                     }
                     else
                     {
                         <div id="kid" style="margin-right:40px;">
-                            @Html.DisplayFor(modelItem => Model.Plusy)
+                            @Html.DisplayFor(modelItem => Model.Votes)
                         </div>
 
                     }

@@ -1,4 +1,4 @@
-﻿@model LesioBlog2_Repo.Models.Wpis
+﻿@model LesioBlog2_Repo.Models.Post
 
 @{
     /**/
@@ -23,8 +23,8 @@
         </div>
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        @Html.HiddenFor(model => model.WpisID)
-        @Html.HiddenFor(model => model.WpisTags)
+        @Html.HiddenFor(model => model.Post_Id)
+        @Html.HiddenFor(model => model.PostTags)
         <div class="form-group">
             @Html.LabelFor(model => model.Content, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
@@ -42,8 +42,6 @@
     </div>
     }
     }
-
-
 
     @section Scripts {
         @Scripts.Render("~/bundles/jqueryval")

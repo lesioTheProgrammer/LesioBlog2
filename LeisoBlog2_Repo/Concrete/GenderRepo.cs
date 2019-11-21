@@ -1,9 +1,6 @@
 ﻿using LesioBlog2_Repo.Abstract;
 using LesioBlog2_Repo.Models;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 
 namespace LesioBlog2_Repo.Concrete
 {
@@ -21,7 +18,6 @@ namespace LesioBlog2_Repo.Concrete
             _db.Genders.Add(gender);
 
         }
-
         public IQueryable<Gender> GetGenders()
         {
             var genders = _db.Genders;
@@ -31,9 +27,12 @@ namespace LesioBlog2_Repo.Concrete
 
         public Gender GetGenderByID(int id)
         {
-            var gender = _db.Genders.SingleOrDefault(x => x.GenderID == id);
+            var gender = _db.Genders.FirstOrDefault(x => x.Gender_Id == id);
+            if (gender == null)
+            {
+                return new Gender();
+            }
             return gender;
-
         }
 
         public void SaveChanges()

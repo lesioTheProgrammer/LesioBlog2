@@ -7,7 +7,7 @@
 
 @using (Html.BeginForm("Create", "Comments", FormMethod.Post))
 {
-    @Html.Hidden("WpisID", ViewData["WpisID"])
+    @Html.Hidden("Post_Id", ViewData["Post_Id"])
     @Html.AntiForgeryToken()
     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
     if (Request.IsAuthenticated)
@@ -29,76 +29,6 @@
         </div>
     }
 }
-
-
-
-@*used for scripting not done yet*@
-
-
-@*@model LesioBlog2_Repo.Models.Comment
-
-    @{
-        Layout = null;
-    }
-
-    @if (Request.IsAuthenticated)
-    {
-        <div style="margin-left: 30px; padding: 0px">
-            Comment here:
-
-            @Html.EditorFor(model => model.Content, new { htmlAttributes = new { @class = "form-control", Content = "data-content" } })
-            <div style="padding-top:5px;"></div>
-            @Html.ValidationMessageFor(model => model.Content, "", new { @class = "text-danger" })
-
-            <span style="margin-left: 0px">
-                <div class="form-group">
-                    <div class=" col-md-1">
-                        <input type="submit" value="Comment" class="btn btn-success js-toggle-sendcomment" data-wpis-id="@ViewData["WpisID"]" />
-                    </div>
-                </div>
-            </span>
-        </div>
-    }*@
-
-
-
-@*<script>
-
-        $(document).ready(function () {
-            $(".js-toggle-sendcomment").click(function (e) {
-
-                debugger
-                var token = $('input[name=__RequestVerificationToken]').val();
-                var comment = {};
-                comment["wpisID"] = $(e.target).attr("data-wpis-id");
-                comment["Content"] = $(e.target).attr("data-content");
-                var theData = $.extend({}, token, comment, true);
-                $.ajax({
-                    context: this,
-                    type: "POST",
-                    url: "/Comment/Create",
-                    data: { __RequestVerificationToken: token, comment: theData },
-                    success: function (result) {
-                        var resultCheck = result.result;
-                        debugger;
-                        if (resultCheck) {
-                            $(e.target).removeClass("btn btn-success")
-                                .addClass("btn btn-info")
-                                .text(plusing);
-
-                        }
-                        else {
-                            $(e.target)
-                                .removeClass("btn btn-info")
-                                .addClass("btn btn-success")
-                                .text(plusing);
-                        }
-                    }
-                });
-            });
-        })
-
-    </script>*@
 
 
 

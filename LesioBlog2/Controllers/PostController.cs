@@ -12,19 +12,19 @@ using System.Web.Routing;
 
 namespace LesioBlog2.Controllers
 {
-    public class WpisController : Controller
+    public class PostController : Controller
     {
-        private readonly IWpisRepo _wpis;
+        private readonly IPostRepo _post;
         private readonly ITagRepo _tag;
         private readonly IUserRepo _user;
 
-        public WpisController(IWpisRepo wpisrepo, ITagRepo tagrepo, IUserRepo user)
+        public PostController(IPostRepo postrepo, ITagRepo tagrepo, IUserRepo user)
         {
-            this._wpis = wpisrepo;
+            this._post = postrepo;
             this._tag = tagrepo;
             this._user = user;
         }
-        // GET: Wpis
+        // GET: Post
         public ActionResult Index(string userNickName, string tagName, int? page, string userCommentNickname)
         {
             int currentPage = page ?? 1;
@@ -33,161 +33,147 @@ namespace LesioBlog2.Controllers
                 currentPage = 1;
             }
             int onPage = 5;
-                var wpis = _wpis.GetWpis();
+            var post = _post.GetPost();
 
-               //  var wpisList = wpis.ToList();
-            var wpisList = wpis.OrderByDescending(x=>x.AddingDate).ToList();
+            var postList = post.OrderByDescending(x=>x.AddingDate).ToList();
             if (string.IsNullOrEmpty(userNickName) && string.IsNullOrEmpty(tagName) && string.IsNullOrEmpty(userCommentNickname))
             {
-                return View(wpisList.ToPagedList<Wpis>(currentPage, onPage));
+                return View(postList.ToPagedList<Post>(currentPage, onPage));
             }
             else if (!string.IsNullOrEmpty(userNickName))
             {
-                //get wpis by user name
-                wpis = _wpis.GetWpisByUserNickName(userNickName).AsQueryable();
-                wpisList = wpis.ToList();
+                //get post by user name
+                post = _post.GetPostByUsrNickName(userNickName).AsQueryable();
+                postList = post.ToList();
             }
             else if (!string.IsNullOrEmpty(tagName))
             {
-                wpis = _tag.getWpisWithSelectedTag(tagName).AsQueryable();
-                wpisList = wpis.ToList();
+                post = _tag.getWpisWithSelectedTag(tagName).AsQueryable();
+                postList = post.ToList();
             }
             else if (!string.IsNullOrEmpty(userCommentNickname))
             {
-                //get wpis cointating commentName
-                wpis = _wpis.GetWpisCointaintnCommWithNickname(userCommentNickname).AsQueryable();
-                wpisList = wpis.ToList();
+                //get post cointating commentName
+                post = _post.GetPostCointaininCommWithNickname(userCommentNickname).AsQueryable();
+                postList = post.ToList();
             }
-            return View(wpisList.ToPagedList<Wpis>(currentPage, onPage));
+            return View(postList.ToPagedList<Post>(currentPage, onPage));
         }
-
 
 
         [HttpPost]
         [AuthorizeUserAttribute]
         [ValidateAntiForgeryToken]
-
-        public ActionResult AddPlus(Wpis wpis)
+        public ActionResult AddPlus(Post post)
         {
             var currentlyLoggedUserID = _user.GetIDOfCurrentlyLoggedUser().Value;
-            var wpisToPlus = _wpis.GetWpisById(wpis.WpisID);
+            var postToUpvote = _post.GetPostByID(post.Post_Id);
 
-            bool checkWpisState = true;
-            var IFWpisPlus =  _wpis.GetPlusWpis(wpisToPlus.WpisID, currentlyLoggedUserID);
+            bool checkPostState = true;
+            var postIsUpvoted =  _post.GetUpvPost(postToUpvote.Post_Id, currentlyLoggedUserID);
 
             //prevent user from double plsuing
-            if (wpisToPlus != null)
+            if (postToUpvote != null)
             {
-                if (IFWpisPlus != null)
+                if (postIsUpvoted != null)
                 {
-                  checkWpisState = IFWpisPlus.IfPlusWpis;
+                  checkPostState = postIsUpvoted.IsPostUpvoted;
                 }
                 else 
                 {
-                    var ifplus = new IfPlusowalWpis()
+                    var postIsUpvtd = new IsPostUpvd()
                     {
-                        UserID = currentlyLoggedUserID,
-                        WpisID = wpisToPlus.WpisID,
-                        IfPlusWpis = false
+                        User_Id = currentlyLoggedUserID,
+                        Post_Id = postToUpvote.Post_Id,
+                        IsPostUpvoted = false
                     };
-                    _wpis.Add(ifplus);
-                    _wpis.SaveChanges();
-                    checkWpisState = ifplus.IfPlusWpis;
+                    _post.Add(postIsUpvtd);
+                    _post.SaveChanges();
+                    checkPostState = postIsUpvtd.IsPostUpvoted;
                 }
             }
 
-            if (wpisToPlus != null && User.Identity.Name.ToLower() != wpisToPlus.User.NickName.ToLower() && !checkWpisState)
+            if (postToUpvote != null && User.Identity.Name.ToLower() != postToUpvote.User.NickName.ToLower() && !checkPostState)
             {
-                wpisToPlus.Plusy = wpisToPlus.Plusy + 1;
-                IFWpisPlus = _wpis.GetPlusWpis(wpisToPlus.WpisID, currentlyLoggedUserID);
-                IFWpisPlus.IfPlusWpis = true;
+                postToUpvote.Votes = postToUpvote.Votes + 1;
+                postIsUpvoted = _post.GetUpvPost(postToUpvote.Post_Id, currentlyLoggedUserID);
+                postIsUpvoted.IsPostUpvoted = true;
 
-               _wpis.UpdateOnlyPlusy(wpisToPlus);
-               _wpis.UpdateIfWpisState(IFWpisPlus);
-               _wpis.SaveChanges();
+               _post.UpdateOnlyVotes(postToUpvote);
+               _post.UpdateIsVotedState(postIsUpvoted);
+               _post.SaveChanges();
 
-                var result = new { result = true, plusy = wpisToPlus.Plusy };
+                var result = new { result = true, votes = postToUpvote.Votes };
                 return Json(result,
                             JsonRequestBehavior.AllowGet); ;
             }
 
 
-            else if (wpisToPlus != null && User.Identity.Name.ToLower() != wpisToPlus.User.NickName.ToLower() && checkWpisState)
+            else if (postToUpvote != null && User.Identity.Name.ToLower() != postToUpvote.User.NickName.ToLower() && checkPostState)
             {
-                wpisToPlus.Plusy = wpisToPlus.Plusy - 1;
-                IFWpisPlus = _wpis.GetPlusWpis(wpisToPlus.WpisID, currentlyLoggedUserID);
-                IFWpisPlus.IfPlusWpis = false;
-                _wpis.UpdateOnlyPlusy(wpisToPlus);
-                _wpis.UpdateIfWpisState(IFWpisPlus);
-                _wpis.SaveChanges();
-                var result = new { result = false, plusy = wpisToPlus.Plusy };
+                postToUpvote.Votes = postToUpvote.Votes - 1;
+                postIsUpvoted = _post.GetUpvPost(postToUpvote.Post_Id, currentlyLoggedUserID);
+                postIsUpvoted.IsPostUpvoted = false;
+                _post.UpdateOnlyVotes(postToUpvote);
+                _post.UpdateIsVotedState(postIsUpvoted);
+                _post.SaveChanges();
+                var result = new { result = false, votes = postToUpvote.Votes };
                 return Json( result , JsonRequestBehavior.AllowGet); 
             }
             else
             {
-                var result = new { result = false, plusy = wpisToPlus.Plusy };
+                var result = new { result = false, votes = postToUpvote.Votes };
                 return Json(result, JsonRequestBehavior.AllowGet);
             }
-
         }
-
-
-
-
 
         public ActionResult GoToParentWpis(int? id)
         {
-            //comment ma wpisID
-            //pokaz wpis po wpisID z komenta
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            var wpis = _wpis.GetWpisById(id);
+            var wpis = _post.GetPostByID(id);
             return View(wpis);
         }
 
 
-
-        // GET: Wpis/Details/5
+        // GET: Post/Details/5
         [AuthorizeUserAttribute]
         public ActionResult Details(int? id)
         {
 
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Gerara pls");
-
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Not avialable");
         }
 
-        // GET: Wpis/Create
+        // GET: Post/Create
         [AuthorizeUserAttribute]
         public ActionResult Create()
         {
            return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
         }
 
-        // POST: Wpis/Create
+        // POST: Post/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [AuthorizeUserAttribute]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "WpisID,UserID,Content,AddingDate,Plusy")] Wpis wpis)
+        public ActionResult Create([Bind(Include = "Post_Id,User_Id,Content,AddingDate,Votes")] Post post)
         {
-            //tagz?
-
-            wpis.AddingDate = DateTime.Now;
-            wpis.EditingDate = null;
+            post.AddingDate = DateTime.Now;
+            post.EditingDate = null;
             var loggedUserId = _user.GetIDOfCurrentlyLoggedUser();
-            wpis.UserID = loggedUserId.Value;
+            post.User_Id = loggedUserId.Value;
 
 
             if (ModelState.IsValid)
             {
-                _wpis.Add(wpis);
-                _wpis.SaveChanges();
+                _post.Add(post);
+                _post.SaveChanges();
 
-                MatchCollection matches = Regex.Matches(wpis.Content, @"\B(\#[a-zA-Z0-9-,_]+\b)");
-                //wpis ID first important
+                MatchCollection matches = Regex.Matches(post.Content, @"\B(\#[a-zA-Z0-9-,_]+\b)");
+                //postId first important
                 foreach (var tagName in matches)
                 {
                     var tag = _tag.GetTagByName(tagName.ToString().ToLower());
@@ -195,18 +181,17 @@ namespace LesioBlog2.Controllers
                     {
                         tag = new Tag();
                         tag.TagName = tagName.ToString().ToLower();
-                        //id radnom
                         _tag.Add(tag);
                         _tag.SaveChanges();
                     }
 
-                    var wpisTag = new WpisTag()
+                    var postTag = new PostTag()
                     {
-                        TagID = tag.TagID,
-                        WpisID = wpis.WpisID
+                        Tag_Id = tag.Tag_Id,
+                        Post_Id = post.Post_Id
                     };
-                    _wpis.Add(wpisTag);
-                    _wpis.SaveChanges();
+                    _post.Add(postTag);
+                    _post.SaveChanges();
                 }
 
                 return RedirectToAction("Index");
@@ -214,7 +199,7 @@ namespace LesioBlog2.Controllers
             return RedirectToAction("Index");
         }
 
-        // GET: Wpis/Edit/5
+        // GET: Post/Edit/5
         [AuthorizeUserAttribute]
         public ActionResult Edit(int? id)
         {
@@ -222,7 +207,7 @@ namespace LesioBlog2.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            var IdOfCreator = _wpis.GetIdOfWpisCreator(id);
+            var IdOfCreator = _post.GetIdOpfPostCreator(id);
             //id of logged user
             int? currentlyLoggedUserId = _user.GetIDOfCurrentlyLoggedUser();
             if (currentlyLoggedUserId == null)
@@ -232,7 +217,7 @@ namespace LesioBlog2.Controllers
             //end
             if (IdOfCreator == currentlyLoggedUserId)
             {
-                Wpis wpis = _wpis.GetWpisById(id);
+                Post wpis = _post.GetPostByID(id);
                 if (wpis == null)
                 {
                     return HttpNotFound();
@@ -246,37 +231,37 @@ namespace LesioBlog2.Controllers
 
         }
 
-        // POST: Wpis/Edit/5
+        // POST: Post/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         [AuthorizeUserAttribute]
-        public ActionResult Edit([Bind(Include = "Content,WpisID")] Wpis wpis)
+        public ActionResult Edit([Bind(Include = "Content,Post_Id")] Post post)
         {
             var logic = new HiddenLogic();
-            wpis.AddingDate = _wpis.GetWpisWithAddDate(wpis);
-            wpis.EditingDate = DateTime.Now;
-            wpis.Plusy = 0;
+            post.AddingDate = _post.GetPostWithAddingDate(post);
+            post.EditingDate = DateTime.Now;
+            post.Votes = 0;
             if (ModelState.IsValid)
             {
-                //tutaj updejt contentu nastepuje 
-                _wpis.UpdateContentAndPlusyAndEditDate(wpis);
-                _wpis.SaveChanges();
+                //content updated here
+                _post.UpdateContentUpvotesAddDate(post);
+                _post.SaveChanges();
                 //old tags:
-                IList<WpisTag> listaWpisTagsActual = _wpis.GetAllWpisTagsByWpisId(wpis.WpisID);
+                IList<PostTag> listPostTagsActual = _post.GetAllPostTagsByPostID(post.Post_Id);
                 List<string> listOfTagNames = new List<string>();
-                foreach (var item in listaWpisTagsActual)
+                foreach (var item in listPostTagsActual)
                 {
-                    listOfTagNames.Add(_tag.GetTagNamesByTagID(item.TagID));
+                    listOfTagNames.Add(_tag.GetTagNamesByTagID(item.Tag_Id));
                 }
-                //tu mam liste nazw tagow uzytych
-                //tutej updejt tagow
+                //list of tags used
+                //tags updated
                 //new content here
                 bool check = false;
-                MatchCollection matches = Regex.Matches(wpis.Content, @"\B(\#[a-zA-Z0-9-,_]+\b)");
-                //jak wpis ma wogole tagi to idz:
-                if (wpis.WpisTags != null)
+                MatchCollection matches = Regex.Matches(post.Content, @"\B(\#[a-zA-Z0-9-,_]+\b)");
+                //if post has tags
+                if (post.PostTags != null)
                 {
                     foreach (var tag in matches)
                     {
@@ -287,45 +272,44 @@ namespace LesioBlog2.Controllers
                         }
                         else
                         {
-                            //sprawdz czy jest w bazie tagowej
-                            //jak nie ma to dodaj i dodaj wpistag
+                            //check if exist in tagList
+                            //add tag and postTag if dont exsist
                             //1. get tag from DB tags by tag name
                             var tagz = _tag.GetTagByName(tag.ToString().ToLower());
-                            // if no existing add so
+                            // if no existing add 
                             if (tagz == null)
                             {
                                 tagz = new Tag();
                                 tagz.TagName = tag.ToString().ToLower();
-                                //id radnom
                                 _tag.Add(tagz);
                                 _tag.SaveChanges();
-                                var wpisTag = new WpisTag()
+                                var postTag = new PostTag()
                                 {
-                                    TagID = tagz.TagID,
-                                    WpisID = wpis.WpisID
+                                    Tag_Id = tagz.Tag_Id,
+                                    Post_Id = post.Post_Id
                                 };
-                                _wpis.Add(wpisTag);
-                                _wpis.SaveChanges();
+                                _post.Add(postTag);
+                                _post.SaveChanges();
                             }
-                            //jak nie ma w listOfTagNames ale jest w tagach bo uzyty gdzies indziej:
+                            //null in listOfTagNames but exist in tags because used somewhere elese
                             else
                             {
-                                //remove wpistagStary po WpisID i TagID:
-                                int tagID = tagz.TagID;
-                                int wpisID = wpis.WpisID;
-                                _tag.RemoveWpisTag(tagID, wpisID);
-                                var wpisTag = new WpisTag()
+                                //remove postTag by Post_Id i Tag_Id:
+                                int tagID = tagz.Tag_Id;
+                                int postID = post.Post_Id;
+                                _tag.RemoveWpisTag(tagID, postID);
+                                var postTag = new PostTag()
                                 {
-                                    TagID = tagz.TagID,
-                                    WpisID = wpis.WpisID
+                                    Tag_Id = tagz.Tag_Id,
+                                    Post_Id = post.Post_Id
                                 };
-                                _wpis.Add(wpisTag);
-                                _wpis.SaveChanges();
+                                _post.Add(postTag);
+                                _post.SaveChanges();
                             }
                         }
                     }
-                    //jak nie ma nigdzie tagu ani uzytego ani nic to gerara
-                    //check po to zeby ogarnac gdy po edicie nie zostaje nic zwiazanego z tagami
+                    //if there isnt any tag used
+                    //bool check if after edtiting theres nothing relative to tags
                     if (check == false && matches.Count != 0)
                     {
                         bool enterLoop = true;
@@ -335,14 +319,15 @@ namespace LesioBlog2.Controllers
                             var tag2 = _tag.GetTagByName(tagFake.ToString());
                             listOfMatches.Add(tag2);
                         }
-                        //usuwaj z checklisty a nie z wpistagkowej bo jak 1 usuniesz a drugi zostawisz to lipa
-                        foreach (var item in listaWpisTagsActual)
+                        //remove from checklist, not postTags (if you try to remove only 1 and you will keep the second --failure)
+                        foreach (var item in listPostTagsActual)
                         {
-                            //get tag ID by match i usun pozostale?
-                            //jak matchesTag jest w listofTagsActual to zostaw jak nie to gerara
+                            //get tagID by match and remove the rest
+                            //if matchesTags exists in listOfTagsActual - leave it;
+                            //new list of tags
                             foreach (var tag in listOfMatches)
                             {
-                                if (listOfMatches.Any(x => x.TagID == item.TagID))
+                                if (listOfMatches.Any(x => x.Tag_Id == item.Tag_Id))
                                 {
                                     enterLoop = false;
                                 }
@@ -353,21 +338,20 @@ namespace LesioBlog2.Controllers
 
                                 if (enterLoop == true)
                                 {
-                                    int tagID = item.TagID;
-                                    int wpisID = wpis.WpisID;
-                                    if (_tag.CheckIfWpisTagExist(tagID, wpisID))
+                                    int tagID = item.Tag_Id;
+                                    int postID = post.Post_Id;
+                                    if (_tag.CheckIfWpisTagExist(tagID, postID))
                                     {
-                                        _tag.RemoveWpisTag(item.TagID, wpisID);
+                                        _tag.RemoveWpisTag(item.Tag_Id, postID);
                                         //get list of ID 
-                                        //remove wpistag
+                                        //remove postTag
                                         //remove tag
-                                        if (_tag.IfWpisOrCommentsHasTag(item.TagID))
+                                        if (_tag.IfWpisOrCommentsHasTag(item.Tag_Id))
                                         {
-                                            _tag.RemoveTagsIfNotUsed(item.TagID);
+                                            _tag.RemoveTagsIfNotUsed(item.Tag_Id);
                                             _tag.SaveChanges();
                                         }
                                     }
-                                    
                                 }
                                 enterLoop = true;
                             }
@@ -375,75 +359,72 @@ namespace LesioBlog2.Controllers
                     }
                     else if(check == false && matches.Count == 0)
                     {
-                        foreach (var item in listaWpisTagsActual)
+                        foreach (var item in listPostTagsActual)
                         {
-                            int wpisID = wpis.WpisID;
-                            _tag.RemoveWpisTag(item.TagID, wpisID);
+                            int postID = post.Post_Id;
+                            _tag.RemoveWpisTag(item.Tag_Id, postID);
                             //get list of ID 
-                            //remove wpistag
+                            //remove postTag
                             //remove tag
-                            if (_tag.IfWpisOrCommentsHasTag(item.TagID))
+                            if (_tag.IfWpisOrCommentsHasTag(item.Tag_Id))
                             {
-                                _tag.RemoveTagsIfNotUsed(item.TagID);
+                                _tag.RemoveTagsIfNotUsed(item.Tag_Id);
                                 _tag.SaveChanges();
                             }
                         }
                     }
                 }
-                //jak pusty wpis przed ale po juz nie
-                else if (wpis.WpisTags == null && matches != null)
+                //if post is empty before and after is not
+                else if (post.PostTags == null && matches != null)
                 {
                     foreach (var tag in matches)
                     {
                         var tagz = _tag.GetTagByName(tag.ToString().ToLower());
-                        // if no existing add so
+                        // if no existing add 
                         if (tagz == null)
                         {
                             tagz = new Tag();
                             tagz.TagName = tag.ToString().ToLower();
-                            //id radnom
                             _tag.Add(tagz);
                             _tag.SaveChanges();
-                            //tylko po dodaniu nowego tagu zmieni sie status tabeli wpistag?? WRONG
-                            var wpisTag = new WpisTag()
+                            var postTag = new PostTag()
                             {
-                                TagID = tagz.TagID,
-                                WpisID = wpis.WpisID
+                                Tag_Id = tagz.Tag_Id,
+                                Post_Id = post.Post_Id
                             };
-                            _wpis.Add(wpisTag);
-                            _wpis.SaveChanges();
+                            _post.Add(postTag);
+                            _post.SaveChanges();
                         }
-                        //jak nie ma w listOfTagNames ale jest w tagach bo uzyty gdzies indziej:
+                        //if theres no matches in listOfTagNames but exists in tags:
                         else
                         {
-                            //remove wpistagStary po WpisID i TagID:
-                            int tagID = tagz.TagID;
-                            int wpisID = wpis.WpisID;
-                            //to nie trzeba usuwac tylko dodac i elo - jak jest tag gdzies uzyty ale nie w tej edycji 
-
-                            var wpisTag = new WpisTag()
+                            //remove postTag get by: Post_Id & Tag_Id:
+                            int tagID = tagz.Tag_Id;
+                            int postID = post.Post_Id;
+                            //no need to delete, just add (if tag exists somewhere else but not in this edit mode)
+                            var postTag = new PostTag()
                             {
-                                TagID = tagID,
-                                WpisID = wpisID
+                                Tag_Id = tagID,
+                                Post_Id = postID
                             };
-                            _wpis.Add(wpisTag);
-                            _wpis.SaveChanges();
+                            _post.Add(postTag);
+                            _post.SaveChanges();
                         }
                     }
-                    //jak nie ma nigdzie tagu ani uzytego ani nic to gerara
-                    //check po to zeby ogarnac gdy po edicie nie zostaje nic zwiazanego z tagami
+                    //if there isnt any tag used
+                    //bool check if after edtiting theres nothing relative to tags
                     if (check == false)
                     {
-                        foreach (var item in listaWpisTagsActual)
+                        foreach (var item in listPostTagsActual)
                         {
-                            int wpisID = wpis.WpisID;
-                            _tag.RemoveWpisTag(item.TagID, wpisID);
+                            int postID = post.Post_Id;
+                            _tag.RemoveWpisTag(item.Tag_Id, postID);
                             //get list of ID 
-                            //remove wpistag
+                            //remove postTag
                             //remove tag
-                            if (_tag.IfWpisOrCommentsHasTag(item.TagID))
+                            if (_tag.IfWpisOrCommentsHasTag(item.Tag_Id))
                             {
-                                _tag.RemoveTagsIfNotUsed(item.TagID);
+                                _tag.RemoveTagsIfNotUsed(item.Tag_Id);
                                 _tag.SaveChanges();
                             }
                         }
@@ -452,10 +433,10 @@ namespace LesioBlog2.Controllers
 
                 return RedirectToAction("Index");
             }
-            return View(wpis);
+            return View(post);
         }
 
-        // GET: Wpis/Delete/5
+        // GET: Post/Delete/5
         [AuthorizeUserAttribute]
         public ActionResult Delete(int? id)
         {
@@ -464,7 +445,7 @@ namespace LesioBlog2.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             bool isUserLogged = (System.Web.HttpContext.Current.User != null) && System.Web.HttpContext.Current.User.Identity.IsAuthenticated;
-            var IdOfCreator = _wpis.GetIdOfWpisCreator(id);
+            var IdOfCreator = _post.GetIdOpfPostCreator(id);
             //id of logged user
             int? currentlyLoggedUserId = _user.GetIDOfCurrentlyLoggedUser();
             if (currentlyLoggedUserId == null)
@@ -474,34 +455,33 @@ namespace LesioBlog2.Controllers
             //end
             if (isUserLogged && IdOfCreator == currentlyLoggedUserId)
             {
-                Wpis wpis = _wpis.GetWpisById(id);
-                if (wpis == null)
+                Post post = _post.GetPostByID(id);
+                if (post == null)
                 {
                     return HttpNotFound();
                 }
-                return View(wpis);
+                return View(post);
             }
             else
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "You can't DELETE someone else wpis gierarka hir \n FOR REAL");
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "You can't DELETE someone else post");
             }
         }
 
-      
-
-
-        // POST: Wpis/Delete/5
+        // POST: Post/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         [AuthorizeUserAttribute]
-        public ActionResult DeleteConfirmed(int id)
+        public ActionResult DeleteConfirmed(int? id)
         {
-            Wpis wpis = _wpis.GetWpisById(id);
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Post post = _post.GetPostByID(id);
 
-         
-
-            _wpis.Delete(wpis);
-            _wpis.SaveChanges();
+            _post.Delete(post);
+            _post.SaveChanges();
             return RedirectToAction("Index");
         }
 
@@ -509,7 +489,7 @@ namespace LesioBlog2.Controllers
         {
             if (disposing)
             {
-                _wpis.Dispose();
+                _post.Dispose();
             }
             base.Dispose(disposing);
         }
@@ -538,8 +518,6 @@ namespace LesioBlog2.Controllers
     }
 
 
-
-
     public class HiddenLogic
     {
         //metods that are repeaated
@@ -561,13 +539,5 @@ namespace LesioBlog2.Controllers
 
 
         }
-
     }
-
-
-
-
-
-
-
 }

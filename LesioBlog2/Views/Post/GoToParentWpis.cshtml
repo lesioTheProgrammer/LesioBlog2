@@ -1,4 +1,4 @@
-﻿@model LesioBlog2_Repo.Models.Wpis
+﻿@model LesioBlog2_Repo.Models.Post
 
 @{
     ViewBag.Title = "GoToParentWpis";
@@ -11,7 +11,7 @@
 <p>
     @if (Request.IsAuthenticated)
     {
-        using (Html.BeginForm("Create", "Wpis", FormMethod.Post))
+        using (Html.BeginForm("Create", "Post", FormMethod.Post))
         {
             @Html.AntiForgeryToken()
             <div style="margin-left: 30px; padding: 2px">
@@ -52,15 +52,15 @@
             {
                 <div id="kid">
                     <button class="colorA js-toggle-plusing"
-                            data-wpis-id="@Model.WpisID" data-plusy-count="@Model.Plusy">
-                        @Html.DisplayFor(modelitem => Model.Plusy)
+                            data-wpis-id="@Model.Post_Id" data-plusy-count="@Model.Votes">
+                        @Html.DisplayFor(modelitem => Model.Votes)
                     </button>
                 </div>
             }
             else
             {
                 <div id="kid" style="margin-right:40px;">
-                    @Html.DisplayFor(modelItem => Model.Plusy)
+                    @Html.DisplayFor(modelItem => Model.Votes)
                 </div>
 
             }
@@ -77,13 +77,11 @@
         <div style="padding-bottom: 0px; font-size: 12px">
             @if (Request.IsAuthenticated)
             {
-                @Html.ActionLink("Details", "Details", new { id = Model.WpisID }, new { @class = "btn btn-sm", @style = "color:white" })
-
                 if (System.Web.HttpContext.Current.User.Identity.Name.ToLower() == Model.User.NickName.ToLower())
                 { <span style="margin-left:0.1%;"></span>
-                    @Html.ActionLink("Edit", "Edit", new { id = Model.WpisID }, new { @class = "btn btn-sm", @style = "color:white" });
+                    @Html.ActionLink("Edit", "Edit", new { id = Model.Post_Id }, new { @class = "btn btn-sm", @style = "color:white" });
                     <span style="margin-left:0.1%;"></span>
-                    @Html.ActionLink("Delete", "Delete", new { id = Model.WpisID }, new { @class = "btn btn-sm", @style = "color:white" })
+                    @Html.ActionLink("Delete", "Delete", new { id = Model.Post_Id }, new { @class = "btn btn-sm", @style = "color:white" })
                 }
             }
         </div>
@@ -91,7 +89,7 @@
     <div>
         @*Tu o dodanie komentarza*@
         <div>
-            @Html.Partial("~/Views/Comments/_CommentAddPartial.cshtml", new ViewDataDictionary { { "WpisID", Model.WpisID } })
+            @Html.Partial("~/Views/Comments/_CommentAddPartial.cshtml", new ViewDataDictionary { { "Post_Id", Model.Post_Id } })
         </div>
     </div>
     @*komenty*@
@@ -114,8 +112,8 @@
                         {
                             <div id="kid">
                                 <button class="colorA js-toggle-plusing2"
-                                        data-comm-id="@item2.CommentID" data-plusy-count2="@item2.Plusy">
-                                    @Html.DisplayFor(modelitem => item2.Plusy)
+                                        data-comm-id="@item2.Comment_Id" data-plusy-count2="@item2.Votes">
+                                    @Html.DisplayFor(modelitem => item2.Votes)
                                 </button>
                             </div>
                         }
@@ -123,7 +121,7 @@
                         {
                             <div id="kid" style="margin-right:40px;">
 
-                                @Html.DisplayFor(modelItem => item2.Plusy)
+                                @Html.DisplayFor(modelItem => item2.Votes)
                             </div>
                         }
                     </span>
@@ -186,7 +184,7 @@
             });
         })
 
-        //komentarz
+        //comment
         $(document).ready(function () {
             $(".js-toggle-plusing2").click(function (e) {
 

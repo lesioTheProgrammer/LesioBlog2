@@ -1,11 +1,11 @@
-﻿@model PagedList.IPagedList<LesioBlog2_Repo.Models.Wpis>
+﻿@model PagedList.IPagedList<LesioBlog2_Repo.Models.Post>
 
 @using PagedList.Mvc;
 @using System.Web.Mvc.Html;
 
 
 @{
-    ViewBag.Title = "Wpisy";
+    ViewBag.Title = "Posts";
 }
 
 <div style="margin-left:10px;">
@@ -15,7 +15,7 @@
 <p>
     @if (Request.IsAuthenticated)
     {
-        using (Html.BeginForm("Create", "Wpis", FormMethod.Post))
+        using (Html.BeginForm("Create", "Post", FormMethod.Post))
         {
             @Html.AntiForgeryToken()
             <div style="margin-left: 30px; padding: 2px; width:auto">
@@ -42,7 +42,7 @@
             Author: @Html.DisplayFor(modelItem => item.User.NickName)
             <span style="font-size: 12px">
 
-                @Html.ActionLink(@Html.DisplayFor(modelItem => item.AddingDate).ToString(), "GoToParentWpis", "Wpis", new { id = item.WpisID }, null)
+                @Html.ActionLink(@Html.DisplayFor(modelItem => item.AddingDate).ToString(), "GoToParentWpis", "Post", new { id = item.Post_Id }, null)
             </span>
             <span style="font-size: 12px">
                 Edited:
@@ -56,15 +56,15 @@
                 {
                     <div id="kid">
                         <button class="colorA js-toggle-plusing"
-                                data-wpis-id="@item.WpisID" data-plusy-count="@item.Plusy">
-                            @Html.DisplayFor(modelitem => item.Plusy)
+                                data-post-id="@item.Post_Id" data-votes-count="@item.Votes">
+                            @Html.DisplayFor(modelitem => item.Votes)
                         </button>
                     </div>
                 }
                 else
                 {
                     <div id="kid" style="margin-right:40px;">
-                        @Html.DisplayFor(modelItem => item.Plusy)
+                        @Html.DisplayFor(modelItem => item.Votes)
                     </div>
 
                 }
@@ -82,9 +82,9 @@
 
                     if (System.Web.HttpContext.Current.User.Identity.Name.ToLower() == item.User.NickName.ToLower())
                     { <span style="margin-left:0.1%;"></span>
-                        @Html.ActionLink("Edit", "Edit", new { id = item.WpisID }, new { @class = "btn btn-sm", @style = "color:white" });
+                        @Html.ActionLink("Edit", "Edit", new { id = item.Post_Id }, new { @class = "btn btn-sm", @style = "color:white" });
                         <span style="margin-left:0.1%;"></span>
-                        @Html.ActionLink("Delete", "Delete", new { id = item.WpisID }, new { @class = "btn btn-sm", @style = "color:white" })
+                        @Html.ActionLink("Delete", "Delete", new { id = item.Post_Id }, new { @class = "btn btn-sm", @style = "color:white" })
                     }
                 }
             </div>
@@ -92,7 +92,7 @@
         <div>
             @*Tu o dodanie komentarza*@
             <div>
-                @Html.Partial("~/Views/Comments/_CommentAddPartial.cshtml", new ViewDataDictionary { { "WpisID", item.WpisID } })
+                @Html.Partial("~/Views/Comments/_CommentAddPartial.cshtml", new ViewDataDictionary { { "Post_Id", item.Post_Id } })
 
             </div>
         </div>
@@ -116,8 +116,8 @@
                                 {
                                     <div id="kid">
                                         <button class="colorA js-toggle-plusing2"
-                                                data-comm-id="@item2.CommentID" data-plusy-count2="@item2.Plusy">
-                                            @Html.DisplayFor(modelitem => item2.Plusy)
+                                                data-comm-id="@item2.Comment_Id" data-votes-count2="@item2.Votes">
+                                            @Html.DisplayFor(modelitem => item2.Votes)
                                         </button>
                                     </div>
                                 }
@@ -125,7 +125,7 @@
                                 {
                                     <div id="kid" style="margin-right:40px;">
 
-                                        @Html.DisplayFor(modelItem => item2.Plusy)
+                                        @Html.DisplayFor(modelItem => item2.Votes)
                                     </div>
                                 }
                             </span>
@@ -166,30 +166,30 @@
 
                 debugger
                 var token = $('input[name=__RequestVerificationToken]').val();
-                var wpis = {};
-                wpis["wpisID"] = $(e.target).attr("data-wpis-id");
-                wpis["plusy"] = $(e.target).attr("data-plusy-count");
-                var theData = $.extend({}, token, wpis, true);
+                var post = {};
+                post["PosT_Id"] = $(e.target).attr("data-post-id");
+                post["Votes"] = $(e.target).attr("data-votes-count");
+                var theData = $.extend({}, token, post, true);
                 $.ajax({
                     context: this,
                     type: "POST",
-                    url: "/Wpis/AddPlus",
-                    data: { __RequestVerificationToken: token, wpis: theData },
+                    url: "/Post/AddPlus",
+                    data: { __RequestVerificationToken: token, post: theData },
                     success: function (result) {
-                        var plusing = result.plusy;
+                        var voting = result.votes;
                         var resultCheck = result.result;
                         debugger;
                         if (resultCheck) {
                             $(e.target).removeClass("colorA")
                                 .addClass("colorB")
-                                .text(plusing);
+                                .text(voting);
 
                         }
                         else {
                             $(e.target)
                                 .removeClass("colorB")
                                 .addClass("colorA")
-                                .text(plusing);
+                                .text(voting);
                         }
                     }
                 });
@@ -204,8 +204,8 @@
                 debugger
                 var token = $('input[name=__RequestVerificationToken]').val();
                 var comment = {};
-                comment["commentID"] = $(e.target).attr("data-comm-id");
-                comment["plusy"] = $(e.target).attr("data-plusy-count2");
+                comment["Comment_Id"] = $(e.target).attr("data-comm-id");
+                comment["Votes"] = $(e.target).attr("data-votes-count2");
                 var theData = $.extend({}, token, comment, true);
                 $.ajax({
                     context: this,
@@ -213,20 +213,20 @@
                     url: "/Comments/AddPlus",
                     data: { __RequestVerificationToken: token, comment: theData },
                     success: function (result) {
-                        var plusing = result.plusy;
+                        var voting = result.votes;
                         var resultCheck = result.result;
                         debugger;
                         if (resultCheck) {
                             $(e.target).removeClass("colorA")
                                 .addClass("colorB")
-                                .text(plusing);
+                                .text(voting);
 
                         }
                         else {
                             $(e.target)
                                 .removeClass("colorB")
                                 .addClass("colorA")
-                                .text(plusing);
+                                .text(voting);
                         }
                     }
                 });

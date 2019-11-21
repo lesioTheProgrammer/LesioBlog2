@@ -13,7 +13,7 @@ namespace LesioBlog2_Repo.Abstract
         void Add(Tag tag);
         void SaveChanges();
         string GetTagNamesByTagID(int? id);
-        List<Wpis> getWpisWithSelectedTag(string tagName);
+        List<Post> getWpisWithSelectedTag(string tagName);
         bool IfWpisOrCommentsHasTag(int id);
         void RemoveTagsIfNotUsed(int id);
 

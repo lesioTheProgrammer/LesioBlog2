@@ -1,13 +1,9 @@
 ﻿using LesioBlog2_Repo.Models;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LesioBlog2_Repo.Abstract
 {
-      public  interface IGender
+    public  interface IGender
     {
         IQueryable<Gender> GetGenders();
 
@@ -15,11 +11,5 @@ namespace LesioBlog2_Repo.Abstract
 
         void SaveChanges();
         Gender GetGenderByID(int id);
-
-
     }
 }
-
-
-
-

@@ -50,7 +50,7 @@ namespace LesioBlog2.App_Start
 
                 kernel.Bind<IBlogContext>().To<BlogContext>();
 
-                kernel.Bind<IWpisRepo>().To<WpisRepo>();
+                kernel.Bind<IPostRepo>().To<PostRepo>();
 
                 kernel.Bind<IUserRepo>().To<UserRepo>();
 
