@@ -45,7 +45,7 @@ namespace LesioBlog2_Repo.Concrete
             return exist;
         }
 
-        public bool CheckIfWpisTagExist(int tagID, int wpisID)
+        public bool CheckIfPostTagExist(int tagID, int wpisID)
         {
             bool exist = false;
             var commTag = _db.PostTags.FirstOrDefault(x => x.Tag_Id == tagID && x.Post_Id == wpisID);
@@ -68,7 +68,7 @@ namespace LesioBlog2_Repo.Concrete
             _db.Tags.Remove(tagToRemove);
         }
 
-        public bool IfWpisOrCommentsHasTag(int id)
+        public bool IfPostOrCommentHaveTags(int id)
         {
             bool hastag = false;
             if (!_db.PostTags.Any(x => x.Tag_Id == id) && !_db.CommentTags.Any(x => x.Tag_Id == id))
@@ -78,10 +78,15 @@ namespace LesioBlog2_Repo.Concrete
             return hastag;
         }
 
-        public void RemoveWpisTag(int id, int id2)
+        public void RemovePostTag(int id, int id2)
         {
             var listaforLoop = _db.PostTags.FirstOrDefault(x => x.Post_Id == id2 && x.Tag_Id == id);
-            _db.PostTags.Remove(listaforLoop);
+
+            // if null do not remove
+            if (listaforLoop != null)
+            {
+                _db.PostTags.Remove(listaforLoop);
+            }
             //save changes
             _db.SaveChanges();
         }
@@ -89,7 +94,10 @@ namespace LesioBlog2_Repo.Concrete
         public void RemoveCommentTag(int id, int id2)
         {
             var listaforLoop = _db.CommentTags.FirstOrDefault(x => x.Comment_Id == id2 && x.Tag_Id == id);
+            if (listaforLoop != null)
+            {
             _db.CommentTags.Remove(listaforLoop);
+            }
             //save changes
             _db.SaveChanges();
         }

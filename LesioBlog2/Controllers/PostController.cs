@@ -252,13 +252,14 @@ namespace LesioBlog2.Controllers
                 IList<PostTag> listPostTagsActual = _post.GetAllPostTagsByPostID(post.Post_Id);
                 List<string> listOfTagNames = new List<string>();
                 foreach (var item in listPostTagsActual)
-                {
+                 {
                     listOfTagNames.Add(_tag.GetTagNamesByTagID(item.Tag_Id));
                 }
                 //list of tags used
                 //tags updated
                 //new content here
                 bool check = false;
+                bool removalCheck = true;
                 MatchCollection matches = Regex.Matches(post.Content, @"\B(\#[a-zA-Z0-9-,_]+\b)");
                 //if post has tags
                 if (post.PostTags != null)
@@ -272,40 +273,7 @@ namespace LesioBlog2.Controllers
                         }
                         else
                         {
-                            //check if exist in tagList
-                            //add tag and postTag if dont exsist
-                            //1. get tag from DB tags by tag name
-                            var tagz = _tag.GetTagByName(tag.ToString().ToLower());
-                            // if no existing add 
-                            if (tagz == null)
-                            {
-                                tagz = new Tag();
-                                tagz.TagName = tag.ToString().ToLower();
-                                _tag.Add(tagz);
-                                _tag.SaveChanges();
-                                var postTag = new PostTag()
-                                {
-                                    Tag_Id = tagz.Tag_Id,
-                                    Post_Id = post.Post_Id
-                                };
-                                _post.Add(postTag);
-                                _post.SaveChanges();
-                            }
-                            //null in listOfTagNames but exist in tags because used somewhere elese
-                            else
-                            {
-                                //remove postTag by Post_Id i Tag_Id:
-                                int tagID = tagz.Tag_Id;
-                                int postID = post.Post_Id;
-                                _tag.RemoveWpisTag(tagID, postID);
-                                var postTag = new PostTag()
-                                {
-                                    Tag_Id = tagz.Tag_Id,
-                                    Post_Id = post.Post_Id
-                                };
-                                _post.Add(postTag);
-                                _post.SaveChanges();
-                            }
+                            AddTagAndPostTag(post, tag, removalCheck);
                         }
                     }
                     //if there isnt any tag used
@@ -338,15 +306,11 @@ namespace LesioBlog2.Controllers
 
                                 if (enterLoop == true)
                                 {
-                                    int tagID = item.Tag_Id;
-                                    int postID = post.Post_Id;
-                                    if (_tag.CheckIfWpisTagExist(tagID, postID))
+                                    if (_tag.CheckIfPostTagExist(item.Tag_Id, post.Post_Id))
                                     {
-                                        _tag.RemoveWpisTag(item.Tag_Id, postID);
-                                        //get list of ID 
-                                        //remove postTag
-                                        //remove tag
-                                        if (_tag.IfWpisOrCommentsHasTag(item.Tag_Id))
+                                        _tag.RemovePostTag(item.Tag_Id, post.Post_Id);
+                                        //get list of ID , remove postTag, remove tag 
+                                        if (_tag.IfPostOrCommentHaveTags(item.Tag_Id))
                                         {
                                             _tag.RemoveTagsIfNotUsed(item.Tag_Id);
                                             _tag.SaveChanges();
@@ -359,81 +323,81 @@ namespace LesioBlog2.Controllers
                     }
                     else if(check == false && matches.Count == 0)
                     {
-                        foreach (var item in listPostTagsActual)
-                        {
-                            int postID = post.Post_Id;
-                            _tag.RemoveWpisTag(item.Tag_Id, postID);
-                            //get list of ID 
-                            //remove postTag
-                            //remove tag
-                            if (_tag.IfWpisOrCommentsHasTag(item.Tag_Id))
-                            {
-                                _tag.RemoveTagsIfNotUsed(item.Tag_Id);
-                                _tag.SaveChanges();
-                            }
-                        }
+                        RemovePostandPostTag(post, listPostTagsActual);
                     }
                 }
                 //if post is empty before and after is not
                 else if (post.PostTags == null && matches != null)
                 {
+                    removalCheck = false;
                     foreach (var tag in matches)
                     {
-                        var tagz = _tag.GetTagByName(tag.ToString().ToLower());
-                        // if no existing add 
-                        if (tagz == null)
-                        {
-                            tagz = new Tag();
-                            tagz.TagName = tag.ToString().ToLower();
-                            _tag.Add(tagz);
-                            _tag.SaveChanges();
-                            var postTag = new PostTag()
-                            {
-                                Tag_Id = tagz.Tag_Id,
-                                Post_Id = post.Post_Id
-                            };
-                            _post.Add(postTag);
-                            _post.SaveChanges();
-                        }
-                        //if theres no matches in listOfTagNames but exists in tags:
-                        else
-                        {
-                            //remove postTag get by: Post_Id & Tag_Id:
-                            int tagID = tagz.Tag_Id;
-                            int postID = post.Post_Id;
-                            //no need to delete, just add (if tag exists somewhere else but not in this edit mode)
-                            var postTag = new PostTag()
-                            {
-                                Tag_Id = tagID,
-                                Post_Id = postID
-                            };
-                            _post.Add(postTag);
-                            _post.SaveChanges();
-                        }
+                        AddTagAndPostTag(post, tag, removalCheck);
                     }
-                    //if there isnt any tag used
-                    //bool check if after edtiting theres nothing relative to tags
+                    removalCheck = true;
+                    //if there isnt any tag used, bool check if after edtiting theres nothing relative to tags
                     if (check == false)
                     {
-                        foreach (var item in listPostTagsActual)
-                        {
-                            int postID = post.Post_Id;
-                            _tag.RemoveWpisTag(item.Tag_Id, postID);
-                            //get list of ID 
-                            //remove postTag
-                            //remove tag
-                            if (_tag.IfWpisOrCommentsHasTag(item.Tag_Id))
-                            {
-                                _tag.RemoveTagsIfNotUsed(item.Tag_Id);
-                                _tag.SaveChanges();
-                            }
-                        }
+                        RemovePostandPostTag(post, listPostTagsActual);
                     }
                 }
 
                 return RedirectToAction("Index");
             }
             return View(post);
+        }
+
+        private void RemovePostandPostTag(Post post, IList<PostTag> listPostTagsActual)
+        {
+            foreach (var item in listPostTagsActual)
+            {
+                _tag.RemovePostTag(item.Tag_Id, post.Post_Id);
+                //get list of ID 
+                //remove postTag
+                //remove tag
+                if (_tag.IfPostOrCommentHaveTags(item.Tag_Id))
+                {
+                    _tag.RemoveTagsIfNotUsed(item.Tag_Id);
+                    _tag.SaveChanges();
+                }
+            }
+        }
+
+        private void AddTagAndPostTag(Post post, object tag, bool removalCheck)
+        {
+            //check if exist in tagList, add tag and postTag if dont exsist, 1. get tag from DB tags by tag name
+            var tagz = _tag.GetTagByName(tag.ToString().ToLower());
+            // if no existing add 
+            if (tagz == null)
+            {
+                tagz = new Tag();
+                tagz.TagName = tag.ToString().ToLower();
+                _tag.Add(tagz);
+                _tag.SaveChanges();
+                var postTag = new PostTag()
+                {
+                    Tag_Id = tagz.Tag_Id,
+                    Post_Id = post.Post_Id
+                };
+                _post.Add(postTag);
+                _post.SaveChanges();
+            }
+            //null in listOfTagNames but exist in tags because used somewhere elese
+            else
+            {
+                //remove postTag by Post_Id i Tag_Id:
+                if (removalCheck)
+                {
+                _tag.RemovePostTag(tagz.Tag_Id, post.Post_Id);
+                }
+                var postTag = new PostTag()
+                {
+                    Tag_Id = tagz.Tag_Id,
+                    Post_Id = post.Post_Id
+                };
+                _post.Add(postTag);
+                _post.SaveChanges();
+            }
         }
 
         // GET: Post/Delete/5

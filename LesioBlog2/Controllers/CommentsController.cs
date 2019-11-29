@@ -231,41 +231,7 @@ namespace LesioBlog2.Controllers
                         }
                         else
                         {
-                            //check if exist in tag base
-                            //if not add tag and postTag
-                            //1. get tag from DB tags by tag name
-                            var tagz = _tag.GetTagByName(tag.ToString().ToLower());
-                            // if no existing add it
-                            if (tagz == null)
-                            {
-                                tagz = new Tag();
-                                tagz.TagName = tag.ToString().ToLower();
-                                //id radnom
-                                _tag.Add(tagz);
-                                _tag.SaveChanges();
-                                var commTag = new CommentTag()
-                                {
-                                    Tag_Id = tagz.Tag_Id,
-                                    Comment_Id = comment.Comment_Id
-                                };
-                                _comm.Add(commTag);
-                                _comm.SaveChanges();
-                            }
-                            //if not existing in listOfTagNames but used somewhere else:
-                            else
-                            {
-                                //remove removeCommVote (get by tagID and CommID)
-                                int tagID = tagz.Tag_Id;
-                                int commID = comment.Comment_Id;
-                                _tag.RemoveCommentTag(tagID, commID);
-                                var commTag = new CommentTag()
-                                {
-                                    Tag_Id = tagz.Tag_Id,
-                                    Comment_Id = comment.Comment_Id
-                                };
-                                _comm.Add(commTag);
-                                _comm.SaveChanges();
-                            }
+                            RemovecommentAndCommentTags(comment, tag);
                         }
                     }
                     //if there isnt any tag used
@@ -298,21 +264,10 @@ namespace LesioBlog2.Controllers
 
                                 if (enterLoop == true)
                                 {
-                                    int tagID = item.Tag_Id;
-                                    int commID = comment.Comment_Id;
-                                    if (_tag.CheckIfCommTagExist(tagID, commID))
+                                    if (_tag.CheckIfCommTagExist(item.Tag_Id, comment.Comment_Id))
                                     {
-                                        _tag.RemoveCommentTag(tagID, commID);
-                                        //get list of ID 
-                                        //remove postTag
-                                        //remove tag
-                                        if (_tag.IfWpisOrCommentsHasTag(tagID))
-                                        {
-                                            _tag.RemoveTagsIfNotUsed(tagID);
-                                            _tag.SaveChanges();
-                                        }
+                                        RemovecommentTag(item, comment.Comment_Id);
                                     }
-
                                 }
                                 enterLoop = true;
                             }
@@ -322,16 +277,7 @@ namespace LesioBlog2.Controllers
                     {
                         foreach (var item in listaCommentTagsActual)
                         {
-                            int commID = comment.Comment_Id;
-                            _tag.RemoveCommentTag(item.Tag_Id, commID);
-                            //get list of ID 
-                            //remove postTag
-                            //remove tag
-                            if (_tag.IfWpisOrCommentsHasTag(item.Tag_Id))
-                            {
-                                _tag.RemoveTagsIfNotUsed(item.Tag_Id);
-                                _tag.SaveChanges();
-                            }
+                            RemovecommentTag(item, comment.Comment_Id);
                         }
                     }
                 }
@@ -340,39 +286,7 @@ namespace LesioBlog2.Controllers
                 {
                     foreach (var tag in matches)
                     {
-                        var tagz = _tag.GetTagByName(tag.ToString().ToLower());
-                        // if no existing add 
-                        if (tagz == null)
-                        {
-                            tagz = new Tag();
-                            tagz.TagName = tag.ToString().ToLower();
-                            //id radnom
-                            _tag.Add(tagz);
-                            _tag.SaveChanges();
-                            var commTag = new CommentTag()
-                            {
-                                Tag_Id = tagz.Tag_Id,
-                                Comment_Id = comment.Comment_Id
-                            };
-                            _comm.Add(commTag);
-                            _comm.SaveChanges();
-
-                        }
-                        //if theres no matches in listOfTagNames but exists in tags:
-                        else
-                        {
-                            //remove postTag get by: Post_Id & Tag_Id:
-                            int tagID = tagz.Tag_Id;
-                            int commID = comment.Comment_Id;
-                            //no need to delete, just add (if tag exists somewhere else but not in this edit mode)
-                            var commTag = new CommentTag()
-                            {
-                                Tag_Id = tagID,
-                                Comment_Id = commID
-                            };
-                            _comm.Add(commTag);
-                            _comm.SaveChanges();
-                        }
+                        RemovecommentAndCommentTags(comment,  tag);
                     }
                     //if there isnt any tag used
                     //bool check if after edtiting theres nothing relative to tags
@@ -380,22 +294,65 @@ namespace LesioBlog2.Controllers
                     {
                         foreach (var item in listaCommentTagsActual)
                         {
-                            int commID = comment.Comment_Id;
-                            _tag.RemoveCommentTag(item.Tag_Id, commID);
-                            //get list of ID 
-                            //remove postTag
-                            //remove tag
-                            if (_tag.IfWpisOrCommentsHasTag(item.Tag_Id))
-                            {
-                                _tag.RemoveTagsIfNotUsed(item.Tag_Id);
-                                _tag.SaveChanges();
-                            }
+                            RemovecommentTag(item, comment.Comment_Id);
                         }
                     }
                 }
                 return RedirectToAction("Index", "Post");
             }
             return View(comment);
+        }
+
+        private void RemovecommentTag(CommentTag item, int commID)
+        {
+            _tag.RemoveCommentTag(item.Tag_Id, commID);
+            //get list of ID 
+            //remove postTag
+            //remove tag
+            if (_tag.IfPostOrCommentHaveTags(item.Tag_Id))
+            {
+                _tag.RemoveTagsIfNotUsed(item.Tag_Id);
+                _tag.SaveChanges();
+            }
+        }
+
+        private void RemovecommentAndCommentTags(Comment comment, object tag)
+        {
+            //check if exist in tag base
+            //if not add tag and postTag
+            //1. get tag from DB tags by tag name
+            var tagz = _tag.GetTagByName(tag.ToString().ToLower());
+            // if no existing add it
+            if (tagz == null)
+            {
+                tagz = new Tag();
+                tagz.TagName = tag.ToString().ToLower();
+                //id radnom
+                _tag.Add(tagz);
+                _tag.SaveChanges();
+                var commTag = new CommentTag()
+                {
+                    Tag_Id = tagz.Tag_Id,
+                    Comment_Id = comment.Comment_Id
+                };
+                _comm.Add(commTag);
+                _comm.SaveChanges();
+            }
+            //if not existing in listOfTagNames but used somewhere else:
+            else
+            {
+                //remove removeCommVote (get by tagID and CommID)
+                int tagID = tagz.Tag_Id;
+                int commID = comment.Comment_Id;
+                _tag.RemoveCommentTag(tagID, commID);
+                var commTag = new CommentTag()
+                {
+                    Tag_Id = tagz.Tag_Id,
+                    Comment_Id = comment.Comment_Id
+                };
+                _comm.Add(commTag);
+                _comm.SaveChanges();
+            }
         }
 
         // GET: Comments/Delete/5
