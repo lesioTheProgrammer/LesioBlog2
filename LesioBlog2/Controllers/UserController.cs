@@ -31,7 +31,6 @@ namespace LesioBlog2.Controllers
             bool isUserLogged = (System.Web.HttpContext.Current.User != null) && System.Web.HttpContext.Current.User.Identity.IsAuthenticated;
             var user = _user.GetUserByNickname(name);
 
-
             if (isUserLogged && string.IsNullOrEmpty(name) || isUserLogged && user == null)
             {
                 var fakeUser = System.Web.HttpContext.Current.User;
@@ -39,23 +38,18 @@ namespace LesioBlog2.Controllers
                 //search by name
                 //cant be empty
                 user = _user.GetUserByNickname(userName);
-
                 user.Gender = _gender.GetGenderByID(user.Gender_Id);
                 user.Comments = _comm.GetCommentByUserID(user.User_Id);
                 user.Post = _postrepo.GetPostByUserID(user.User_Id);
-
                 return View(user);
             }
             else if ((isUserLogged && !string.IsNullOrEmpty(name)))
             {
                 user = _user.GetUserByNickname(name);
-
                 user.Gender = _gender.GetGenderByID(user.Gender_Id);
                 user.Comments = _comm.GetCommentByUserID(user.User_Id);
                 user.Post = _postrepo.GetPostByUserID(user.User_Id);
-
                 return View(user);
-
             }
 
             else
@@ -143,7 +137,6 @@ namespace LesioBlog2.Controllers
                     _user.Add(user);
                     _user.SaveChanges();
                     return RedirectToAction("LogIn", "User");
-
                 }
                 else
                 {
@@ -197,7 +190,6 @@ namespace LesioBlog2.Controllers
             }
             //if user exist with same nickname but diff emails
             var user2 = _user.GetUserByNickname(username);
-
             if (user2 != null)
             {
                 if (user2.NickName.ToLower() != username.ToLower())
@@ -235,7 +227,7 @@ namespace LesioBlog2.Controllers
                     user = _user.GetUserByEmail(user.Email);
                     //user generate code 
                     var code  =  _coderepo.AddCode(user.User_Id);
-                    user.Code_Id = user.User_Id; //bo 1 do 1 to userid = codeId hehe
+                    user.Code_Id = user.User_Id; //uID to code is 1 to 1
                     _user.SaveChanges();
                     var callback = Url.Action("ResetPassword", "User", new { userID = user.User_Id, code = code }, protocol: Request.Url.Scheme);
                     //  new mail message

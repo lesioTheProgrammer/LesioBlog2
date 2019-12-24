@@ -50,8 +50,7 @@ namespace LesioBlog2.Controllers
 
             bool checkPostState = true;
             var commToVoteItem = _comm.GetPlusComment(commToVote.Comment_Id, currentlyLoggedUserID);
-
-            // prevent user from double plsuing
+            // prevent user from double voting
             if (commToVote != null)
             {
                 if (commToVoteItem != null)
