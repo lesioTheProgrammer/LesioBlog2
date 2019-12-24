@@ -13,53 +13,49 @@ namespace LesioBlog2.Controllers
         private readonly IUserRepo _user;
         private readonly IGender _gender;
         private readonly ICommentRepo _comm;
-        private readonly IWpisRepo _wpisRepo;
+        private readonly IPostRepo _postrepo;
+        private readonly ICodeRepo _coderepo;
 
-
-        public UserController(IUserRepo userrepo, IGender gender, ICommentRepo comments, IWpisRepo wpis)
+        public UserController(IUserRepo userrepo, IGender gender, ICommentRepo comments, IPostRepo post, ICodeRepo code)
         {
             this._user = userrepo;
             this._gender = gender;
             this._comm = comments;
-            this._wpisRepo = wpis;
-
+            this._postrepo = post;
+            this._coderepo = code;
         }
-
         // GET: User
-
-
         [HttpGet]
-        public ActionResult Index(string Name)
+        public ActionResult Index(string name)
         {
             bool isUserLogged = (System.Web.HttpContext.Current.User != null) && System.Web.HttpContext.Current.User.Identity.IsAuthenticated;
-            var user = _user.GetUserByNickname(Name);
+            var user = _user.GetUserByNickname(name);
 
 
-            if (isUserLogged && string.IsNullOrEmpty(Name) || isUserLogged && user == null)
+            if (isUserLogged && string.IsNullOrEmpty(name) || isUserLogged && user == null)
             {
-              var FakeUser = System.Web.HttpContext.Current.User;
-              string userName = FakeUser.Identity.Name;
+                var fakeUser = System.Web.HttpContext.Current.User;
+                string userName = fakeUser.Identity.Name;
                 //search by name
                 //cant be empty
                 user = _user.GetUserByNickname(userName);
-                //gender nie ma kolumny userID
 
-                user.Gender = _gender.GetGenderByID(user.GenderID);
-                user.Comments = _comm.GetCommentByUserID(user.UserID);
-                user.Wpis = _wpisRepo.GetWpisByUserID(user.UserID);
+                user.Gender = _gender.GetGenderByID(user.Gender_Id);
+                user.Comments = _comm.GetCommentByUserID(user.User_Id);
+                user.Post = _postrepo.GetPostByUserID(user.User_Id);
 
                 return View(user);
             }
-            else if ((isUserLogged && !string.IsNullOrEmpty(Name)))
+            else if ((isUserLogged && !string.IsNullOrEmpty(name)))
             {
-                user = _user.GetUserByNickname(Name);
+                user = _user.GetUserByNickname(name);
 
-                    user.Gender = _gender.GetGenderByID(user.GenderID);
-                    user.Comments = _comm.GetCommentByUserID(user.UserID);
-                    user.Wpis = _wpisRepo.GetWpisByUserID(user.UserID);
+                user.Gender = _gender.GetGenderByID(user.Gender_Id);
+                user.Comments = _comm.GetCommentByUserID(user.User_Id);
+                user.Post = _postrepo.GetPostByUserID(user.User_Id);
 
-                    return View(user);
-                
+                return View(user);
+
             }
 
             else
@@ -75,9 +71,8 @@ namespace LesioBlog2.Controllers
         {
             //check if user is logged in
             bool isUserLogged = (System.Web.HttpContext.Current.User != null) && System.Web.HttpContext.Current.User.Identity.IsAuthenticated;
-           //nothing to post in displaying user state
-           
-                return View();
+            //nothing to post in displaying user state
+            return View();
         }
 
 
@@ -90,19 +85,19 @@ namespace LesioBlog2.Controllers
         public ActionResult LogIn(LesioBlog2_Repo.Models.User user)
         {
             //got user with some details
-           // if (ModelState.IsValid) --checking only email and password, not all 
+            // if (ModelState.IsValid) --checking only email and password, not all 
             {
                 if (IsValid(user.Email, user.Password))
                 {
-                     //to get user nickname
+                    //to get user nickname
                     FormsAuthentication.SetAuthCookie(_user.GetUserNicknameByEmail(user.Email), true);  //this decides which value goes to user.identiy name
-                    return RedirectToAction("Index", "Wpis");
+                    return RedirectToAction("Index", "Post");
                 }
 
                 else
                 {
                     ModelState.AddModelError("", "Login data is incorrect.");
-                   
+
                 }
             }
             return View(user);
@@ -111,19 +106,15 @@ namespace LesioBlog2.Controllers
         [HttpGet]
         public ActionResult Registration()
         {
-
+            //no need of genderlist, doing genderSelection in View.
             var genderlist = this._gender.GetGenders();
-          //  ViewBag.GenderID = new SelectList(genderlist, "GenderID", "GenderName", genderlist.Select(x=>x.GenderID));
-
             return View();
         }
 
         [HttpPost]
-        public ActionResult Registration([Bind(Include = "Email,Password,UserID,NickName,FullName,City,GenderID")]LesioBlog2_Repo.Models.User user)
+        public ActionResult Registration([Bind(Include = "Email,Password,User_Id,NickName,FullName,City,Gender_Id")]LesioBlog2_Repo.Models.User user)
         {
-
             //checking if email and nickname taken
-            
             if (IsEmailUsernameTaken(user.Email, user.NickName))
             {
                 if (ModelState.IsValid)  //password and email form checking
@@ -137,13 +128,17 @@ namespace LesioBlog2.Controllers
                     #region 
                     //userID
                     var rnd = new Random();
-                    user.UserID = rnd.Next();
-                    var matchingUser = _user.FindUserByID(user.UserID);
+                    user.User_Id = rnd.Next();
+                    var matchingUser = _user.FindUserByID(user.User_Id);
                     while (matchingUser != null)
                     {
-                        user.UserID = rnd.Next();
-                        matchingUser = _user.FindUserByID(user.UserID);
+                        user.User_Id = rnd.Next();
+                        matchingUser = _user.FindUserByID(user.User_Id);
                     }
+                    //deafult values:
+                    user.Role_Id = 2; //deafult -- fix it later in db?
+                    user.Active = true;
+                    //deafult end
                     #endregion
                     _user.Add(user);
                     _user.SaveChanges();
@@ -160,31 +155,19 @@ namespace LesioBlog2.Controllers
             {
                 ModelState.AddModelError("", "Email/Username taken, change it please");
             }
-
-            
-
-
             return View(user);
         }
 
         public ActionResult LogOut()
         {
-
             FormsAuthentication.SignOut();
-
-            return RedirectToAction("Index", "Wpis");
+            return RedirectToAction("Index", "Post");
         }
-
-
-
         //validate username and password
 
         private bool IsValid(string email, string password)
         {
             var crypto = new SimpleCrypto.PBKDF2();
-
-
-
             bool IsValid = false;
 
             //get the user by email
@@ -192,9 +175,9 @@ namespace LesioBlog2.Controllers
             var user = _user.GetUserByEmail(email);
             if (user != null)
             {
-                if(user.Password == crypto.Compute(password, user.PasswordSalt))
+                if (user.Password == crypto.Compute(password, user.PasswordSalt))
                 {
-                    IsValid = true; 
+                    IsValid = true;
                 }
             }
             return IsValid;
@@ -202,13 +185,12 @@ namespace LesioBlog2.Controllers
 
         private bool IsEmailUsernameTaken(string email, string username)
         {
-            //mielimy mielonke kurwiczki
             bool IsEUValid = false;
             //if theres user with same email and username
             var user = _user.GetUserByEmail(email);
             if (user != null)
             {
-                if(user.Email != email && user.NickName.ToLower() != username.ToLower())
+                if (user.Email != email && user.NickName.ToLower() != username.ToLower())
                 {
                     IsEUValid = true;
                 }
@@ -235,60 +217,61 @@ namespace LesioBlog2.Controllers
             return IsEUValid;
         }
 
-
         [HttpGet]
         public ActionResult ResetPasswordSent()
         {
             return View();
         }
 
-
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult ResetPasswordSent(User user)
         {
-
-
             if (!string.IsNullOrEmpty(user.Email))
             {
-               bool ifExist =  _user.CheckIfUserEmailVaild(user.Email);
-               if (ifExist == true)
+                bool ifExist = _user.CheckIfUserEmailVaild(user.Email);
+                if (ifExist == true)
                 {
-                 int userId = _user.GetUserByEmail(user.Email).UserID;
-                 user = _user.GetUserByEmail(user.Email);
-                   
-                        //wyslij
-                        SmtpClient client = new SmtpClient();
-                        MailMessage mailMessage = new MailMessage();
-                        mailMessage.From = new MailAddress("lesio.blog@gmail.com");
-                        mailMessage.To.Add(user.Email);
-                        mailMessage.Subject = "Reset your password";
-
-                    //userID
-                    var rnd = new Random();
-                    user.Code = rnd.Next(10000, int.MaxValue);
+                    user = _user.GetUserByEmail(user.Email);
+                    //user generate code 
+                    var code  =  _coderepo.AddCode(user.User_Id);
+                    user.Code_Id = user.User_Id; //bo 1 do 1 to userid = codeId hehe
                     _user.SaveChanges();
-                    var code = user.Code;
-                    var callback = Url.Action("ResetPassword", "User", new {userID = userId, code = code }, protocol: Request.Url.Scheme);
-                    mailMessage.Body = "Reset your password here \n"+ callback;
-                    client.Send(mailMessage);
-                    return RedirectToAction("Index", "Wpis");
+                    var callback = Url.Action("ResetPassword", "User", new { userID = user.User_Id, code = code }, protocol: Request.Url.Scheme);
+                    //  new mail message
+                    #region
+                    MailMessage mail = new MailMessage("lesio.blog@gmail.com", user.Email);
+                    mail.Subject = "Reset your password";
+                    mail.Body = "Reset your password here \n" + callback;
+                    SmtpClient smtpClient = new SmtpClient("smtp.gmail.com", 587);
+                    smtpClient.Credentials = new System.Net.NetworkCredential()
+                    {
+                        UserName = "lesio.blog@gmail.com",
+                        Password = "lesio222pies"
+                    };
+                    smtpClient.EnableSsl = true;
+                    System.Net.ServicePointManager.ServerCertificateValidationCallback = delegate (object s,
+                            System.Security.Cryptography.X509Certificates.X509Certificate certificate,
+                            System.Security.Cryptography.X509Certificates.X509Chain chain,
+                            System.Net.Security.SslPolicyErrors sslPolicyErrors)
+                    {
+                        return true;
+                    };
 
+                    smtpClient.Send(mail);
+                    #endregion
+                    return RedirectToAction("Index", "Post");
                 }
                 else
                 {
                     ModelState.AddModelError("", "Email is incorrect, change it please");
                 }
             }
-
             else
             {
                 ModelState.AddModelError("", "Email is incorrect, change it please");
             }
-
-            return RedirectToAction("Index", "Wpis");
-
+            return RedirectToAction("Index", "Post");
         }
 
         [HttpGet]
@@ -303,41 +286,27 @@ namespace LesioBlog2.Controllers
         }
 
         [HttpPost]
-        public ActionResult ResetPassword(int userID, int code, string password)
+        public ActionResult ResetPassword(ID_CodeViewModel model)
         {
-
-            var user = _user.GetUserByID(userID);
-            var pass = password;
-            if (user.Code == code && user.UserID == userID)
+            var user = _user.GetUserByIDAndCode(model.ID);
+            var pass = model.Password;
+            int? codex = _coderepo.GetCodeValue(model.ID); //po userId bierz kod
+            if (model.Code == codex && user.User_Id == model.ID)
             {
                 //set new password and reset the code
-               
                 var crypto = new SimpleCrypto.PBKDF2();
                 var encrpPass = crypto.Compute(pass);
                 user.Password = encrpPass;
                 user.PasswordSalt = crypto.Salt;
-
                 var random = new Random();
-
-                user.Code = random.Next(10000, int.MaxValue);
-
+                user.Code.CodeValue = random.Next(10000, int.MaxValue);
                 _user.SaveChanges();
-
-
             }
             else
             {
                 return RedirectToAction("ResetPasswordSent", "User");
             }
-
-
-
-
             return RedirectToAction("LogIn", "User");
         }
-
-
-
-
     }
 }

@@ -1,19 +1,17 @@
-﻿using System.Collections.Generic;
+﻿
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace LesioBlog2_Repo.Models
 {
     public class Tag
     {
-
-        public int TagID { get; set; }
-
+        [Key]
+        public int Tag_Id { get; set; }
         public string TagName { get; set; }
-
-        //wiele tagow wiele wpisow
-
-        public virtual ICollection<WpisTag> WpisTag { get; set; }
-
-        //wiele tagoe wiele komentow
+        //many tags many post
+        public virtual ICollection<PostTag> PostTag { get; set; }
+        //many tags many comme
         public virtual ICollection<CommentTag> CommentTags { get; set; }
     }
 }

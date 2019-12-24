@@ -1,0 +1,41 @@
+﻿<script>
+
+        $(document).ready(function () {
+            $(".js-toggle-sendcomment").click(function (e) {
+
+                debugger
+                var token = $('input[name=__RequestVerificationToken]').val();
+                var comment = {};
+                comment["wpisID"] = $(e.target).attr("data-wpis-id");
+                comment["Content"] = $(e.target).attr("data-content");
+                var theData = $.extend({}, token, comment, true);
+                $.ajax({
+                    context: this,
+                    type: "POST",
+                    url: "/Comment/Create",
+                    data: { __RequestVerificationToken: token, comment: theData },
+                    success: function (result) {
+                        var resultCheck = result.result;
+                        debugger;
+                        if (resultCheck) {
+                            $(e.target).removeClass("btn btn-success")
+                                .addClass("btn btn-info")
+                                .text(plusing);
+
+                        }
+                        else {
+                            $(e.target)
+                                .removeClass("btn btn-info")
+                                .addClass("btn btn-success")
+                                .text(plusing);
+                        }
+                    }
+                });
+            });
+        })
+        @*
+        script comment adding
+            *@
+</script>
+
+

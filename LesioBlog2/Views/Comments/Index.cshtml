@@ -15,7 +15,7 @@
             @Html.DisplayNameFor(model => model.User.NickName)
         </th>
         <th>
-            @Html.DisplayName("Wpis content");
+            @Html.DisplayName("Post content");
         </th>
         <th>
             @Html.DisplayNameFor(model => model.Content)
@@ -24,7 +24,7 @@
             @Html.DisplayNameFor(model => model.AddingDate)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Plusy)
+            @Html.DisplayNameFor(model => model.Votes)
         </th>
         <th></th>
     </tr>
@@ -35,8 +35,8 @@
         @Html.DisplayFor(modelItem => item.User.NickName)
     </td>
     <td>
-        @Html.DisplayFor(modelItem => item.Wpis.Content)
-        @Html.ActionLink("Go to related wpis", "GoToParentWpis", "Wpis", new { id = item.WpisID }, null)
+        @Html.DisplayFor(modelItem => item.Post.Content)
+        @Html.ActionLink("Go to related wpis", "GoToParentWpis", "Wpis", new { id = item.Post_Id }, null)
     </td>
 
 
@@ -47,21 +47,19 @@
         @Html.DisplayFor(modelItem => item.AddingDate)
     </td>
     <td>
-        @Html.DisplayFor(modelItem => item.Plusy)
+        @Html.DisplayFor(modelItem => item.Votes)
     </td>
     <td>
         @if (Request.IsAuthenticated)
         {
-            @Html.ActionLink("Details", "Details", new { id = item.WpisID })
 
-
-            if (System.Web.HttpContext.Current.User.Identity.Name == item.User.NickName)
+            if (System.Web.HttpContext.Current.User.Identity.Name.ToLower() == item.User.NickName.ToLower())
             {
                 <span> || </span>
-                @Html.ActionLink("Edit", "Edit", new { id = item.WpisID });
+                @Html.ActionLink("Edit", "Edit", new { id = item.Post_Id });
                 <span> || </span>
 
-                @Html.ActionLink("Delete", "Delete", new { id = item.WpisID })
+                @Html.ActionLink("Delete", "Delete", new { id = item.Post_Id })
             }
         }
     </td>

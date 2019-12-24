@@ -10,7 +10,6 @@ namespace LesioBlog2_Repo.Concrete
 {
     public class CommentRepo : ICommentRepo
     {
-
         private readonly IBlogContext _db;
         public CommentRepo(IBlogContext db)
         {
@@ -27,113 +26,97 @@ namespace LesioBlog2_Repo.Concrete
             _db.CommentTags.Add(commTag);
         }
 
-         public void Add(IfPlusowalComment plusComm)
+         public void Add(IsCommUpvoted voteComm)
         {
-            _db.IfPlusowalComment.Add(plusComm);
+            _db.IsCommUpvoted.Add(voteComm);
         }
-
-
 
         public void Delete(Comment comment)
         {
             //remove tags if are not used anywhere else
-            var commTags = _db.CommentTags.Where(x => x.CommentID == comment.CommentID).Select(x => x);
-            //lista wpistagow'
+            var commTags = _db.CommentTags.Where(x => x.Comment_Id == comment.Comment_Id);
+            //list of PostTags
             //Ilist because this allows to perform Savechanges in Foreach
-            IList<CommentTag> listaforLoop = _db.CommentTags.Where(x => x.CommentID == comment.CommentID)
-                .Select(x => x)
-                .ToList();
-
+            IList<CommentTag> listaforLoop = _db.CommentTags.Where(x => x.Comment_Id == comment.Comment_Id).ToList();
             foreach (var item in listaforLoop)
             {
-                var tagID = item.TagID;
+                var tagID = item.Tag_Id;
                 //get list of ID 
                 _db.CommentTags.Remove(item);
                 //save changes
                 _db.SaveChanges();
-                if (!_db.CommentTags.Any(x => x.TagID == tagID) && !_db.WpisTags.Any(x => x.TagID == tagID))
+                if (!_db.CommentTags.Any(x => x.Tag_Id == tagID) && !_db.PostTags.Any(x => x.Tag_Id == tagID))
                 {
-                    var tagToRemove = _db.Tags.Where(x => x.TagID == tagID).SingleOrDefault();
+                    var tagToRemove = _db.Tags.FirstOrDefault(x => x.Tag_Id == tagID);
+                    if (tagToRemove == null)
+                    {
+                        throw new FieldAccessException();
+                    }
+
                     _db.Tags.Remove(tagToRemove);
                 }
             }
 
+            IList<IsCommUpvoted> lostOfIsCommUpvoted = _db.IsCommUpvoted
+                .Where(x => x.Comment_Id == comment.Comment_Id)
+                .ToList();
+            foreach (var item in lostOfIsCommUpvoted)
+            {
+                _db.IsCommUpvoted.Remove(item);
+                _db.SaveChanges();
+            }
             _db.Comments.Remove(comment);
         }
-
-      
-
         public Comment GetCommentById(int? id)
         {
-            var comment = _db.Comments.Include(a=>a.User).Include(x=>x.CommentTags).SingleOrDefault(x => x.CommentID == id);
+            var comment = _db.Comments.Include(a=>a.User).Include(x=>x.CommentTags).FirstOrDefault(x => x.Comment_Id == id);
+            if (comment == null)
+            {
+                return new Comment();
+            }
             return comment;
         }
 
         public ICollection<Comment>  GetCommentByUserID(int? id)
         {
-            var comment = _db.Comments.Where(x => x.UserID == id).Select(x=>x);
-
-            var list = comment.ToList();
-
-            return list;
-
+            var comment = _db.Comments.Where(x => x.User_Id == id).ToList();
+            return comment;
         }
 
-        public IfPlusowalComment GetPlusComment(int? idComment, int? idUser)
+        public IsCommUpvoted GetPlusComment(int? idComment, int? idUser)
         {
-            var plusedComment = _db.IfPlusowalComment
-                .Where(x => x.CommentID == idComment)
-                .Where(x => x.UserID == idUser)
-                .SingleOrDefault();
+            var plusedComment = _db.IsCommUpvoted.FirstOrDefault(x => x.Comment_Id == idComment && x.User_Id == idUser);
+            if (plusedComment == null)
+            {
+                //null ref ex in controler OK
+            }
             return plusedComment;
         }
-
-
-
         public List<Comment> GetCommentByUserNickName(string name)
         {
-            var user = _db.Users.SingleOrDefault(x => x.NickName.ToLower() == name.ToLower());
+            var user = _db.Users.FirstOrDefault(x => x.NickName.ToLower() == name.ToLower());
             if (user != null)
             {
-                var comments = _db.Comments.Include("Wpis").Include("User").Where(x => x.UserID == user.UserID);
+                var comments = _db.Comments.Include("Post").Include("User").Where(x => x.User_Id == user.User_Id);
                 return comments.ToList();
             }
             else
             {
                 return new List<Comment>();
             }
-
-        }
-
-        public IQueryable<Comment> GetComment()
-        {
-            var comments = _db.Comments.Include("User");
-            return comments;
-        }
-
-        public IQueryable<Comment> GetPages(int? page, int? pagesize)
-        {
-            throw new NotImplementedException();
         }
 
         public DateTime GetCommentWithAddingDate(Comment comment)
         {
-
             DateTime data;
-
-            int id = comment.CommentID;
-
-            data = _db.Comments.AsNoTracking().SingleOrDefault(x => x.CommentID == id).AddingDate;
-
+            int id = comment.Comment_Id;
+            data = _db.Comments.AsNoTracking().FirstOrDefault(x => x.Comment_Id == id).AddingDate;
+            if (data == null)
+            {
+                return new DateTime(); 
+            }
 
             return data;
-        }
-
-
-        public Comment FindCommentByID(int? id)
-        {
-            var comment = _db.Comments.SingleOrDefault(x => x.CommentID == id);
-            return comment;
         }
 
 
@@ -142,21 +125,14 @@ namespace LesioBlog2_Repo.Concrete
             _db.SaveChanges();
         }
 
-        public void Update(Comment comment)
-        {
-            _db.Entry(comment).State = System.Data.Entity.EntityState.Modified;
-        }
 
         public void UpdateContentAndPlusyAndEditDate(Comment comment)
         {
             _db.Comments.Attach(comment);
             _db.Entry(comment).Property("Content").IsModified = true;
-            _db.Entry(comment).Property("Plusy").IsModified = true;
+            _db.Entry(comment).Property("Votes").IsModified = true;
             _db.Entry(comment).Property("EditingDate").IsModified = true;
         }
-
-
-
         private bool disposed = false;
         protected virtual void Dispose(bool disposing)
         {
@@ -175,46 +151,31 @@ namespace LesioBlog2_Repo.Concrete
             GC.SuppressFinalize(this);
         }
 
-
         public int GetIdOfCommentCreator(int? id)
         {
-            var ID = _db.Comments.SingleOrDefault(x => x.CommentID == id).UserID;
-            return ID;
+            int? ID = _db.Comments.FirstOrDefault(x => x.Comment_Id == id).User_Id;
+            if (ID == null)
+            {
+                return 0;
+            }
+            return ID.GetValueOrDefault();
         }
 
-
-
-        public void UpdateOnlyPlusy(Comment comment)
+        public void UpdateOnlyVotes(Comment comment)
         {
             _db.Comments.Attach(comment);
-            _db.Entry(comment).Property("Plusy").IsModified = true;
+            _db.Entry(comment).Property("Votes").IsModified = true;
         }
 
-        public void UpdateIfCommState(IfPlusowalComment ifplus)
+        public void UpdateIfCommState(IsCommUpvoted isUpvoted)
         {
-            _db.IfPlusowalComment.Attach(ifplus);
-            _db.Entry(ifplus).Property("IfPlusWpis").IsModified = true;
+            _db.IsCommUpvoted.Attach(isUpvoted);
+            _db.Entry(isUpvoted).Property("IsCommentUpvoted").IsModified = true;
         }
-
-
-
-
         public List<CommentTag> GetAllCommTagsByCommId(int? id)
         {
-
-            var returning = _db.CommentTags.Where(x => x.CommentID == id).Select(x => x).ToList();
-            return returning;
+            var commTag = _db.CommentTags.Where(x => x.Comment_Id == id).ToList();
+            return commTag;
         }
-
-
-        
-
-
-
-
-
-
-
-
     }
 }

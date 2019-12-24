@@ -1,4 +1,4 @@
-﻿@model LesioBlog2_Repo.Models.Comment
+﻿@model LesioBlog2_Repo.Models.Post
 
 @{
     ViewBag.Title = "Details";
@@ -7,16 +7,14 @@
 <h2>Details</h2>
 
 <div>
-    <h4>Comment</h4>
+    <h4>Post</h4>
     <hr />
-    
 </div>
 <p>
     @if (System.Web.HttpContext.Current.User.Identity.Name.ToLower() == Model.User.NickName.ToLower())
     {
-        @Html.ActionLink("Edit", "Edit", new { id = Model.Comment_Id })
+        @Html.ActionLink("Edit", "Edit", new { id = Model.Post_Id })
         <span>|</span>
     }
-
     @Html.ActionLink("Back to List", "Index")
 </p>

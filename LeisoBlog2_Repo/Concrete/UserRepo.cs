@@ -1,5 +1,6 @@
 ﻿using LesioBlog2_Repo.Abstract;
 using LesioBlog2_Repo.Models;
+using System.Data.Entity;
 using System.Linq;
 
 namespace LesioBlog2_Repo.Concrete
@@ -26,23 +27,25 @@ namespace LesioBlog2_Repo.Concrete
 
         public User GetUserByEmail(string email)
         {
-            var user = _db.Users.SingleOrDefault(u => u.Email.ToLower() == email.ToLower());
+            var user = _db.Users.FirstOrDefault(u => u.Email.ToLower() == email.ToLower());
+           
             return user;
         }
 
         public User FindUserByID(int? id)
         {
-            var user = _db.Users.SingleOrDefault(u => u.UserID == id);
+            var user = _db.Users.FirstOrDefault(u => u.User_Id == id);
             return user;
-
         }
+
+
+        
 
         public string GetUserNicknameByEmail(string email)
         {
-            string nickname = "THIS USER HAS NO NICKNAME WHATS WRONG HELP";
-            //mam usera po emailu tera wygrzebac jego nickname
-            var user = _db.Users.SingleOrDefault(x => x.Email.ToLower() == email.ToLower());
-
+            string nickname = "";
+            //i got user by email--get userName
+            var user = _db.Users.FirstOrDefault(x => x.Email.ToLower() == email.ToLower());
             if (user != null)
             {
               nickname = user.NickName;
@@ -62,27 +65,22 @@ namespace LesioBlog2_Repo.Concrete
             {
                 return null;
             }
-            var currentlyLoggedUserId = _db.Users.SingleOrDefault(x=>x.NickName == userName).UserID;
+            var currentlyLoggedUserId = _db.Users.FirstOrDefault(x=>x.NickName == userName).User_Id;
             return currentlyLoggedUserId;
 
         }
 
-
         public User GetUserByNickname(string nickname)
         {
-            var user = _db.Users.SingleOrDefault(x => x.NickName.ToLower() == nickname.ToLower());
+            var user = _db.Users.FirstOrDefault(x => x.NickName.ToLower() == nickname.ToLower());
             return user;
         }
 
         public User GetLoggedUser()
         {
-            var user =_db.Users.SingleOrDefault();
+            var user =_db.Users.FirstOrDefault();
             return user;
-
         }
-        
-
-
         public void SaveChanges()
         {
             _db.SaveChanges();
@@ -135,24 +133,17 @@ namespace LesioBlog2_Repo.Concrete
             return output;
         }
 
-        public void UpdateOnlyCode(User user)
-        {
-
-           // _db.Entry(user).State = EntityState.Modified;
-          // _db.Users.Attach(user);
-         //  _db.Entry(user).Property("Code").IsModified = true;
-
-        }
-
-
         public User GetUserByID(int id)
         {
-             var user =  _db.Users.SingleOrDefault(x => x.UserID == id);
+             var user =  _db.Users.FirstOrDefault(x => x.User_Id == id);
             return user;
         }
 
-
-
+        public User GetUserByIDAndCode(int id)
+        {
+            var user = _db.Users.Include(z => z.Code).FirstOrDefault(x => x.User_Id == id);
+            return user;
+        }
 
     }
 }

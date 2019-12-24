@@ -25,140 +25,95 @@ namespace LesioBlog2.Controllers
         // GET: Comments
         public ActionResult Index(string userNickName)
         {
-            var comments = _comm.GetComment();
-            if (string.IsNullOrEmpty(userNickName))
-            {
-                return View(comments.ToList());
-            }
-            else
-            {
-                comments = _comm.GetCommentByUserNickName(userNickName).AsQueryable();
-            }
-            return View(comments);
-
+            return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
         }
 
         // GET: Comments/Details/5
         public ActionResult Details(int? id)
         {
-
-            var comment = _comm.GetCommentById(id);
-
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            if (comment == null)
-            {
-                return HttpNotFound();
-            }
-            return View(comment);
+            return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
         }
 
         // GET: Comments/Create
         public ActionResult Create()
         {
-            return View();
+            return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Not avialable");
+
         }
-
-
-
-
-
         [HttpPost]
         [AuthorizeUserAttribute]
         [ValidateAntiForgeryToken]
-
         public ActionResult AddPlus(Comment comment)
         {
             var currentlyLoggedUserID = _user.GetIDOfCurrentlyLoggedUser().Value;
-            var commToPlus = _comm.GetCommentById(comment.CommentID);
+            var commToVote = _comm.GetCommentById(comment.Comment_Id);
 
-            bool checkWpisState = true;
-            var ifCommPlus= _comm.GetPlusComment(commToPlus.CommentID, currentlyLoggedUserID);
+            bool checkPostState = true;
+            var commToVoteItem = _comm.GetPlusComment(commToVote.Comment_Id, currentlyLoggedUserID);
 
-           // prevent user from double plsuing
-            if (commToPlus != null)
+            // prevent user from double plsuing
+            if (commToVote != null)
             {
-                if (ifCommPlus != null)
+                if (commToVoteItem != null)
                 {
-                    checkWpisState = ifCommPlus.IfPlusWpis;
+                    checkPostState = commToVoteItem.IsCommentUpvoted;
                 }
                 else
                 {
-                    var ifplus = new IfPlusowalComment()
+                    var commVoteEntity = new IsCommUpvoted()
                     {
-                        UserID = currentlyLoggedUserID,
-                        CommentID = commToPlus.CommentID,
-                        IfPlusWpis = false
+                        User_Id = currentlyLoggedUserID,
+                        Comment_Id = commToVote.Comment_Id,
+                        IsCommentUpvoted = false
                     };
-                         _comm.Add(ifplus);
-                        _comm.SaveChanges();
-                    checkWpisState = ifplus.IfPlusWpis;
+                    _comm.Add(commVoteEntity);
+                    _comm.SaveChanges();
+                    checkPostState = commVoteEntity.IsCommentUpvoted;
                 }
             }
 
-            if (commToPlus != null && User.Identity.Name != commToPlus.User.NickName && !checkWpisState)
+            if (commToVote != null && User.Identity.Name.ToLower() != commToVote.User.NickName.ToLower() && !checkPostState)
             {
-                commToPlus.Plusy = commToPlus.Plusy + 1;
-                ifCommPlus = _comm.GetPlusComment(commToPlus.CommentID, currentlyLoggedUserID);
-                ifCommPlus.IfPlusWpis = true;
-                _comm.UpdateOnlyPlusy(commToPlus);
-                _comm.UpdateIfCommState(ifCommPlus);
+                commToVote.Votes = commToVote.Votes + 1;
+                commToVoteItem = _comm.GetPlusComment(commToVote.Comment_Id, currentlyLoggedUserID);
+                commToVoteItem.IsCommentUpvoted = true;
+                _comm.UpdateOnlyVotes(commToVote);
+                _comm.UpdateIfCommState(commToVoteItem);
                 _comm.SaveChanges();
 
-                var result = new { result = true, plusy = commToPlus.Plusy };
+                var result = new { result = true, votes = commToVote.Votes };
                 return Json(result,
                             JsonRequestBehavior.AllowGet); ;
             }
 
 
-            else if (commToPlus != null && User.Identity.Name != commToPlus.User.NickName && checkWpisState)
+            else if (commToVote != null && User.Identity.Name.ToLower() != commToVote.User.NickName.ToLower() && checkPostState)
             {
-                commToPlus.Plusy = commToPlus.Plusy - 1;
-                ifCommPlus = _comm.GetPlusComment(commToPlus.CommentID, currentlyLoggedUserID);
-                ifCommPlus.IfPlusWpis = false;
-                _comm.UpdateOnlyPlusy(commToPlus);
-                _comm.UpdateIfCommState(ifCommPlus);
+                commToVote.Votes = commToVote.Votes - 1;
+                commToVoteItem = _comm.GetPlusComment(commToVote.Comment_Id, currentlyLoggedUserID);
+                commToVoteItem.IsCommentUpvoted = false;
+                _comm.UpdateOnlyVotes(commToVote);
+                _comm.UpdateIfCommState(commToVoteItem);
                 _comm.SaveChanges();
-                var result = new { result = false, plusy = commToPlus.Plusy };
+                var result = new { result = false, votes = commToVote.Votes };
                 return Json(result, JsonRequestBehavior.AllowGet);
             }
             else
             {
-                var result = new { result = false, plusy = commToPlus.Plusy };
+                var result = new { result = false, votes = commToVote.Votes };
                 return Json(result, JsonRequestBehavior.AllowGet);
             }
 
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         // POST: Comments/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "WpisID,Content,UserID,ID,AddingDate,Plusy,EditingDate")] Comment comment)
+        public ActionResult Create([Bind(Include = "Post_Id,Content,User_Id,ID,AddingDate,Votes,EditingDate")] Comment comment)
         {
-            comment.Plusy = 0;
+            comment.Votes = 0;
             comment.AddingDate = DateTime.Now;
-            //  comment.WpisID = 8;
-            //wpisID is not passed?????
             //load from users:
             var nullableUserID = _user.GetIDOfCurrentlyLoggedUser();
             if (nullableUserID == null)
@@ -168,15 +123,15 @@ namespace LesioBlog2.Controllers
             else
             {
                 //int? to int
-                comment.UserID = nullableUserID.GetValueOrDefault();
+                comment.User_Id = nullableUserID.GetValueOrDefault();
             }
             comment.EditingDate = null;
 
+            var result = new { result = true };
             if (ModelState.IsValid)
             {
                 _comm.Add(comment);
                 _comm.SaveChanges();
-
 
                 MatchCollection matches = Regex.Matches(comment.Content, @"\B(\#[a-zA-Z0-9-,_]+\b)");
                 //wpis ID first important
@@ -186,7 +141,7 @@ namespace LesioBlog2.Controllers
                     if (tag == null)
                     {
                         tag = new Tag();
-                        tag.TagName = tagName.ToString();
+                        tag.TagName = tagName.ToString().ToLower();
                         //id radnom
                         _tag.Add(tag);
                         _tag.SaveChanges();
@@ -194,16 +149,15 @@ namespace LesioBlog2.Controllers
 
                     var commTag = new CommentTag()
                     {
-                        TagID = tag.TagID,
-                        CommentID = comment.CommentID
+                        Tag_Id = tag.Tag_Id,
+                        Comment_Id = comment.Comment_Id
                     };
                     _comm.Add(commTag);
                     _comm.SaveChanges();
                 }
-
-                return RedirectToAction("Index", "Wpis");
+                return RedirectToAction("Index", "Post");
             }
-            return RedirectToAction("Index", "Wpis");
+            return RedirectToAction("Index", "Post");
         }
 
         // GET: Comments/Edit/5
@@ -241,10 +195,10 @@ namespace LesioBlog2.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "CommentID,Content")] Comment comment)
+        public ActionResult Edit([Bind(Include = "Comment_Id,Content")] Comment comment)
         {
             var logic = new HiddenLogic();
-            comment.Plusy = 0;
+            comment.Votes = 0;
             comment.EditingDate = DateTime.Now;
             comment.AddingDate = _comm.GetCommentWithAddingDate(comment);
 
@@ -254,83 +208,52 @@ namespace LesioBlog2.Controllers
                 _comm.SaveChanges();
 
                 //old tags:
-                IList<CommentTag> listaCommentTagsActual = _comm.GetAllCommTagsByCommId(comment.CommentID);
+                IList<CommentTag> listaCommentTagsActual = _comm.GetAllCommTagsByCommId(comment.Comment_Id);
                 List<string> listOfTagNames = new List<string>();
                 foreach (var item in listaCommentTagsActual)
                 {
-                    listOfTagNames.Add(_tag.GetTagNamesByTagID(item.TagID));
+                    listOfTagNames.Add(_tag.GetTagNamesByTagID(item.Tag_Id));
                 }
-                //tu mam liste nazw tagow uzytych
-                //tutej updejt tagow
+                //list of name tags used
+                //update of tags
                 //new content here
                 bool check = false;
                 MatchCollection matches = Regex.Matches(comment.Content, @"\B(\#[a-zA-Z0-9-,_]+\b)");
-                //jak wpis ma wogole tagi to idz:
+                //if comment has tags ->enter
                 if (comment.CommentTags != null)
                 {
                     foreach (var tag in matches)
                     {
-                        if (listOfTagNames.Any(p => p.Contains(tag.ToString())))
+                        if (listOfTagNames.Any(p => p.Contains(tag.ToString().ToLower())))
                         {
                             logic.CheckTheDifferenceBetween(matches.Count, listOfTagNames.Count);
                             continue;
                         }
                         else
                         {
-                            //sprawdz czy jest w bazie tagowej
-                            //jak nie ma to dodaj i dodaj wpistag
-                            //1. get tag from DB tags by tag name
-                            var tagz = _tag.GetTagByName(tag.ToString());
-                            // if no existing add so
-                            if (tagz == null)
-                            {
-                                tagz = new Tag();
-                                tagz.TagName = tag.ToString();
-                                //id radnom
-                                _tag.Add(tagz);
-                                _tag.SaveChanges();
-                                var commTag = new CommentTag()
-                                {
-                                    TagID = tagz.TagID,
-                                    CommentID = comment.CommentID
-                                };
-                                _comm.Add(commTag);
-                                _comm.SaveChanges();
-                            }
-                            //jak nie ma w listOfTagNames ale jest w tagach bo uzyty gdzies indziej:
-                            else
-                            {
-                                //remove wpistagStary po WpisID i TagID:
-                                int tagID = tagz.TagID;
-                                int commID = comment.CommentID;
-                                _tag.RemoveCommentTag(tagID, commID);
-                                 var commTag = new CommentTag()
-                                 {
-                                     TagID = tagz.TagID,
-                                     CommentID = comment.CommentID
-                                 };
-                                _comm.Add(commTag);
-                                _comm.SaveChanges();
-                            }
+                            RemovecommentAndCommentTags(comment, tag);
                         }
                     }
-                    //jak nie ma nigdzie tagu ani uzytego ani nic to gerara
-                    //check po to zeby ogarnac gdy po edicie nie zostaje nic zwiazanego z tagami
+                    //if there isnt any tag used
+                    //bool check if after edtiting theres nothing relative to tags
                     if (check == false && matches.Count != 0)
                     {
                         bool enterLoop = true;
-                        //usuwaj z checklisty a nie z wpistagkowej bo jak 1 usuniesz a drugi zostawisz to lipa
+                        var listOfMatches = new List<Tag>();
+                        foreach (var tagFake in matches)
+                        {
+                            var tag2 = _tag.GetTagByName(tagFake.ToString());
+                            listOfMatches.Add(tag2);
+                        }
+                        //remove from checklist, not postTags (if you try to remove only 1 and you will keep the second --failure)
                         foreach (var item in listaCommentTagsActual)
                         {
-                            //get tag ID by match i usun pozostale?
-                            //jak matchesTag jest w listofTagsActual to zostaw jak nie to gerara
-                            foreach (var tag in matches)
+                            //get tagID by match and remove the rest
+                            //if matchesTags exists in listOfTagsActual - leave it;
+                            //new list of tags
+                            foreach (var tag in listOfMatches)
                             {
-                                var tagz = _tag.GetTagByName(tag.ToString());
-                                //   var TagName =_tag.GetTagNamesByTagID(tagz.TagID);
-                                //   var itemName = _tag.GetTagNamesByTagID(item.TagID);
-
-                                if (item.TagID == tagz.TagID)
+                                if (listOfMatches.Any(x => x.Tag_Id == item.Tag_Id))
                                 {
                                     enterLoop = false;
                                 }
@@ -341,16 +264,9 @@ namespace LesioBlog2.Controllers
 
                                 if (enterLoop == true)
                                 {
-                                    int tagID = item.TagID;
-                                    int commID = comment.CommentID;
-                                    _tag.RemoveCommentTag(tagID, commID);
-                                    //get list of ID 
-                                    //remove wpistag
-                                    //remove tag
-                                    if (_tag.IfWpisOrCommentsHasTag(item.TagID))
+                                    if (_tag.CheckIfCommTagExist(item.Tag_Id, comment.Comment_Id))
                                     {
-                                        _tag.RemoveTagsIfNotUsed(item.TagID);
-                                        _tag.SaveChanges();
+                                        RemovecommentTag(item, comment.Comment_Id);
                                     }
                                 }
                                 enterLoop = true;
@@ -361,82 +277,82 @@ namespace LesioBlog2.Controllers
                     {
                         foreach (var item in listaCommentTagsActual)
                         {
-                            int commID = comment.CommentID;
-                            _tag.RemoveCommentTag(item.TagID, commID);
-                            //get list of ID 
-                            //remove wpistag
-                            //remove tag
-                            if (_tag.IfWpisOrCommentsHasTag(item.TagID))
-                            {
-                                _tag.RemoveTagsIfNotUsed(item.TagID);
-                                _tag.SaveChanges();
-                            }
+                            RemovecommentTag(item, comment.Comment_Id);
                         }
                     }
                 }
-                //jak pusty wpis przed ale po juz nie
+                //if post is empty before and after is not
                 else if (comment.CommentTags == null && matches != null)
                 {
                     foreach (var tag in matches)
                     {
-                        var tagz = _tag.GetTagByName(tag.ToString());
-                        // if no existing add so
-                        if (tagz == null)
-                        {
-                            tagz = new Tag();
-                            tagz.TagName = tag.ToString();
-                            //id radnom
-                            _tag.Add(tagz);
-                            _tag.SaveChanges();
-                            //tylko po dodaniu nowego tagu zmieni sie status tabeli wpistag?? WRONG
-                            var commTag = new CommentTag()
-                            {
-                                TagID = tagz.TagID,
-                                CommentID = comment.CommentID
-                            };
-                            _comm.Add(commTag);
-                            _comm.SaveChanges();
-                            
-                        }
-                        //jak nie ma w listOfTagNames ale jest w tagach bo uzyty gdzies indziej:
-                        else
-                        {
-                            //remove wpistagStary po WpisID i TagID:
-                            int tagID = tagz.TagID;
-                            int commID = comment.CommentID;
-                            //to nie trzeba usuwac tylko dodac i elo - jak jest tag gdzies uzyty ale nie w tej edycji 
-
-                            var commTag = new CommentTag()
-                            {
-                                TagID = tagID,
-                                CommentID = commID
-                            };
-                            _comm.Add(commTag);
-                            _comm.SaveChanges();
-                        }
+                        RemovecommentAndCommentTags(comment,  tag);
                     }
-                    //jak nie ma nigdzie tagu ani uzytego ani nic to gerara
-                    //check po to zeby ogarnac gdy po edicie nie zostaje nic zwiazanego z tagami
+                    //if there isnt any tag used
+                    //bool check if after edtiting theres nothing relative to tags
                     if (check == false)
                     {
                         foreach (var item in listaCommentTagsActual)
                         {
-                            int commID = comment.CommentID;
-                            _tag.RemoveCommentTag(item.TagID, commID);
-                            //get list of ID 
-                            //remove wpistag
-                            //remove tag
-                            if (_tag.IfWpisOrCommentsHasTag(item.TagID))
-                            {
-                                _tag.RemoveTagsIfNotUsed(item.TagID);
-                                _tag.SaveChanges();
-                            }
+                            RemovecommentTag(item, comment.Comment_Id);
                         }
                     }
                 }
-                return RedirectToAction("Index", "Wpis");
+                return RedirectToAction("Index", "Post");
             }
             return View(comment);
+        }
+
+        private void RemovecommentTag(CommentTag item, int commID)
+        {
+            _tag.RemoveCommentTag(item.Tag_Id, commID);
+            //get list of ID 
+            //remove postTag
+            //remove tag
+            if (_tag.IfPostOrCommentHaveTags(item.Tag_Id))
+            {
+                _tag.RemoveTagsIfNotUsed(item.Tag_Id);
+                _tag.SaveChanges();
+            }
+        }
+
+        private void RemovecommentAndCommentTags(Comment comment, object tag)
+        {
+            //check if exist in tag base
+            //if not add tag and postTag
+            //1. get tag from DB tags by tag name
+            var tagz = _tag.GetTagByName(tag.ToString().ToLower());
+            // if no existing add it
+            if (tagz == null)
+            {
+                tagz = new Tag();
+                tagz.TagName = tag.ToString().ToLower();
+                //id radnom
+                _tag.Add(tagz);
+                _tag.SaveChanges();
+                var commTag = new CommentTag()
+                {
+                    Tag_Id = tagz.Tag_Id,
+                    Comment_Id = comment.Comment_Id
+                };
+                _comm.Add(commTag);
+                _comm.SaveChanges();
+            }
+            //if not existing in listOfTagNames but used somewhere else:
+            else
+            {
+                //remove removeCommVote (get by tagID and CommID)
+                int tagID = tagz.Tag_Id;
+                int commID = comment.Comment_Id;
+                _tag.RemoveCommentTag(tagID, commID);
+                var commTag = new CommentTag()
+                {
+                    Tag_Id = tagz.Tag_Id,
+                    Comment_Id = comment.Comment_Id
+                };
+                _comm.Add(commTag);
+                _comm.SaveChanges();
+            }
         }
 
         // GET: Comments/Delete/5
@@ -466,7 +382,7 @@ namespace LesioBlog2.Controllers
             }
             else
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "You can't DELETE someone else comment gierarka hir \n FOR REAL");
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "You can't DELETE someone else comment");
             }
         }
 
@@ -474,12 +390,16 @@ namespace LesioBlog2.Controllers
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         [AuthorizeUserAttribute]
-        public ActionResult DeleteConfirmed(int id)
+        public ActionResult DeleteConfirmed(int? id)
         {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
             Comment comment = _comm.GetCommentById(id);
             _comm.Delete(comment);
             _comm.SaveChanges();
-            return RedirectToAction("Index", "Wpis");
+            return RedirectToAction("Index", "Post");
         }
 
         protected override void Dispose(bool disposing)
@@ -491,8 +411,4 @@ namespace LesioBlog2.Controllers
             base.Dispose(disposing);
         }
     }
-
-
-    
-
 }

@@ -8,7 +8,6 @@
 }
     <div style="margin-left:10px;">
         <h2>Registration</h2>
-
     </div>
 
 @using (Html.BeginForm())
@@ -63,11 +62,11 @@
             <legend class="col-form-label col-sm-2 pt-0" style="margin-left: 20px;">Gender: </legend>
             <div class="col-sm-10" style="margin-left:0px;">
                 <div class="form-check" style="display:inline;">
-                    <label style="margin-top:4px;  vertical-align:middle">  @Html.RadioButtonFor(x => x.GenderID, 1, new { @class = "form-check", type = "radio", value = "1" })</label>
+                    <label style="margin-top:4px;  vertical-align:middle">  @Html.RadioButtonFor(x => x.Gender_Id, 1, new { @class = "form-check", type = "radio", value = "1" })</label>
                     @Html.Label("Male")
                 </div>
                     <div class="form-check" style="display:inline; ">
-                       <label style="margin-top:4px; vertical-align:middle"> @Html.RadioButtonFor(x => x.GenderID, 2, new { @class = "form-check", type = "radio", value = "2" })</label>
+                       <label style="margin-top:4px; vertical-align:middle"> @Html.RadioButtonFor(x => x.Gender_Id, 2, new { @class = "form-check", type = "radio", value = "2" })</label>
                         @Html.Label("Female")
                     </div>
              </div>
@@ -103,10 +102,5 @@
                 button.attr('disabled', 'disabled');
             }, 0);
         });
-
-
-
     </script>
-
-
 }

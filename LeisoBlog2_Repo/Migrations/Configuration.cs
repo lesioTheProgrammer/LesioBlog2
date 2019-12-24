@@ -1,6 +1,7 @@
 namespace LesioBlog2_Repo.Migrations
 {
     using LesioBlog2_Repo.Models;
+    using LesioBlog2_Repo.Models;
     using LesioBlog2_Repo.Models.Context;
     using System;
     using System.Data.Entity.Migrations;
@@ -21,7 +22,8 @@ namespace LesioBlog2_Repo.Migrations
             //  You can use the DbSet<T>.AddOrUpdate() helper extension method 
             //  to avoid creating duplicate seed data.
             SeedGenders(context);
-            SeedUsers(context);
+            SeedRoles(context);
+         //   SeedUsers(context);
           //  SeedWpis(context);
           //  SeedComments(context);
           //  SeedTags(context);
@@ -36,13 +38,13 @@ namespace LesioBlog2_Repo.Migrations
         private void SeedIfPlusWpis(BlogContext context)
         {
 
-            var ifplus = new IfPlusowalComment
+            var ifplus = new IsCommUpvoted
             {
-                CommentID = context.Comments.FirstOrDefault().CommentID,
-                UserID = context.Users.FirstOrDefault().UserID,
-                IfPlusWpis = false
+                Comment_Id = context.Comments.FirstOrDefault().Comment_Id,
+                User_Id = context.Users.FirstOrDefault().User_Id,
+                IsCommentUpvoted = false
             };
-            context.Set<IfPlusowalComment>().AddOrUpdate(ifplus);
+            context.Set<IsCommUpvoted>().AddOrUpdate(ifplus);
 
             context.SaveChanges();
         }
@@ -54,13 +56,13 @@ namespace LesioBlog2_Repo.Migrations
         private void SeedIfPlus(BlogContext context)
         {
 
-            var ifplus = new IfPlusowalWpis
+            var ifplus = new IsPostUpvd
             {
-                WpisID = 2,
-                UserID = 3,
-                IfPlusWpis = false
+                Post_Id = 2,
+                User_Id = 3,
+                IsPostUpvoted = false
             };
-            context.Set<IfPlusowalWpis>().AddOrUpdate(ifplus);
+            context.Set<IsPostUpvd>().AddOrUpdate(ifplus);
 
             context.SaveChanges();
         }
@@ -75,12 +77,12 @@ namespace LesioBlog2_Repo.Migrations
             {
                 var comment = new Comment()
                 {
-                    CommentID = i,
-                    UserID = context.Users.FirstOrDefault().UserID,
-                    WpisID = context.Wpis.FirstOrDefault().WpisID,
+                    Comment_Id = i,
+                    User_Id = context.Users.FirstOrDefault().User_Id,
+                    Post_Id = context.Post.FirstOrDefault().Post_Id,
                     Content = "Gerara" + i.ToString(),
                     AddingDate = DateTime.Now,
-                    Plusy = random.Next(0, 100),
+                    Votes = random.Next(0, 100),
                     EditingDate = DateTime.Now.AddDays(1)
 
                 };
@@ -95,18 +97,18 @@ namespace LesioBlog2_Repo.Migrations
             var random = new Random();
             for (int i = 1; i < 11; i++)
             {
-                var wpis = new Wpis
+                var wpis = new Post
                 {
-                    WpisID = i,
-                    UserID = context.Users.FirstOrDefault().UserID,
+                    Post_Id = i,
+                    User_Id = context.Users.FirstOrDefault().User_Id,
                     Content = "Mnibu" + i.ToString(),
                     AddingDate = DateTime.Now,
-                    Plusy = random.Next(0, 100),
+                    Votes = random.Next(0, 100),
                     EditingDate = DateTime.Now.AddDays(3)
 
 
                 };
-                context.Set<Wpis>().AddOrUpdate(wpis);
+                context.Set<Post>().AddOrUpdate(wpis);
             }
             context.SaveChanges();
         }
@@ -117,7 +119,7 @@ namespace LesioBlog2_Repo.Migrations
             {
                 var tag = new Tag
                 {
-                    TagID = i,
+                    Tag_Id = i,
                     TagName = "ForReal" + i.ToString()
                 };
                 context.Set<Tag>().AddOrUpdate(tag);
@@ -132,7 +134,7 @@ namespace LesioBlog2_Repo.Migrations
             {
                 var gender = new Gender
                 {
-                    GenderID = i,
+                    Gender_Id = i,
                     GenderName = i < 2 ? "Male" : "Female"
                 };
                 context.Set<Gender>().AddOrUpdate(gender);
@@ -143,6 +145,28 @@ namespace LesioBlog2_Repo.Migrations
         }
 
 
+        public void SeedRoles(BlogContext context)
+        {
+            var role = new Role
+            {
+                Role_Id = 1,
+                RoleName = "Admin",
+                };
+            var role2 = new Role
+            {
+                Role_Id = 2,
+                RoleName = "User",
+            }; var role3 = new Role
+            {
+                Role_Id = 3,
+                RoleName = "Moderator",
+            };
+
+            context.Set<Role>().AddOrUpdate(role);
+            context.Set<Role>().AddOrUpdate(role2);
+            context.Set<Role>().AddOrUpdate(role3);
+        }
+
 
 
         private void SeedUsers(BlogContext context)
@@ -151,14 +175,13 @@ namespace LesioBlog2_Repo.Migrations
             {
                 var user = new User
                 {
-                    UserID = i,
+                    User_Id = i,
                     NickName = "Bobas" + i.ToString(),
                     FullName = "Pan Bobas" + i.ToString(),
                     City = "Breslau" + i.ToString(),
                     Email = "lesio" + i.ToString() + "@gmail.com",
                     Password = "piespies" + i.ToString(),
-                    GenderID = i < 5 ? 1 : 2,
-                    Code = 232445 + i
+                    Gender_Id = i < 5 ? 1 : 2,
                 };
                 context.Set<User>().AddOrUpdate(user);
             }
@@ -170,12 +193,12 @@ namespace LesioBlog2_Repo.Migrations
         {
             for (int i = 1; i < 11; i++)
             {
-                var wptag = new WpisTag
+                var wptag = new PostTag
                 {
-                    WpisID = i,
-                    TagID = i
+                    Post_Id = i,
+                    Tag_Id = i
                 };
-                context.Set<WpisTag>().AddOrUpdate(wptag);
+                context.Set<PostTag>().AddOrUpdate(wptag);
             }
             context.SaveChanges();
         }
@@ -186,8 +209,8 @@ namespace LesioBlog2_Repo.Migrations
             {
                 var comtag = new CommentTag
                 {
-                    CommentID = i,
-                    TagID = i
+                    Comment_Id = i,
+                    Tag_Id = i
                 };
                 context.Set<CommentTag>().AddOrUpdate(comtag);
             }

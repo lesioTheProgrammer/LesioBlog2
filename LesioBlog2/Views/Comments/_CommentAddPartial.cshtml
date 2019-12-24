@@ -1,4 +1,5 @@
-﻿@model LesioBlog2_Repo.Models.Comment
+﻿
+@model LesioBlog2_Repo.Models.Comment
 
 @{
     Layout = null;
@@ -6,29 +7,28 @@
 
 @using (Html.BeginForm("Create", "Comments", FormMethod.Post))
 {
-    @Html.Hidden("WpisID", ViewData["WpisID"])
+    @Html.Hidden("Post_Id", ViewData["Post_Id"])
     @Html.AntiForgeryToken()
     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
     if (Request.IsAuthenticated)
     {
-    <div style="margin-left: 30px; padding: 0px">
-        Comment here:
+        <div style="margin-left: 30px; padding: 0px">
+            Comment here:
 
-        @Html.EditorFor(model => model.Content, new { htmlAttributes = new { @class = "form-control" } })
-        <div style="padding-top:5px;"></div>
-        @Html.ValidationMessageFor(model => model.Content, "", new { @class = "text-danger" })
+            @Html.EditorFor(model => model.Content, new { htmlAttributes = new { @class = "form-control" } })
+            <div style="padding-top:5px;"></div>
+            @Html.ValidationMessageFor(model => model.Content, "", new { @class = "text-danger" })
 
-        <span style="margin-left: 0px">
-            <div class="form-group">
-                <div class=" col-md-1">
-                    <input type="submit" value="Comment" class="btn btn-success" />
+            <span style="margin-left: 0px">
+                <div class="form-group">
+                    <div class=" col-md-1">
+                        <input type="submit" value="Comment" class="btn btn-success" />
+                    </div>
                 </div>
-            </div>
-        </span>
-    </div>
+            </span>
+        </div>
     }
 }
-
 
 
 
