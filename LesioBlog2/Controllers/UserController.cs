@@ -14,20 +14,17 @@ namespace LesioBlog2.Controllers
         private readonly IGender _gender;
         private readonly ICommentRepo _comm;
         private readonly IPostRepo _postrepo;
+        private readonly ICodeRepo _coderepo;
 
-
-        public UserController(IUserRepo userrepo, IGender gender, ICommentRepo comments, IPostRepo post)
+        public UserController(IUserRepo userrepo, IGender gender, ICommentRepo comments, IPostRepo post, ICodeRepo code)
         {
             this._user = userrepo;
             this._gender = gender;
             this._comm = comments;
             this._postrepo = post;
-
+            this._coderepo = code;
         }
-
         // GET: User
-
-
         [HttpGet]
         public ActionResult Index(string name)
         {
@@ -75,7 +72,6 @@ namespace LesioBlog2.Controllers
             //check if user is logged in
             bool isUserLogged = (System.Web.HttpContext.Current.User != null) && System.Web.HttpContext.Current.User.Identity.IsAuthenticated;
             //nothing to post in displaying user state
-
             return View();
         }
 
@@ -139,6 +135,10 @@ namespace LesioBlog2.Controllers
                         user.User_Id = rnd.Next();
                         matchingUser = _user.FindUserByID(user.User_Id);
                     }
+                    //deafult values:
+                    user.Role_Id = 2; //deafult -- fix it later in db?
+                    user.Active = true;
+                    //deafult end
                     #endregion
                     _user.Add(user);
                     _user.SaveChanges();
@@ -232,40 +232,46 @@ namespace LesioBlog2.Controllers
                 bool ifExist = _user.CheckIfUserEmailVaild(user.Email);
                 if (ifExist == true)
                 {
-                    int userId = _user.GetUserByEmail(user.Email).User_Id;
                     user = _user.GetUserByEmail(user.Email);
-
-                    //wyslij
-                    SmtpClient client = new SmtpClient();
-                    MailMessage mailMessage = new MailMessage();
-                    mailMessage.From = new MailAddress("lesio.blog@gmail.com");
-                    mailMessage.To.Add(user.Email);
-                    mailMessage.Subject = "Reset your password";
-
-                    //userID
-                    var rnd = new Random();
-                    user.Code = rnd.Next(10000, int.MaxValue);
+                    //user generate code 
+                    var code  =  _coderepo.AddCode(user.User_Id);
+                    user.Code_Id = user.User_Id; //bo 1 do 1 to userid = codeId hehe
                     _user.SaveChanges();
-                    var code = user.Code;
-                    var callback = Url.Action("ResetPassword", "User", new { userID = userId, code = code }, protocol: Request.Url.Scheme);
-                    mailMessage.Body = "Reset your password here \n" + callback;
-                    client.Send(mailMessage);
-                    return RedirectToAction("Index", "Post");
+                    var callback = Url.Action("ResetPassword", "User", new { userID = user.User_Id, code = code }, protocol: Request.Url.Scheme);
+                    //  new mail message
+                    #region
+                    MailMessage mail = new MailMessage("lesio.blog@gmail.com", user.Email);
+                    mail.Subject = "Reset your password";
+                    mail.Body = "Reset your password here \n" + callback;
+                    SmtpClient smtpClient = new SmtpClient("smtp.gmail.com", 587);
+                    smtpClient.Credentials = new System.Net.NetworkCredential()
+                    {
+                        UserName = "lesio.blog@gmail.com",
+                        Password = "lesio222pies"
+                    };
+                    smtpClient.EnableSsl = true;
+                    System.Net.ServicePointManager.ServerCertificateValidationCallback = delegate (object s,
+                            System.Security.Cryptography.X509Certificates.X509Certificate certificate,
+                            System.Security.Cryptography.X509Certificates.X509Chain chain,
+                            System.Net.Security.SslPolicyErrors sslPolicyErrors)
+                    {
+                        return true;
+                    };
 
+                    smtpClient.Send(mail);
+                    #endregion
+                    return RedirectToAction("Index", "Post");
                 }
                 else
                 {
                     ModelState.AddModelError("", "Email is incorrect, change it please");
                 }
             }
-
             else
             {
                 ModelState.AddModelError("", "Email is incorrect, change it please");
             }
-
             return RedirectToAction("Index", "Post");
-
         }
 
         [HttpGet]
@@ -280,24 +286,20 @@ namespace LesioBlog2.Controllers
         }
 
         [HttpPost]
-        public ActionResult ResetPassword(int userID, int code, string password)
+        public ActionResult ResetPassword(ID_CodeViewModel model)
         {
-
-            var user = _user.GetUserByID(userID);
-            var pass = password;
-            if (user.Code == code && user.User_Id == userID)
+            var user = _user.GetUserByIDAndCode(model.ID);
+            var pass = model.Password;
+            int? codex = _coderepo.GetCodeValue(model.ID); //po userId bierz kod
+            if (model.Code == codex && user.User_Id == model.ID)
             {
                 //set new password and reset the code
-
                 var crypto = new SimpleCrypto.PBKDF2();
                 var encrpPass = crypto.Compute(pass);
                 user.Password = encrpPass;
                 user.PasswordSalt = crypto.Salt;
-
                 var random = new Random();
-
-                user.Code = random.Next(10000, int.MaxValue);
-
+                user.Code.CodeValue = random.Next(10000, int.MaxValue);
                 _user.SaveChanges();
             }
             else

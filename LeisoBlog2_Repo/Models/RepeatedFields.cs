@@ -14,5 +14,6 @@ namespace LesioBlog2_Repo.Models
 
         public DateTime? EditingDate { get; set; }
 
+        public bool Active { get; set; }
     }
 }

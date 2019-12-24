@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using LesioBlog2_Repo.Models;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace LesioBlog2_Repo.Models
@@ -8,7 +9,11 @@ namespace LesioBlog2_Repo.Models
 
         [Key]
         public int User_Id { get; set; }
-        public int Gender_Id { get; set; }
+        public int Gender_Id { get; set; } //fk
+
+        public int Role_Id { get; set; } //fk
+
+        public int Code_Id { get; set; } //fk
         [Required]
         [EmailAddress]
         [Display(Name = "Email adress: ")]
@@ -27,11 +32,17 @@ namespace LesioBlog2_Repo.Models
         public string FullName { get; set; }
         [Display(Name = "City:")]
         public string City { get; set; }
-        public int Code { get; set; }
+
+        public bool Active { get; set; }
+
 
         public virtual ICollection<Post> Post { get; set; }
         public virtual ICollection<Comment> Comments { get; set; }
         public virtual Gender Gender { get; set; } //1 gender to one user
         public virtual ICollection<IsPostUpvd> IsPostUpvd {get; set;}
+
+        public virtual Code Code { get; set; } //1 code to one user
+
+        public virtual Role Role { get; set; } //1 role to one user
     }
 }

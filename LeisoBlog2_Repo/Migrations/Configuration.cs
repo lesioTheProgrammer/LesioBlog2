@@ -1,6 +1,7 @@
 namespace LesioBlog2_Repo.Migrations
 {
     using LesioBlog2_Repo.Models;
+    using LesioBlog2_Repo.Models;
     using LesioBlog2_Repo.Models.Context;
     using System;
     using System.Data.Entity.Migrations;
@@ -21,7 +22,8 @@ namespace LesioBlog2_Repo.Migrations
             //  You can use the DbSet<T>.AddOrUpdate() helper extension method 
             //  to avoid creating duplicate seed data.
             SeedGenders(context);
-            SeedUsers(context);
+            SeedRoles(context);
+         //   SeedUsers(context);
           //  SeedWpis(context);
           //  SeedComments(context);
           //  SeedTags(context);
@@ -143,6 +145,28 @@ namespace LesioBlog2_Repo.Migrations
         }
 
 
+        public void SeedRoles(BlogContext context)
+        {
+            var role = new Role
+            {
+                Role_Id = 1,
+                RoleName = "Admin",
+                };
+            var role2 = new Role
+            {
+                Role_Id = 2,
+                RoleName = "User",
+            }; var role3 = new Role
+            {
+                Role_Id = 3,
+                RoleName = "Moderator",
+            };
+
+            context.Set<Role>().AddOrUpdate(role);
+            context.Set<Role>().AddOrUpdate(role2);
+            context.Set<Role>().AddOrUpdate(role3);
+        }
+
 
 
         private void SeedUsers(BlogContext context)
@@ -158,7 +182,6 @@ namespace LesioBlog2_Repo.Migrations
                     Email = "lesio" + i.ToString() + "@gmail.com",
                     Password = "piespies" + i.ToString(),
                     Gender_Id = i < 5 ? 1 : 2,
-                    Code = 232445 + i
                 };
                 context.Set<User>().AddOrUpdate(user);
             }

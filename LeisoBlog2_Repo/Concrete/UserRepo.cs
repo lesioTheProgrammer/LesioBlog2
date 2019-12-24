@@ -1,5 +1,6 @@
 ﻿using LesioBlog2_Repo.Abstract;
 using LesioBlog2_Repo.Models;
+using System.Data.Entity;
 using System.Linq;
 
 namespace LesioBlog2_Repo.Concrete
@@ -36,6 +37,9 @@ namespace LesioBlog2_Repo.Concrete
             var user = _db.Users.FirstOrDefault(u => u.User_Id == id);
             return user;
         }
+
+
+        
 
         public string GetUserNicknameByEmail(string email)
         {
@@ -134,5 +138,12 @@ namespace LesioBlog2_Repo.Concrete
              var user =  _db.Users.FirstOrDefault(x => x.User_Id == id);
             return user;
         }
+
+        public User GetUserByIDAndCode(int id)
+        {
+            var user = _db.Users.Include(z => z.Code).FirstOrDefault(x => x.User_Id == id);
+            return user;
+        }
+
     }
 }

@@ -1,4 +1,5 @@
 ﻿using LesioBlog2_Repo.Models;
+using LesioBlog2_Repo.Models;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 
@@ -18,8 +19,17 @@ namespace LesioBlog2_Repo.Abstract
 
          DbSet<Gender> Genders { get; set; }
 
-        DbSet<IsPostUpvd> IsPostUpvd { get; set; }
+         DbSet<IsPostUpvd> IsPostUpvd { get; set; }
          DbSet<IsCommUpvoted> IsCommUpvoted { get; set; }
+
+
+         DbSet<Role> Roles { get; set; }
+
+         DbSet<Code> Code { get; set; }
+
+
+         DbSet<Messages> Messages { get; set; }
+         DbSet<UserMess> UserMess { get; set; }
 
 
         Database Database { get; }

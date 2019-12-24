@@ -226,7 +226,7 @@ namespace LesioBlog2.Controllers
             }
             else
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "You can't edit someone else wpis gierarka hir \n FOR REAL");
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "You can't edit someone else post, leave");
             }
 
         }

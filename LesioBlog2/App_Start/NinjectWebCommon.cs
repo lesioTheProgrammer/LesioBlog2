@@ -3,15 +3,14 @@
 
 namespace LesioBlog2.App_Start
 {
-    using System;
-    using System.Web;
     using LesioBlog2_Repo.Abstract;
     using LesioBlog2_Repo.Concrete;
     using LesioBlog2_Repo.Models.Context;
     using Microsoft.Web.Infrastructure.DynamicModuleHelper;
-
     using Ninject;
     using Ninject.Web.Common;
+    using System;
+    using System.Web;
 
     public static class NinjectWebCommon 
     {
@@ -60,6 +59,9 @@ namespace LesioBlog2.App_Start
 
 
                 kernel.Bind<ITagRepo>().To<TagRepo>();
+
+                kernel.Bind<ICodeRepo>().To<CodeRepo>();
+
                 RegisterServices(kernel);
                 return kernel;
             }
