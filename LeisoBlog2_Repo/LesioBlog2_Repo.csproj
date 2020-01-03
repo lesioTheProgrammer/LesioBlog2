@@ -119,6 +119,30 @@
     <Compile Include="Migrations\201912201542280_first.Designer.cs">
       <DependentUpon>201912201542280_first.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202001021355522_userToUserGfrom_messaging.cs" />
+    <Compile Include="Migrations\202001021355522_userToUserGfrom_messaging.Designer.cs">
+      <DependentUpon>202001021355522_userToUserGfrom_messaging.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202001031054380_userMess.cs" />
+    <Compile Include="Migrations\202001031054380_userMess.Designer.cs">
+      <DependentUpon>202001031054380_userMess.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202001031142564_fixUserMEss.cs" />
+    <Compile Include="Migrations\202001031142564_fixUserMEss.Designer.cs">
+      <DependentUpon>202001031142564_fixUserMEss.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202001031229427_UserMessFix2.cs" />
+    <Compile Include="Migrations\202001031229427_UserMessFix2.Designer.cs">
+      <DependentUpon>202001031229427_UserMessFix2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202001031239188_userMess_removed_UserPK.cs" />
+    <Compile Include="Migrations\202001031239188_userMess_removed_UserPK.Designer.cs">
+      <DependentUpon>202001031239188_userMess_removed_UserPK.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202001031316536_brandNewMessages.cs" />
+    <Compile Include="Migrations\202001031316536_brandNewMessages.Designer.cs">
+      <DependentUpon>202001031316536_brandNewMessages.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Code.cs" />
     <Compile Include="Models\Context\blogContext.cs" />
@@ -134,7 +158,6 @@
     <Compile Include="Models\User.cs" />
     <Compile Include="Models\Post.cs" />
     <Compile Include="Models\PostTag.cs" />
-    <Compile Include="Models\UserMess.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -149,6 +172,24 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201912201542280_first.resx">
       <DependentUpon>201912201542280_first.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202001021355522_userToUserGfrom_messaging.resx">
+      <DependentUpon>202001021355522_userToUserGfrom_messaging.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202001031054380_userMess.resx">
+      <DependentUpon>202001031054380_userMess.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202001031142564_fixUserMEss.resx">
+      <DependentUpon>202001031142564_fixUserMEss.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202001031229427_UserMessFix2.resx">
+      <DependentUpon>202001031229427_UserMessFix2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202001031239188_userMess_removed_UserPK.resx">
+      <DependentUpon>202001031239188_userMess_removed_UserPK.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202001031316536_brandNewMessages.resx">
+      <DependentUpon>202001031316536_brandNewMessages.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

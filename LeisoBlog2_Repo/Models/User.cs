@@ -1,5 +1,4 @@
-﻿using LesioBlog2_Repo.Models;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace LesioBlog2_Repo.Models
@@ -44,5 +43,11 @@ namespace LesioBlog2_Repo.Models
         public virtual Code Code { get; set; } //1 code to one user
 
         public virtual Role Role { get; set; } //1 role to one user
+
+        //messages
+
+        public virtual ICollection<Messages> MessageFrom { get; set; }
+        public virtual ICollection<Messages> MessageTo { get; set; }
+
     }
 }

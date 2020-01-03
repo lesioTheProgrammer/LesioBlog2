@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace LesioBlog2_Repo.Models
@@ -14,9 +13,13 @@ namespace LesioBlog2_Repo.Models
         public bool Active { get; set; }
 
 
-        //many mess to many users
-        //moge usera po fk pobrac przeciez
-        public virtual ICollection<UserMess> UserMess { get; set; }
+        public int UserFrom_Id { get; set; }
+        public int UserTo_Id { get; set; }
+
+
+        public virtual User UserTo { get; set; }
+        public virtual User UserFrom { get; set; }
+
 
     }
 }

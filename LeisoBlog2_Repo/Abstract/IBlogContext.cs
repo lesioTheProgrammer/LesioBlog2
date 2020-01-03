@@ -1,5 +1,4 @@
 ﻿using LesioBlog2_Repo.Models;
-using LesioBlog2_Repo.Models;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 
@@ -29,7 +28,6 @@ namespace LesioBlog2_Repo.Abstract
 
 
          DbSet<Messages> Messages { get; set; }
-         DbSet<UserMess> UserMess { get; set; }
 
 
         Database Database { get; }

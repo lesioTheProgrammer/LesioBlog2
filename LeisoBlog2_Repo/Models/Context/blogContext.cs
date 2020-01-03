@@ -36,7 +36,6 @@ namespace LesioBlog2_Repo.Models.Context
 
 
         public DbSet<Messages> Messages { get; set; }
-        public DbSet<UserMess> UserMess { get; set; }
 
 
 
@@ -64,7 +63,6 @@ namespace LesioBlog2_Repo.Models.Context
             modelBuilder.Entity<PostTag>().HasKey(key => new { key.Tag_Id, key.Post_Id });
             modelBuilder.Entity<CommentTag>().HasKey(key => new { key.Tag_Id, key.Comment_Id });
             //mess
-            modelBuilder.Entity<UserMess>().HasKey(key => new { key.Message_Id, key.User_Id });
 
 
             modelBuilder.Entity<IsPostUpvd>().HasKey(key => new { key.User_Id, key.Post_Id });
@@ -73,6 +71,13 @@ namespace LesioBlog2_Repo.Models.Context
             //one to one or zero
             //code
             modelBuilder.Entity<User>().HasOptional(x => x.Code).WithRequired(u => u.User);
+
+
+            modelBuilder.Entity<Messages>().HasRequired(x => x.UserFrom).WithMany(z => z.MessageFrom).HasForeignKey(k => k.UserFrom_Id);
+            modelBuilder.Entity<Messages>().HasRequired(x => x.UserTo).WithMany(z => z.MessageTo).HasForeignKey(k => k.UserTo_Id);
+
+
+
         }
     }
 }

@@ -496,7 +496,6 @@ namespace LesioBlog2.Controllers
             return check;
         }
 
-
         public void AddTagAfterEditing(Tag tag)
         {
 
