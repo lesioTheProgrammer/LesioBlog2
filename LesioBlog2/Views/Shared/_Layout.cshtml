@@ -1,28 +1,19 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <meta content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title - Welcome on LesioBlog!</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
 </head>
-<body style="padding-top: 56px;  position:absolute;
-    width: 100%;
-    min-width:500px;
-    max-width:2000px;
-    height:100%;
-    left: 0;
-    top: 0;
-     background-color:#DAE0E6;
-    z-index: 10;">
-    <div style="width: auto; height: auto;   background-color:#DAE0E6">
+<body style="padding-top: 56px; padding-bottom: 0%;">
+    <div style="width: auto; height: auto;  background-color:#DAE0E6">
 
         @if (Request.IsAuthenticated)
         {
-            
-            <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark" style="min-width:500px; max-width:2000px">
-                <a class="navbar-brand" href="@Url.Action("Index", "Wpis")">View all wpisy</a>
+            <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
+                <a class="navbar-brand" href="@Url.Action("Index", "Post")">View all posts</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
@@ -30,7 +21,7 @@
                 <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
                     <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
                         <li class="nav-item active">
-                            <a class="nav-link" href="@Url.Action("Index", "User")">@Url.Encode(User.Identity.Name) <span class="sr-only">(current)</span></a>
+                            <a class="nav-link" style="" href="@Url.Action("Index", "User")">@Url.Encode(User.Identity.Name) <span class="sr-only">(current)</span></a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="@Url.Action("Logout", "User")">Sign out</a>
@@ -48,9 +39,8 @@
         }
         else
         {
-
-            <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark" style="min-width:500px; max-width:2000px">
-                <a class="navbar-brand" href="@Url.Action("Index", "Wpis")">View all wpisy</a>
+            <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
+                <a class="navbar-brand" href="@Url.Action("Index", "Post")">View all posts</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
@@ -70,16 +60,12 @@
 
                 </div>
             </nav>
-
-
-
-
         }
 
         @RenderBody()
         <hr />
-        <footer style="clear:both; position:relative; height:150px;margin-top:-200px; ">
-            <p style="clear:none; position:absolute; bottom:-30px; background-color:#DAE0E6;">&copy; @DateTime.Now.Year - Lesio Blog</p>
+        <footer>
+            <p>&copy; @DateTime.Now.Year - Lesio Blog</p>
         </footer>
     </div>
 
