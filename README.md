@@ -1,4 +1,4 @@
-# LesioBlog2
+# LesioBlog
 Reddit-like site, contains most of the things available on any blog out there. 
 
 
