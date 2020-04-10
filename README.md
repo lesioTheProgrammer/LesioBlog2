@@ -13,3 +13,4 @@ Steps to open this project on your local machine:
 
 Gif presenting the running application:
 
+![alt-text](https://github.com/lesioTheProgrammer/LesioBlog2/blob/master/lesioblog.gif)
