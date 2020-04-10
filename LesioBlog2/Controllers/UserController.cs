@@ -282,7 +282,7 @@ namespace LesioBlog2.Controllers
         {
             var user = _user.GetUserByIDAndCode(model.ID);
             var pass = model.Password;
-            int? codex = _coderepo.GetCodeValue(model.ID); //po userId bierz kod
+            int? codex = _coderepo.GetCodeValue(model.ID); // id is userid
             if (model.Code == codex && user.User_Id == model.ID)
             {
                 //set new password and reset the code

@@ -53,7 +53,7 @@ namespace LesioBlog2.Controllers
             }
             else if (!string.IsNullOrEmpty(userCommentNickname))
             {
-                //get post cointating commentName
+                //get post containing commentName
                 post = _post.GetPostCointaininCommWithNickname(userCommentNickname).AsQueryable();
                 postList = post.ToList();
             }
@@ -72,7 +72,7 @@ namespace LesioBlog2.Controllers
             bool checkPostState = true;
             var postIsUpvoted =  _post.GetUpvPost(postToUpvote.Post_Id, currentlyLoggedUserID);
 
-            //prevent user from double plsuing
+            //prevent user from double voting
             if (postToUpvote != null)
             {
                 if (postIsUpvoted != null)
