@@ -10,11 +10,15 @@ In this project there's no straight distinction between Controller and Model in 
 
 Project also uses Dependency Injection, here: Ninject to make an extra layer between repository (model) and Controller, which has only access to the interfaces of the repository classes. 
 
+Database diagram:
+
+![alt-text](https://github.com/lesioTheProgrammer/LesioBlog2/blob/master/lesioblog.png)
+
 Gif presenting the running application:
 
 ![alt-text](https://github.com/lesioTheProgrammer/LesioBlog2/blob/master/lesioblog.gif)
 
 
-Database diagram:
+
 
 
