@@ -39,8 +39,6 @@ namespace LesioBlog2_Repo.Concrete
         }
 
 
-        
-
         public string GetUserNicknameByEmail(string email)
         {
             string nickname = "";

@@ -92,7 +92,7 @@
         <div>
             @*Tu o dodanie komentarza*@
             <div>
-                @Html.Partial("~/Views/Comments/_CommentAddPartial.cshtml", new ViewDataDictionary { { "Post_Id", item.Post_Id } })
+                @Html.Action("_CommentAddPartial", "Comments", new { id = item.Post_Id });
 
             </div>
         </div>
@@ -235,11 +235,11 @@
 
 
         @*
-            
-        script comment adding
-            
-            
-            *@
+
+            script comment adding
+
+
+                *@
 
 
 

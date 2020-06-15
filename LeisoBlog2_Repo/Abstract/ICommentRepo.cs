@@ -10,15 +10,11 @@ namespace LesioBlog2_Repo.Abstract
         Comment GetCommentById(int? id);
         void SaveChanges();
         void Add(Comment comment);
-
         DateTime GetCommentWithAddingDate(Comment comment);
-
         ICollection<Comment> GetCommentByUserID(int? id);
-
         void Delete(Comment comment);
         int GetIdOfCommentCreator(int? id);
         void UpdateContentAndPlusyAndEditDate(Comment comment);
-
         IsCommUpvoted GetPlusComment(int? idComment, int? idUser);
         void Add(CommentTag commTag);
         void Add(IsCommUpvoted plusComm);

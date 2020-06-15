@@ -73,7 +73,7 @@ namespace LesioBlog2.Controllers
         [HttpGet]
         public ActionResult LogIn()
         {
-            return View();  //gut
+            return View(new User());  
         }
         [HttpPost]
         public ActionResult LogIn(LesioBlog2_Repo.Models.User user)
@@ -102,7 +102,7 @@ namespace LesioBlog2.Controllers
         {
             //no need of genderlist, doing genderSelection in View.
             var genderlist = this._gender.GetGenders();
-            return View();
+            return View(new User());
         }
 
         [HttpPost]

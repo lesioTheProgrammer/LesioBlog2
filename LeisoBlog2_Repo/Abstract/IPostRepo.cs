@@ -13,25 +13,16 @@ namespace LesioBlog2_Repo.Abstract
         Post GetPostByID(int? id);
         void SaveChanges();
         void Add(Post wpis);
-
         DateTime GetPostWithAddingDate(Post wpis);
-
         ICollection<Post> GetPostByUserID(int? id);
-
         void Delete(Post wpis);
         int GetIdOpfPostCreator(int? id);
-
         void UpdateContentUpvotesAddDate(Post wpis);
         void Add(PostTag wpisTag);
-
         void UpdateOnlyVotes(Post wpis);
-
-
         List<PostTag> GetAllPostTagsByPostID(int? id);
         void Add(IsPostUpvd ifplusowal);
         IsPostUpvd GetUpvPost(int? idWpis, int? idUser);
-
-
         void UpdateIsVotedState(IsPostUpvd ifplus);
     }
 }

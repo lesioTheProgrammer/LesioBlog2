@@ -6,9 +6,7 @@ namespace LesioBlog2_Repo.Abstract
     public  interface IGender
     {
         IQueryable<Gender> GetGenders();
-
         void Add(Gender gender);
-
         void SaveChanges();
         Gender GetGenderByID(int id);
     }

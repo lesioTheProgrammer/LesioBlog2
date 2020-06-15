@@ -33,13 +33,6 @@ namespace LesioBlog2.Controllers
         {
             return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
         }
-
-        // GET: Comments/Create
-        public ActionResult Create()
-        {
-            return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Not avialable");
-
-        }
         [HttpPost]
         [AuthorizeUserAttribute]
         [ValidateAntiForgeryToken]
@@ -104,6 +97,20 @@ namespace LesioBlog2.Controllers
             }
 
         }
+
+
+        // GET: Comments/Create
+        public ActionResult _CommentAddPartial(int id)
+        {
+            var comment = new Comment();
+            comment.Post_Id = id;
+            return View(comment);
+
+        }
+
+
+
+
         // POST: Comments/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.

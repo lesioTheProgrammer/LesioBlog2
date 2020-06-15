@@ -4,7 +4,6 @@
     {
         int AddCode(int userId);
         void SaveChanges();
-
         int? GetCodeValue(int id);
     }
 }

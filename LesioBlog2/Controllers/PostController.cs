@@ -105,7 +105,7 @@ namespace LesioBlog2.Controllers
 
                 var result = new { result = true, votes = postToUpvote.Votes };
                 return Json(result,
-                            JsonRequestBehavior.AllowGet); ;
+                            JsonRequestBehavior.AllowGet); 
             }
 
 
@@ -159,10 +159,9 @@ namespace LesioBlog2.Controllers
         [HttpPost]
         [AuthorizeUserAttribute]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Post_Id,User_Id,Content,AddingDate,Votes")] Post post)
+        public ActionResult Create([Bind(Include = "Content")] Post post)
         {
             post.AddingDate = DateTime.Now;
-            post.EditingDate = null;
             var loggedUserId = _user.GetIDOfCurrentlyLoggedUser();
             post.User_Id = loggedUserId.Value;
 

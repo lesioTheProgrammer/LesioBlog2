@@ -156,10 +156,13 @@ namespace LesioBlog2_Repo.Concrete
             var user = _db.Users.FirstOrDefault(x => x.NickName.ToLower() == name.ToLower());
             if (user != null)
             {
-                var wpis = _db.Post.Where(x => x.User_Id == user.User_Id).Include(x=>x.Comments.Select(u=>u.User)).Include(x=>x.User).Select(x=>x).ToList();
+                var wpis = _db.Post.Where(x => x.User_Id == user.User_Id)
+                    .Include(x=>x.Comments
+                    .Select(u=>u.User))
+                    .Include(x=>x.User)
+                    .Select(x=>x).ToList();
                 return wpis;
             }
-            //else:
             return new List<Post>();
         }
 
