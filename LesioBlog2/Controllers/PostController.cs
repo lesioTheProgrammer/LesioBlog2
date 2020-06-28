@@ -164,8 +164,6 @@ namespace LesioBlog2.Controllers
             post.AddingDate = DateTime.Now;
             var loggedUserId = _user.GetIDOfCurrentlyLoggedUser();
             post.User_Id = loggedUserId.Value;
-
-
             if (ModelState.IsValid)
             {
                 _post.Add(post);

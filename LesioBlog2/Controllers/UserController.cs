@@ -129,8 +129,8 @@ namespace LesioBlog2.Controllers
                         user.User_Id = rnd.Next();
                         matchingUser = _user.FindUserByID(user.User_Id);
                     }
-                    //deafult values:
-                    user.Role_Id = 2; //deafult -- fix it later in db?
+                    //default values:
+                    user.Role_Id = 2; //default
                     user.Active = true;
                     //deafult end
                     #endregion
@@ -162,9 +162,6 @@ namespace LesioBlog2.Controllers
         {
             var crypto = new SimpleCrypto.PBKDF2();
             bool IsValid = false;
-
-            //get the user by email
-            //creating userrepo 
             var user = _user.GetUserByEmail(email);
             if (user != null)
             {
@@ -278,7 +275,7 @@ namespace LesioBlog2.Controllers
         }
 
         [HttpPost]
-        public ActionResult ResetPassword(ID_CodeViewModel model)
+        public ActionResult ResetPasswordSent(ID_CodeViewModel model)
         {
             var user = _user.GetUserByIDAndCode(model.ID);
             var pass = model.Password;
